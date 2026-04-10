@@ -64,6 +64,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 40px;display:f
 .search-input::placeholder{color:var(--muted)}
 .search-btn{background:var(--gold);color:var(--deep);border:none;border-radius:12px;padding:14px 28px;font-weight:700;cursor:pointer;font-size:14px;transition:all .2s}
 .search-btn:hover{background:var(--gold-light)}
+.search-suggestions{margin-top:10px;background:var(--surface2);border:1px solid rgba(240,237,230,.1);border-radius:16px;overflow:hidden;max-height:260px;overflow-y:auto;box-shadow:0 18px 40px rgba(0,0,0,.2);}
+.suggestion-item{padding:12px 16px;font-size:13px;color:var(--text);cursor:pointer;transition:background .2s}
+.suggestion-item:hover{background:rgba(201,168,76,.1)}
+.suggestion-item strong{color:var(--gold)}
+.suggestion-empty{padding:12px 16px;font-size:13px;color:var(--muted)}
 .filter-chips{display:flex;gap:8px;flex-wrap:wrap}
 .chip{background:var(--surface2);border:1px solid rgba(240,237,230,.1);color:var(--muted);padding:6px 16px;border-radius:20px;font-size:12px;cursor:pointer;transition:all .2s}
 .chip.active,.chip:hover{background:rgba(201,168,76,.15);border-color:var(--gold);color:var(--gold)}
@@ -283,9 +288,10 @@ footer{background:var(--surface);border-top:1px solid rgba(240,237,230,.06);padd
 <div class="search-section">
   <div class="search-wrap reveal">
     <div class="search-row">
-      <input class="search-input" id="searchInput" placeholder="🔍  Search destinations, countries, continents..." oninput="filterDest()">
-      <button class="search-btn">Search</button>
+      <input class="search-input" id="searchInput" placeholder="🔍  Search destinations, countries, continents..." oninput="handleSearchInput()" onfocus="renderSearchSuggestions()" autocomplete="off">
+      <button class="search-btn" onclick="filterDest();return false">Search</button>
     </div>
+    <div class="search-suggestions" id="searchSuggestions"></div>
     <div class="filter-chips" id="filterChips">
       <div class="chip active" onclick="setFilter('all',this)">All</div>
       <div class="chip" onclick="setFilter('asia',this)">Asia</div>
@@ -598,6 +604,54 @@ indiaData["All States"]=allIndia;
 
 let activeFilter='all';
 let activeState='All States';
+let searchTerms=[];
+
+function buildSearchTerms(){
+  const destinationTerms=destinations.map(d=>d.name);
+  const indiaTerms=allIndia.map(p=>p.name);
+  searchTerms=[...new Set([...destinationTerms,...indiaTerms])].sort((a,b)=>a.localeCompare(b));
+}
+
+function handleSearchInput(){
+  filterDest();
+  renderSearchSuggestions();
+}
+
+function renderSearchSuggestions(){
+  const input=document.getElementById('searchInput');
+  const query=input.value.trim().toLowerCase();
+  const container=document.getElementById('searchSuggestions');
+  if(!query){
+    container.innerHTML='';
+    return;
+  }
+  const matches=searchTerms.filter(term=>term.toLowerCase().includes(query)).slice(0,8);
+  if(!matches.length){
+    container.innerHTML='<div class="suggestion-empty">No matching city found. Try another place.</div>';
+    return;
+  }
+  container.innerHTML=matches.map(term=>`<div class="suggestion-item" onclick="selectSuggestion('${term.replace(/'/g,"\\'")}')"><strong>${term}</strong></div>`).join('');
+}
+
+function selectSuggestion(value){
+  const input=document.getElementById('searchInput');
+  input.value=value;
+  filterDest();
+  renderSearchSuggestions();
+}
+
+function clearSearchSuggestions(){
+  const container=document.getElementById('searchSuggestions');
+  if(container) container.innerHTML='';
+}
+
+document.addEventListener('click',e=>{
+  const suggestions=document.getElementById('searchSuggestions');
+  const input=document.getElementById('searchInput');
+  if(suggestions && input && !suggestions.contains(e.target) && e.target !== input){
+    suggestions.innerHTML='';
+  }
+});
 
 function createStars(){
   const c=document.getElementById('stars');
@@ -956,16 +1010,44 @@ function renderGallery(query){
 }
 
 function openLightbox(src){
-  const overlay=document.getElementById('lightboxOverlay');
-  const img=document.getElementById('lightboxImage');
-  if(!overlay||!img) return;
+  let overlay=document.getElementById('lightboxOverlay');
+  let img=document.getElementById('lightboxImage');
+  if(!overlay || !img){
+    const lightbox=createLightboxOverlay();
+    overlay=lightbox.overlay;
+    img=lightbox.img;
+  }
   img.src=src;
+  overlay.style.display='flex';
   overlay.classList.add('open');
 }
 
 function closeLightbox(){
   const overlay=document.getElementById('lightboxOverlay');
+  const img=document.getElementById('lightboxImage');
+  if(overlay) overlay.style.display='none';
   if(overlay) overlay.classList.remove('open');
+  if(img) img.src='';
+}
+
+function createLightboxOverlay(){
+  const overlay=document.createElement('div');
+  overlay.className='lightbox-overlay';
+  overlay.id='lightboxOverlay';
+  overlay.style.display='none';
+  overlay.onclick=function(event){ if(event.target===this) closeLightbox(); };
+  const closeBtn=document.createElement('button');
+  closeBtn.className='lightbox-close';
+  closeBtn.textContent='✕';
+  closeBtn.onclick=function(event){ event.stopPropagation(); closeLightbox(); };
+  const img=document.createElement('img');
+  img.className='lightbox-img';
+  img.id='lightboxImage';
+  img.alt='Expanded travel photo';
+  overlay.appendChild(closeBtn);
+  overlay.appendChild(img);
+  document.body.appendChild(overlay);
+  return {overlay,img};
 }
 
 function showTyping(){
@@ -987,6 +1069,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModalDirect();}
 
 window.onload=()=>{
   createStars();
+  buildSearchTerms();
   renderDest(destinations);
   renderStateTabs();
   renderIndia();
