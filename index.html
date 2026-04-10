@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WanderWorld — Global Travel Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--deep:#0A0A0F;--surface:#12121A;--surface2:#1A1A26;--surface3:#22223A;--text:#F0EDE6;--muted:#9994AA;--accent:#FF6B4A;--teal:#2DCBBC;--india:#FF9933;--india2:#138808}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--deep);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--surface)}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(10,10,15,.95),transparent);backdrop-filter:blur(10px)}
+.logo{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold);letter-spacing:1px}
+.logo span{color:var(--text)}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;letter-spacing:.5px;transition:color .2s}
+.nav-links a:hover{color:var(--gold)}
+.nav-cta{background:var(--gold);color:var(--deep);padding:8px 20px;border-radius:20px;font-size:13px;font-weight:600;text-decoration:none;transition:all .2s;cursor:pointer;border:none}
+.nav-cta:hover{background:var(--gold-light);transform:translateY(-1px)}
+
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:100px 40px 60px}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(201,168,76,.08),transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(45,203,188,.06),transparent 50%),radial-gradient(ellipse at 60% 80%,rgba(255,107,74,.05),transparent 50%)}
+.stars{position:absolute;inset:0;overflow:hidden}
+.star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:twinkle var(--d,3s) var(--delay,0s) infinite}
+@keyframes twinkle{0%,100%{opacity:.2}50%{opacity:1}}
+.hero-content{text-align:center;max-width:900px;position:relative;z-index:1}
+.hero-tag{display:inline-block;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:var(--gold);font-size:11px;font-weight:600;letter-spacing:3px;padding:6px 20px;border-radius:20px;margin-bottom:32px;animation:fadeUp .8s .2s both}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(48px,8vw,96px);line-height:1.0;margin-bottom:24px;animation:fadeUp .8s .4s both}
+.hero h1 .line2{color:var(--gold);font-style:italic}
+.hero p{font-size:18px;color:var(--muted);max-width:560px;margin:0 auto 40px;line-height:1.7;animation:fadeUp .8s .6s both}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;animation:fadeUp .8s .8s both}
+.btn-primary{background:var(--gold);color:var(--deep);padding:14px 32px;border-radius:30px;font-weight:700;font-size:14px;text-decoration:none;border:none;cursor:pointer;transition:all .3s;letter-spacing:.5px}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 12px 40px rgba(201,168,76,.3)}
+.btn-outline{background:transparent;color:var(--text);padding:14px 32px;border-radius:30px;font-weight:500;font-size:14px;text-decoration:none;border:1px solid rgba(240,237,230,.2);cursor:pointer;transition:all .3s}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.hero-stats{display:flex;gap:48px;justify-content:center;margin-top:64px;animation:fadeUp .8s 1s both}
+.stat-item{text-align:center}
+.stat-num{font-family:'Space Mono',monospace;font-size:32px;font-weight:700;color:var(--gold)}
+.stat-label{font-size:12px;color:var(--muted);margin-top:4px;letter-spacing:1px}
+.float-cards{position:absolute;right:5%;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:12px;animation:floatIn 1s 1.2s both}
+@keyframes floatIn{from{opacity:0;transform:translateY(-40%) translateX(60px)}to{opacity:1;transform:translateY(-50%) translateX(0)}}
+.float-card{background:rgba(26,26,38,.9);backdrop-filter:blur(16px);border:1px solid rgba(201,168,76,.15);border-radius:16px;padding:12px 16px;min-width:200px}
+.float-card .fc-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.float-card .fc-dot{width:8px;height:8px;border-radius:50%;background:var(--teal)}
+.float-card .fc-label{font-size:11px;color:var(--muted);font-weight:500}
+.float-card .fc-val{font-size:15px;font-weight:600;color:var(--text)}
+.float-card .fc-sub{font-size:11px;color:var(--muted)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+.section{padding:100px 40px}
+.section-tag{font-size:11px;font-weight:600;letter-spacing:3px;color:var(--gold);margin-bottom:16px;text-transform:uppercase}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(32px,4vw,56px);line-height:1.1;margin-bottom:16px}
+.section-sub{font-size:16px;color:var(--muted);max-width:520px;line-height:1.7}
+.section-header{margin-bottom:56px}
+
+.search-section{padding:0 40px 80px}
+.search-wrap{background:var(--surface);border:1px solid rgba(201,168,76,.2);border-radius:24px;padding:32px;max-width:900px;margin:0 auto}
+.search-row{display:flex;gap:12px;margin-bottom:20px}
+.search-input{flex:1;background:var(--surface2);border:1px solid rgba(240,237,230,.1);border-radius:12px;padding:14px 20px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;transition:border .2s}
+.search-input:focus{border-color:var(--gold)}
+.search-input::placeholder{color:var(--muted)}
+.search-btn{background:var(--gold);color:var(--deep);border:none;border-radius:12px;padding:14px 28px;font-weight:700;cursor:pointer;font-size:14px;transition:all .2s}
+.search-btn:hover{background:var(--gold-light)}
+.filter-chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:var(--surface2);border:1px solid rgba(240,237,230,.1);color:var(--muted);padding:6px 16px;border-radius:20px;font-size:12px;cursor:pointer;transition:all .2s}
+.chip.active,.chip:hover{background:rgba(201,168,76,.15);border-color:var(--gold);color:var(--gold)}
+
+.dest-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
+.dest-card{background:var(--surface);border:1px solid rgba(240,237,230,.06);border-radius:24px;overflow:hidden;cursor:pointer;transition:all .4s;position:relative}
+.dest-card:hover{transform:translateY(-8px);border-color:rgba(201,168,76,.3);box-shadow:0 24px 60px rgba(0,0,0,.4)}
+.dest-img{height:220px;display:flex;align-items:center;justify-content:center;font-size:72px;position:relative;overflow:hidden}
+.dest-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(18,18,26,.9))}
+.dest-badge{position:absolute;top:16px;right:16px;background:rgba(10,10,15,.7);backdrop-filter:blur(8px);border:1px solid rgba(201,168,76,.3);color:var(--gold);font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;z-index:1}
+.dest-body{padding:20px}
+.dest-country{font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:4px}
+.dest-name{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:8px}
+.dest-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.dest-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.dest-tag{background:var(--surface2);color:var(--muted);font-size:11px;padding:4px 10px;border-radius:8px}
+.dest-tag.solo{color:#C9A84C;background:rgba(201,168,76,.1)}
+.dest-tag.couple{color:#FF6B9D;background:rgba(255,107,157,.1)}
+.dest-tag.family{color:#2DCBBC;background:rgba(45,203,188,.1)}
+.dest-footer{display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid rgba(240,237,230,.06)}
+.best-time{font-size:12px;color:var(--muted)}
+.best-time span{color:var(--teal)}
+.dest-time{font-size:12px;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.dest-time span{background:rgba(201,168,76,.1);color:var(--gold);padding:5px 10px;border-radius:999px;font-size:12px;font-weight:600}
+.dest-btn{background:transparent;border:1px solid rgba(201,168,76,.3);color:var(--gold);padding:6px 16px;border-radius:10px;font-size:12px;cursor:pointer;transition:all .2s}
+.dest-btn:hover{background:var(--gold);color:var(--deep)}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid rgba(201,168,76,.2);border-radius:28px;max-width:760px;width:100%;max-height:90vh;overflow-y:auto;animation:modalIn .3s ease;position:relative}
+@keyframes modalIn{from{opacity:0;transform:scale(.94) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-hero{height:280px;display:flex;align-items:center;justify-content:center;font-size:100px;position:relative;border-radius:20px 20px 0 0;overflow:hidden}
+.modal-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,var(--surface))}
+.modal-body{padding:32px}
+.modal-close{position:absolute;top:20px;right:20px;background:rgba(0,0,0,.5);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;z-index:10}
+.modal-tabs{display:flex;gap:4px;background:var(--surface2);border-radius:12px;padding:4px;margin-bottom:24px}
+.m-tab{flex:1;padding:8px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:13px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.m-tab.active{background:var(--gold);color:var(--deep);font-weight:600}
+.tab-content{display:none}
+.tab-content.active{display:block;animation:fadeUp .3s ease}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.info-box{background:var(--surface2);border-radius:12px;padding:16px}
+.info-box label{font-size:11px;color:var(--muted);display:block;margin-bottom:4px}
+.info-box strong{font-size:15px;color:var(--text)}
+.history-text{font-size:14px;color:var(--muted);line-height:1.8}
+
+.india-section{background:linear-gradient(135deg,rgba(255,153,51,.04),rgba(19,136,8,.04));border-top:1px solid rgba(255,153,51,.1);border-bottom:1px solid rgba(19,136,8,.1)}
+.india-header{display:flex;align-items:flex-start;gap:24px;margin-bottom:48px;flex-wrap:wrap}
+.india-flag{font-size:48px}
+.india-title-block .section-tag{color:var(--india)}
+.india-title-block .section-title em{color:var(--india);font-style:normal}
+.state-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:32px;scrollbar-width:none}
+.state-tabs::-webkit-scrollbar{display:none}
+.state-tab{background:var(--surface);border:1px solid rgba(240,237,230,.08);color:var(--muted);padding:8px 20px;border-radius:20px;font-size:13px;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.state-tab.active{background:rgba(255,153,51,.15);border-color:var(--india);color:var(--india);font-weight:500}
+.india-places{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
+.india-card{background:var(--surface);border:1px solid rgba(240,237,230,.06);border-radius:20px;overflow:hidden;cursor:pointer;transition:all .3s}
+.india-card:hover{transform:translateY(-6px);border-color:rgba(255,153,51,.3);box-shadow:0 16px 40px rgba(0,0,0,.3)}
+.india-card-img{height:140px;display:flex;align-items:center;justify-content:center;font-size:52px}
+.india-card-body{padding:16px}
+.india-card-state{font-size:10px;color:var(--india);font-weight:600;letter-spacing:1px;margin-bottom:4px}
+.india-card-name{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:6px}
+.india-card-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.india-card-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.india-tag{font-size:10px;padding:3px 8px;border-radius:6px}
+.t-heritage{background:rgba(201,168,76,.1);color:var(--gold)}
+.t-nature{background:rgba(45,203,188,.1);color:var(--teal)}
+.t-spiritual{background:rgba(255,107,74,.1);color:var(--accent)}
+.t-beach{background:rgba(45,150,255,.1);color:#4AB8FF}
+.t-hill{background:rgba(100,220,100,.1);color:#6ADC6A}
+.t-fort{background:rgba(220,150,50,.1);color:#DCA032}
+
+.traveller-section{padding:80px 40px;background:var(--surface)}
+.traveller-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:960px;margin:0 auto}
+.trav-card{background:var(--surface2);border:1px solid rgba(240,237,230,.06);border-radius:24px;padding:32px;text-align:center;transition:all .3s;position:relative;overflow:hidden}
+.trav-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.trav-card.solo::before{background:var(--gold)}
+.trav-card.couple::before{background:#FF6B9D}
+.trav-card.family::before{background:var(--teal)}
+.trav-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.trav-icon{font-size:40px;margin-bottom:16px}
+.trav-name{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:8px}
+.trav-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.trav-tips{list-style:none}
+.trav-tips li{font-size:12px;color:var(--muted);padding:5px 0;border-bottom:1px solid rgba(240,237,230,.04);text-align:left}
+.trav-tips li::before{content:"✦ ";color:var(--gold);font-size:10px}
+
+.chatbot-fab{position:fixed;bottom:32px;right:32px;z-index:1500}
+.chat-toggle{width:64px;height:64px;border-radius:50%;background:var(--gold);border:none;font-size:28px;cursor:pointer;box-shadow:0 8px 32px rgba(201,168,76,.4);transition:all .3s;display:flex;align-items:center;justify-content:center}
+.chat-toggle:hover{transform:scale(1.1);background:var(--gold-light)}
+.chat-window{position:absolute;bottom:80px;right:0;width:380px;background:var(--surface);border:1px solid rgba(201,168,76,.2);border-radius:24px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.5);display:none;flex-direction:column}
+.chat-window.open{display:flex;animation:chatIn .3s ease}
+@keyframes chatIn{from{opacity:0;transform:translateY(20px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+.chat-header{background:linear-gradient(135deg,var(--surface2),var(--surface3));padding:20px;border-bottom:1px solid rgba(240,237,230,.06)}
+.chat-header-top{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.chat-avatar{width:40px;height:40px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:18px}
+.chat-name{font-weight:600;font-size:15px}
+.chat-status{font-size:11px;color:var(--teal)}
+.chat-subtitle{font-size:12px;color:var(--muted)}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px;max-height:340px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:85%;animation:fadeUp .2s ease}
+.msg.bot{align-self:flex-start}
+.msg.user{align-self:flex-end}
+.msg-bubble{padding:12px 16px;border-radius:16px;font-size:13px;line-height:1.6}
+.msg.bot .msg-bubble{background:var(--surface2);color:var(--text);border-bottom-left-radius:4px}
+.msg.user .msg-bubble{background:var(--gold);color:var(--deep);font-weight:500;border-bottom-right-radius:4px}
+.msg-time{font-size:10px;color:var(--muted);margin-top:4px}
+.msg.user .msg-time{text-align:right}
+.chat-quick{padding:10px 16px;display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid rgba(240,237,230,.06)}
+.quick-btn{background:var(--surface2);border:1px solid rgba(240,237,230,.1);color:var(--muted);padding:5px 10px;border-radius:10px;font-size:11px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.quick-btn:hover{border-color:var(--gold);color:var(--gold)}
+.chat-input-row{padding:12px 16px;border-top:1px solid rgba(240,237,230,.06);display:flex;gap:8px}
+.chat-input{flex:1;background:var(--surface2);border:1px solid rgba(240,237,230,.1);border-radius:12px;padding:10px 14px;color:var(--text);font-size:13px;outline:none;font-family:'DM Sans',sans-serif}
+.chat-input:focus{border-color:var(--gold)}
+.chat-input::placeholder{color:var(--muted)}
+.chat-send{background:var(--gold);color:var(--deep);border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:14px;transition:all .2s}
+.chat-send:hover{background:var(--gold-light)}
+.typing-indicator{display:flex;gap:4px;align-items:center;padding:12px 16px;background:var(--surface2);border-radius:16px;width:fit-content}
+.typing-dot{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:typing 1.2s infinite}
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+footer{background:var(--surface);border-top:1px solid rgba(240,237,230,.06);padding:60px 40px 32px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.footer-brand p{font-size:13px;color:var(--muted);line-height:1.6;max-width:260px;margin-top:12px}
+.footer-col h4{font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px;letter-spacing:.5px}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:10px}
+.footer-col ul li a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
+.footer-col ul li a:hover{color:var(--gold)}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:24px;border-top:1px solid rgba(240,237,230,.06)}
+.footer-bottom p{font-size:12px;color:var(--muted)}
+
+.reveal{opacity:0;transform:translateY(40px);transition:all .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:900px){
+  nav{padding:16px 20px}
+  .nav-links,.float-cards{display:none}
+  .hero{padding:100px 20px 60px}
+  .hero-stats{gap:24px}
+  .section,.search-section,.traveller-section{padding:60px 20px}
+  .dest-grid,.india-places{grid-template-columns:1fr 1fr}
+  .traveller-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .chat-window{width:calc(100vw - 40px);right:-8px}
+  .info-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .dest-grid,.india-places{grid-template-columns:1fr}
+  .hero-stats{flex-wrap:wrap;gap:20px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Wander<span>World</span></div>
+  <ul class="nav-links">
+    <li><a href="#destinations">Destinations</a></li>
+    <li><a href="#india">🇮🇳 India</a></li>
+    <li><a href="#travellers">Travel Types</a></li>
+    <li><a href="#" onclick="openChat();return false">AI Guide</a></li>
+  </ul>
+  <button class="nav-cta" onclick="openChat()">Chat with AI Guide</button>
+</nav>
+
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="stars" id="stars"></div>
+  <div class="hero-content">
+    <div class="hero-tag">✦ YOUR WORLD TRAVEL COMPANION</div>
+    <h1>Discover Every<br><span class="line2">Corner of Earth</span></h1>
+    <p>Explore 500+ destinations worldwide — rich history, best season, live local time, and personalised timezone-aware travel tips.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="document.getElementById('destinations').scrollIntoView({behavior:'smooth'})">Explore Destinations</button>
+      <a href="#india" class="btn-outline">🇮🇳 India Special Section</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-num" id="c1">0</div><div class="stat-label">Destinations</div></div>
+      <div class="stat-item"><div class="stat-num" id="c2">0</div><div class="stat-label">Countries</div></div>
+      <div class="stat-item"><div class="stat-num" id="c3">0</div><div class="stat-label">India Places</div></div>
+      <div class="stat-item"><div class="stat-num" id="c4">0</div><div class="stat-label">Travellers Helped</div></div>
+    </div>
+  </div>
+  <div class="float-cards">
+    <div class="float-card">
+      <div class="fc-top"><div class="fc-dot"></div><div class="fc-label">LIVE AI GUIDE</div></div>
+      <div class="fc-val">Paris, France</div>
+      <div class="fc-sub">☀️ Ask about weather & tips</div>
+    </div>
+    <div class="float-card">
+      <div class="fc-top"><div class="fc-dot" style="background:#FF6B4A"></div><div class="fc-label">TRENDING NOW</div></div>
+      <div class="fc-val">Ladakh, India</div>
+      <div class="fc-sub">🏔️ Best season: Jun–Sep</div>
+    </div>
+    <div class="float-card">
+      <div class="fc-top"><div class="fc-dot" style="background:#C9A84C"></div><div class="fc-label">AI CHATBOT</div></div>
+      <div class="fc-val">Ask me anything!</div>
+      <div class="fc-sub">💬 Weather · Tips · History</div>
+    </div>
+  </div>
+</section>
+
+<div class="search-section">
+  <div class="search-wrap reveal">
+    <div class="search-row">
+      <input class="search-input" id="searchInput" placeholder="🔍  Search destinations, countries, continents..." oninput="filterDest()">
+      <button class="search-btn">Search</button>
+    </div>
+    <div class="filter-chips" id="filterChips">
+      <div class="chip active" onclick="setFilter('all',this)">All</div>
+      <div class="chip" onclick="setFilter('asia',this)">Asia</div>
+      <div class="chip" onclick="setFilter('europe',this)">Europe</div>
+      <div class="chip" onclick="setFilter('americas',this)">Americas</div>
+      <div class="chip" onclick="setFilter('africa',this)">Africa</div>
+      <div class="chip" onclick="setFilter('oceania',this)">Oceania</div>
+      <div class="chip" onclick="setFilter('solo',this)">🎒 Solo</div>
+      <div class="chip" onclick="setFilter('couple',this)">💑 Couple</div>
+      <div class="chip" onclick="setFilter('family',this)">👨‍👩‍👧 Family</div>
+    </div>
+  </div>
+</div>
+
+<section class="section" id="destinations">
+  <div class="section-header reveal">
+    <div class="section-tag">✦ WORLD DESTINATIONS</div>
+    <h2 class="section-title">Places That Will<br>Change You Forever</h2>
+    <p class="section-sub">Handpicked destinations with rich history, best season, and personalised travel tips.</p>
+  </div>
+  <div class="dest-grid" id="destGrid"></div>
+</section>
+
+<section class="traveller-section" id="travellers">
+  <div style="text-align:center;margin-bottom:48px" class="reveal">
+    <div class="section-tag" style="display:inline-block">✦ TRAVEL YOUR WAY</div>
+    <h2 class="section-title">Every Journey is Unique</h2>
+    <p class="section-sub" style="margin:0 auto;text-align:center;max-width:480px">Whether you're solo, with your partner, or with the whole family — we have guides tailored for you.</p>
+  </div>
+  <div class="traveller-grid">
+    <div class="trav-card solo reveal">
+      <div class="trav-icon">🎒</div>
+      <div class="trav-name">Solo Travel</div>
+      <p class="trav-desc">Full freedom, flexible plans, and self-discovery at every step.</p>
+      <ul class="trav-tips">
+        <li>Stay in hostels to meet fellow travellers</li>
+        <li>Use travel apps for safety tracking</li>
+        <li>Join group tours at popular sights</li>
+        <li>Keep emergency contacts accessible</li>
+        <li>Travel light — one bag is freedom</li>
+      </ul>
+    </div>
+    <div class="trav-card couple reveal">
+      <div class="trav-icon">💑</div>
+      <div class="trav-name">Couple Travel</div>
+      <p class="trav-desc">Create unforgettable memories together with romantic escapes and shared adventures.</p>
+      <ul class="trav-tips">
+        <li>Book private accommodations for intimacy</li>
+        <li>Plan at least one surprise activity</li>
+        <li>Balance adventure with relaxation</li>
+        <li>Explore local restaurants at night</li>
+        <li>Capture golden hour moments together</li>
+      </ul>
+    </div>
+    <div class="trav-card family reveal">
+      <div class="trav-icon">👨‍👩‍👧‍👦</div>
+      <div class="trav-name">Family Travel</div>
+      <p class="trav-desc">Build lasting bonds through shared adventures that every age group enjoys.</p>
+      <ul class="trav-tips">
+        <li>Plan kid-friendly activities each day</li>
+        <li>Choose central, safe accommodation</li>
+        <li>Pack a travel first-aid kit always</li>
+        <li>Visit theme parks, zoos, nature parks</li>
+        <li>Keep snacks, water & games on hand</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section india-section" id="india">
+  <div class="india-header reveal">
+    <div class="india-flag">🇮🇳</div>
+    <div class="india-title-block">
+      <div class="section-tag">✦ INCREDIBLE INDIA — ADVANCED SPECIAL SECTION</div>
+      <h2 class="section-title">All States · All Cities<br><em>All Wonders</em></h2>
+      <p class="section-sub">State-wise curated guide to every incredible corner of India — Himalayas to tropical beaches, deserts to backwaters.</p>
+    </div>
+  </div>
+  <div class="state-tabs" id="stateTabs"></div>
+  <div class="india-places" id="indiaGrid"></div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">Wander<span>World</span></div>
+      <p>Your intelligent global travel companion — combining curated destination guides with AI-powered insights and live weather assistance.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="#destinations">World Destinations</a></li>
+        <li><a href="#india">India Special</a></li>
+        <li><a href="#travellers">Travel Types</a></li>
+        <li><a href="#" onclick="openChat();return false">AI Guide Chat</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Regions</h4>
+      <ul>
+        <li><a href="#">Asia Pacific</a></li>
+        <li><a href="#">Europe</a></li>
+        <li><a href="#">Americas</a></li>
+        <li><a href="#">Africa & Middle East</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>India</h4>
+      <ul>
+        <li><a href="#">North India</a></li>
+        <li><a href="#">South India</a></li>
+        <li><a href="#">East India</a></li>
+        <li><a href="#">Northeast India</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 WanderWorld — Crafted for explorers everywhere.</p>
+    <p style="color:var(--gold)">✦ Powered by AI · Live Weather · Real Stories</p>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <div class="modal-hero" id="modalHero" style="background:linear-gradient(135deg,var(--surface2),var(--surface3))"></div>
+    <div class="modal-body">
+      <div id="modalTitle" style="font-family:'Playfair Display',serif;font-size:28px;margin-bottom:4px"></div>
+      <div id="modalCountry" style="font-size:13px;color:var(--muted);margin-bottom:20px"></div>
+      <div class="modal-tabs">
+        <button class="m-tab active" onclick="switchTab('overview',this)">Overview</button>
+        <button class="m-tab" onclick="switchTab('history',this)">History</button>
+        <button class="m-tab" onclick="switchTab('plan',this)">Plan Trip</button>
+      </div>
+      <div class="tab-content active" id="tab-overview">
+        <div class="info-grid" id="infoGrid"></div>
+        <div id="modalDesc" style="font-size:14px;color:var(--muted);line-height:1.8"></div>
+      </div>
+      <div class="tab-content" id="tab-history">
+        <div class="history-text" id="modalHistory"></div>
+      </div>
+      <div class="tab-content" id="tab-plan">
+        <div id="modalPlan"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHATBOT -->
+<div class="chatbot-fab">
+  <div class="chat-window" id="chatWindow">
+    <div class="chat-header">
+      <div class="chat-header-top">
+        <div class="chat-avatar">🌍</div>
+        <div>
+          <div class="chat-name">WanderAI Guide</div>
+          <div class="chat-status">● Online — Powered by Local AI Assistant</div>
+        </div>
+      </div>
+      <div class="chat-subtitle">Ask about weather, history, best time, tips & more!</div>
+    </div>
+    <div class="chat-msgs" id="chatMsgs">
+      <div class="msg bot">
+        <div class="msg-bubble">Namaste! 🙏✈️ I'm your WanderWorld guide running locally in your page. Ask me about destination weather, local time, history, trip planning, or solo/couple/family travel tips.</div>
+        <div class="msg-time">Just now</div>
+      </div>
+    </div>
+    <div class="chat-quick">
+      <button class="quick-btn" onclick="quickAsk('What is the weather like in Paris, France right now?')">🌤 Paris weather</button>
+      <button class="quick-btn" onclick="quickAsk('Best time to visit Rajasthan, India?')">📅 Rajasthan timing</button>
+      <button class="quick-btn" onclick="quickAsk('Top romantic places in Kerala for couples?')">💑 Kerala couples</button>
+      <button class="quick-btn" onclick="quickAsk('Safe solo travel tips for a female traveller in India?')">🎒 Solo India tips</button>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-input" id="chatInput" placeholder="Ask about any destination..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chat-send" onclick="sendChat()">➤</button>
+    </div>
+  </div>
+  <button class="chat-toggle" onclick="toggleChat()" id="chatToggle">🌍</button>
+</div>
+
+<script>
+const destinations=[
+  {id:1,name:"Paris",country:"France",continent:"europe",emoji:"🗼",badge:"Romantic",desc:"The City of Light — where art, cuisine, and romance converge along the River Seine.",history:"Paris was founded around 250 BC by the Parisii Celtic tribe. Julius Caesar conquered it in 52 BC. It became the French capital in 987 AD and flourished through the Renaissance, the Revolution, two World Wars, and emerged as a global cultural capital and fashion hub.",best:"Apr–Jun · Sep–Nov",types:["couple","solo"],solo:"Walk the Marais, café culture, world-class museums, solo jazz bars.",couple:"Seine river cruise, Eiffel Tower at night, wine tasting in Montmartre.",family:"Disneyland Paris nearby, Louvre, Luxembourg Gardens.",budget:"€€€",visa:"Schengen Visa",lang:"French",currency:"Euro (€)",timezone:"Europe/Paris",tags:["couple","solo"]},
+  {id:2,name:"Kyoto",country:"Japan",continent:"asia",emoji:"⛩️",badge:"Cultural",desc:"Ancient temples, bamboo forests, geishas — Japan's soul perfectly preserved in one city.",history:"Kyoto served as Japan's imperial capital for over 1,000 years (794–1869). It escaped heavy WWII bombing, preserving 1,600+ Buddhist temples and 400+ Shinto shrines including 17 UNESCO World Heritage Sites.",best:"Mar–May · Oct–Nov",types:["solo","couple","family"],solo:"Philosopher's Path, temple-hopping at dawn, authentic ryokan stays.",couple:"Arashiyama bamboo at sunrise, kimono rental, private tea ceremony.",family:"Nijo Castle, Arashiyama Monkey Park, cultural craft workshops.",budget:"€€€",visa:"Visa-free (many countries)",lang:"Japanese",currency:"Yen (¥)",timezone:"Asia/Tokyo",tags:["solo","couple","family"]},
+  {id:3,name:"Santorini",country:"Greece",continent:"europe",emoji:"🏛️",badge:"Scenic",desc:"Whitewashed cliffs, volcanic sunsets, Aegean blue — pure Mediterranean magic.",history:"Shaped by one of history's largest volcanic eruptions (c.1600 BC) — possibly inspiring the Atlantis legend. Colonised by Phoenicians, then Minoans. Later a key Byzantine and Venetian trading post in the Aegean.",best:"May–October",types:["couple","solo"],solo:"Cliff hikes, volcanic wine tours, photography at Oia.",couple:"Private villa, Oia sunset, catamaran cruise around caldera.",family:"Black sand beaches, Akrotiri ruins, boat trips around the island.",budget:"€€€€",visa:"Schengen Visa",lang:"Greek",currency:"Euro (€)",timezone:"Europe/Athens",tags:["couple","solo"]},
+  {id:4,name:"New York City",country:"USA",continent:"americas",emoji:"🗽",badge:"Urban",desc:"The city that never sleeps — energy, culture, world-class food, and ambition on every block.",history:"Founded as New Amsterdam by Dutch settlers in 1626, seized by British in 1664 and renamed New York. Briefly the US capital in 1789–90. It became America's largest city, welcoming 12 million immigrants through Ellis Island between 1892–1954.",best:"Apr–Jun · Sep–Nov",types:["solo","couple","family"],solo:"Brooklyn walks, jazz bars in Harlem, food tours, open mic nights.",couple:"Central Park picnic, Broadway show, High Line sunset, fine dining.",family:"Central Park Zoo, Natural History Museum, Times Square, NYC ferry.",budget:"€€€€",visa:"ESTA / Visa required",lang:"English",currency:"USD ($)",timezone:"America/New_York",tags:["solo","couple","family"]},
+  {id:5,name:"Bali",country:"Indonesia",continent:"asia",emoji:"🌺",badge:"Paradise",desc:"Sacred temples, terraced rice fields, surf beaches — a spiritual island of eternal beauty.",history:"Bali's Hindu-Buddhist culture dates to the 1st century AD. The Majapahit Empire's fall in 1343 brought mass Hindu migration here. It survived Dutch colonisation (1908) while retaining its unique Balinese culture unlike the rest of Muslim Indonesia.",best:"Apr–October",types:["solo","couple","family"],solo:"Yoga retreats, surf lessons, budget guesthouses in Canggu, Ubud arts.",couple:"Private villas, sunset at Tanah Lot, romantic couples spa retreat.",family:"Monkey Forest, Bali Safari Park, Waterbom water park Kuta.",budget:"€€",visa:"Visa on arrival",lang:"Balinese / Indonesian",currency:"IDR (Rp)",timezone:"Asia/Makassar",tags:["solo","couple","family"]},
+  {id:6,name:"Machu Picchu",country:"Peru",continent:"americas",emoji:"🏔️",badge:"Ancient",desc:"Lost city of the Incas — a mist-covered mountain citadel, wonder of the ancient world.",history:"Built around 1450 AD by Inca Emperor Pachacuti as a royal estate. Abandoned during the Spanish conquest and forgotten by the outside world until American historian Hiram Bingham rediscovered it in 1911. Now a UNESCO World Heritage Site.",best:"Apr–October",types:["solo","couple"],solo:"Inca Trail hike (4 days), Sun Gate sunrise, budget stays in Aguas Calientes.",couple:"Sunrise private guided tour, helicopter view, local Peruvian cuisine.",family:"Train journey from Cusco, guided tours, Aguas Calientes hot springs.",budget:"€€€",visa:"Visa-free (many)",lang:"Spanish",currency:"PEN (S/)",timezone:"America/Lima",tags:["solo","couple"]},
+  {id:7,name:"Serengeti Safari",country:"Tanzania",continent:"africa",emoji:"🦁",badge:"Wildlife",desc:"Witness the Great Migration — 1.5 million wildebeest crossing the endless golden savannah.",history:"The Serengeti ecosystem has been home to Maasai herders for centuries. Declared a national park in 1951, protecting 14,763 sq km of savannah and hosting the world's greatest wildlife spectacle — the annual Great Wildebeest Migration.",best:"Jun–October",types:["couple","family"],solo:"Solo safari camps, wildlife photography tours, conservation volunteering.",couple:"Luxury tented camps, hot air balloon safari at sunrise, sundowner drives.",family:"Kid-friendly lodges, game drives, conservation education centre.",budget:"€€€€",visa:"Visa required",lang:"Swahili / English",currency:"TZS",timezone:"Africa/Nairobi",tags:["couple","family"]},
+  {id:8,name:"Amsterdam",country:"Netherlands",continent:"europe",emoji:"🚲",badge:"Vibrant",desc:"Canals, cycling, golden-age art, and a liberal spirit — Europe's most liveable city.",history:"Founded as a fishing village in the 12th century, Amsterdam became the world's wealthiest city during the Dutch Golden Age (17th century) through the spice trade. The VOC (Dutch East India Company) was the world's first multinational.",best:"Apr–September",types:["solo","couple","family"],solo:"Canal walks, Van Gogh Museum, cycling tours, brown café evenings.",couple:"Private boat rental, Jordaan neighborhood, artisan cheese tasting.",family:"Anne Frank House, NEMO Science Museum, Vondelpark, canal boat.",budget:"€€€",visa:"Schengen Visa",lang:"Dutch",currency:"Euro (€)",timezone:"Europe/Amsterdam",tags:["solo","couple","family"]},
+  {id:9,name:"Maldives",country:"Maldives",continent:"asia",emoji:"🏝️",badge:"Luxury",desc:"Overwater bungalows, crystal-clear lagoons, and vibrant coral reefs — paradise on Earth.",history:"Inhabited for 2,500+ years, the Maldives was an independent sultanate for centuries. British Protectorate from 1887, independence in 1965. Known as the world's flattest nation and most threatened by rising sea levels.",best:"Nov–April",types:["couple","solo"],solo:"Budget guesthouses on local islands, snorkelling, freediving courses.",couple:"Overwater villa, private beach dinner, sunset dolphin cruise.",family:"Kid-friendly resort islands, snorkelling with rays, beach clubs.",budget:"€€€€€",visa:"Free on arrival (30 days)",lang:"Dhivehi",currency:"MVR",timezone:"Indian/Maldives",tags:["couple","solo"]},
+  {id:10,name:"Rome",country:"Italy",continent:"europe",emoji:"🏺",badge:"Historic",desc:"2,800 years of history under your feet — the Eternal City overwhelms every sense.",history:"Rome was founded in 753 BC (traditionally) by Romulus. It evolved from a Kingdom to a Republic (509 BC) to an Empire that dominated Europe and the Mediterranean for 500 years, shaping law, language, architecture, and Christianity worldwide.",best:"Mar–May · Sep–Nov",types:["solo","couple","family"],solo:"Vatican early morning, Trastevere evenings, pasta cooking class.",couple:"Colosseum sunset tour, private Sistine Chapel visit, gelato walks.",family:"Gladiator school for kids, Borghese Gardens, pizza-making class.",budget:"€€€",visa:"Schengen Visa",lang:"Italian",currency:"Euro (€)",timezone:"Europe/Rome",tags:["solo","couple","family"]},
+  {id:11,name:"Queenstown",country:"New Zealand",continent:"oceania",emoji:"🎿",badge:"Adventure",desc:"Adventure capital of the world — bungee jumping, skiing, fjords, and raw wilderness.",history:"Settled by Māori around 1300 AD. European settlers arrived in the 1860s during the Otago Gold Rush. Queenstown became an adventure tourism hub in the 1970s and is famously where the modern bungee jump was invented (1988).",best:"Dec–Feb (summer) · Jun–Aug (ski)",types:["solo","couple"],solo:"Solo bungee jump, hostel community, hike the Queenstown Hill circuit.",couple:"Milford Sound cruise, Central Otago wine tour, helicopter fjord flight.",family:"Skyline Luge rides, gondola, family-friendly jet boating on the Shotover.",budget:"€€€€",visa:"Visa / NZeTA required",lang:"English / Māori",currency:"NZD ($)",timezone:"Pacific/Auckland",tags:["solo","couple"]},
+  {id:12,name:"Cairo & Pyramids",country:"Egypt",continent:"africa",emoji:"🏜️",badge:"Ancient",desc:"Stand before 4,500-year-old wonders — the last standing of the Seven Wonders of the Ancient World.",history:"The Great Pyramid of Giza was built c.2560 BC for Pharaoh Khufu and remained the world's tallest man-made structure for 3,800 years. Ancient Egyptian civilisation spanned 3,000 years, revolutionising mathematics, medicine, and monumental architecture.",best:"Oct–April",types:["solo","couple","family"],solo:"Desert overnight camping, budget group tours, vibrant Cairo bazaars.",couple:"Nile dinner cruise, sound & light show at Pyramids, luxury Nile cruise.",family:"Great Sphinx, mummy museums, camel rides, hands-on archaeology tours.",budget:"€€",visa:"Visa on arrival",lang:"Arabic",currency:"EGP (£E)",timezone:"Africa/Cairo",tags:["solo","couple","family"]},
+];
+
+const indiaData={
+  "All States":[],
+  "Rajasthan":[
+    {name:"Jaipur",emoji:"🏰",desc:"Pink City — Amber Fort, Hawa Mahal, palaces, and vibrant bazaars.",tags:["heritage","fort"]},
+    {name:"Jodhpur",emoji:"🔵",desc:"Blue City — Mehrangarh Fort, Jaswant Thada, golden desert sunsets.",tags:["heritage","fort"]},
+    {name:"Udaipur",emoji:"🌊",desc:"City of Lakes — Lake Pichola, City Palace, romantic lakeside dinners.",tags:["heritage"]},
+    {name:"Jaisalmer",emoji:"🏜️",desc:"Golden City — Sonar Qila, Sam Dunes, camel safari under the stars.",tags:["heritage","nature"]},
+    {name:"Pushkar",emoji:"🕌",desc:"Sacred lake town, Brahma Temple, colourful ghats, camel fair.",tags:["spiritual"]},
+    {name:"Ranthambore",emoji:"🐯",desc:"Famous tiger reserve, safari drives, Ranthambore Fort ruins.",tags:["nature","heritage"]},
+  ],
+  "Kerala":[
+    {name:"Munnar",emoji:"🍃",desc:"Rolling tea estates, misty Nilgiri hills, scenic Eravikulam National Park.",tags:["nature","hill"]},
+    {name:"Alleppey",emoji:"🚤",desc:"Backwaters capital — houseboat stays on Kerala's famous canals.",tags:["nature","beach"]},
+    {name:"Wayanad",emoji:"🌿",desc:"Coffee and cardamom plantations, tribal culture, Chembra Peak trek.",tags:["nature","hill"]},
+    {name:"Kovalam",emoji:"🌊",desc:"Lighthouse beach, Ayurveda resorts, world-class seafood.",tags:["beach"]},
+    {name:"Thekkady",emoji:"🐘",desc:"Periyar Wildlife Sanctuary, spice garden tours, elephant safari.",tags:["nature"]},
+    {name:"Thrissur",emoji:"🎭",desc:"Cultural capital of Kerala, Thrissur Pooram elephant festival.",tags:["heritage","spiritual"]},
+  ],
+  "Himachal Pradesh":[
+    {name:"Manali",emoji:"❄️",desc:"Rohtang Pass, Solang Valley snow, Hadimba Temple, adventure capital.",tags:["nature","hill"]},
+    {name:"Shimla",emoji:"🚂",desc:"Summer capital of British India, Mall Road, UNESCO toy train.",tags:["hill","heritage"]},
+    {name:"Dharamshala",emoji:"🙏",desc:"Little Lhasa, Dalai Lama residence, Himalayan views, Tibetan culture.",tags:["spiritual","nature"]},
+    {name:"Spiti Valley",emoji:"🏔️",desc:"High-altitude cold desert, ancient Buddhist monasteries, stargazing.",tags:["nature","spiritual"]},
+    {name:"Kasol",emoji:"🌲",desc:"Parvati Valley, Kheerganga trek, riverside camping, hippie haven.",tags:["nature","hill"]},
+    {name:"Dalhousie",emoji:"🌄",desc:"Scottish colonial hill station, Khajjiar (India's Switzerland), meadows.",tags:["hill","nature"]},
+  ],
+  "Goa":[
+    {name:"North Goa",emoji:"🏖️",desc:"Baga, Calangute, Anjuna — beach parties, flea markets, water sports.",tags:["beach"]},
+    {name:"South Goa",emoji:"🌅",desc:"Palolem, Agonda, Cavelossim — serene beaches, quiet coves, dolphins.",tags:["beach","nature"]},
+    {name:"Old Goa",emoji:"⛪",desc:"UNESCO Portuguese heritage churches, Basilica of Bom Jesus (St Francis Xavier).",tags:["heritage","spiritual"]},
+    {name:"Dudhsagar Falls",emoji:"💦",desc:"Dramatic 4-tiered 600m waterfall inside Bhagwan Mahaveer Wildlife Sanctuary.",tags:["nature"]},
+    {name:"Panaji",emoji:"🏘️",desc:"Charming capital, Fontainhas Latin Quarter, Mandovi riverfront.",tags:["heritage"]},
+  ],
+  "Uttar Pradesh":[
+    {name:"Agra",emoji:"🕌",desc:"Taj Mahal — UNESCO wonder and the world's greatest monument to love.",tags:["heritage"]},
+    {name:"Varanasi",emoji:"🪔",desc:"World's oldest living city, Ganga Aarti at dusk, ghats, moksha.",tags:["spiritual","heritage"]},
+    {name:"Lucknow",emoji:"🍛",desc:"City of Nawabs — Bara Imambara, Tunday kebabs, Urdu poetry evenings.",tags:["heritage"]},
+    {name:"Mathura & Vrindavan",emoji:"🦚",desc:"Birthplace of Lord Krishna, 5,000 temples, Holi celebrations.",tags:["spiritual"]},
+    {name:"Prayagraj",emoji:"🌊",desc:"Triveni Sangam, Maha Kumbh Mela, Allahabad Fort, Akbar's city.",tags:["spiritual","heritage"]},
+    {name:"Ayodhya",emoji:"🏛️",desc:"Birthplace of Lord Rama, Ram Mandir, Sarayu River Aarti.",tags:["spiritual","heritage"]},
+  ],
+  "Tamil Nadu":[
+    {name:"Chennai",emoji:"🌊",desc:"Marina Beach (world's 2nd longest), Kapaleeshwarar Temple, filter coffee.",tags:["beach","heritage"]},
+    {name:"Madurai",emoji:"🕌",desc:"Meenakshi Amman Temple — a towering Dravidian architectural marvel.",tags:["heritage","spiritual"]},
+    {name:"Ooty",emoji:"🌸",desc:"Queen of Nilgiris, Botanical Gardens, tea gardens, UNESCO toy train.",tags:["hill","nature"]},
+    {name:"Mahabalipuram",emoji:"🗿",desc:"UNESCO shore temple, Arjuna's Penance rock carvings, scenic beach.",tags:["heritage"]},
+    {name:"Rameswaram",emoji:"🐚",desc:"Sacred island city, Ramanathaswamy Temple, Pamban Bridge sunrise.",tags:["spiritual","heritage"]},
+    {name:"Kodaikanal",emoji:"🌫️",desc:"Princess of hill stations, lake boating, Coaker's Walk, misty valleys.",tags:["hill","nature"]},
+  ],
+  "Uttarakhand":[
+    {name:"Rishikesh",emoji:"🧘",desc:"Yoga capital of the world, Ganges rafting, Laxman Jhula, Beatles Ashram.",tags:["spiritual","nature"]},
+    {name:"Haridwar",emoji:"🪔",desc:"Gateway to the gods, Har Ki Pauri, evening Ganga Aarti.",tags:["spiritual"]},
+    {name:"Nainital",emoji:"⛵",desc:"Emerald lake city, boating, Mall Road, Snow View Point.",tags:["hill","nature"]},
+    {name:"Kedarnath",emoji:"🏔️",desc:"Shiva temple at 3,584m, Char Dham pilgrimage, helicopter access.",tags:["spiritual","nature"]},
+    {name:"Valley of Flowers",emoji:"🌼",desc:"UNESCO national park, 500+ Himalayan wildflower species, trekker's paradise.",tags:["nature","hill"]},
+    {name:"Auli",emoji:"⛷️",desc:"Premier ski resort, Gurso Bugyal meadows, Nanda Devi views.",tags:["hill","nature"]},
+  ],
+  "West Bengal":[
+    {name:"Kolkata",emoji:"🌉",desc:"City of Joy — Howrah Bridge, Victoria Memorial, Durga Puja, street food.",tags:["heritage"]},
+    {name:"Darjeeling",emoji:"☕",desc:"Tea capital, Kanchenjunga views, UNESCO toy train, Tiger Hill sunrise.",tags:["hill","nature"]},
+    {name:"Sundarbans",emoji:"🐯",desc:"World's largest mangrove delta, Royal Bengal Tiger, UNESCO site.",tags:["nature"]},
+    {name:"Bishnupur",emoji:"🎨",desc:"Terracotta temples, Baluchari silk weaving, Bishnupur gharana music.",tags:["heritage"]},
+  ],
+  "Karnataka":[
+    {name:"Mysuru",emoji:"👑",desc:"Amba Vilas Palace, Chamundi Hills, Dasara festival, sandalwood.",tags:["heritage"]},
+    {name:"Coorg",emoji:"☕",desc:"Coffee and spice country, Talacauvery, Abbey Falls, Namdroling monastery.",tags:["nature","hill"]},
+    {name:"Hampi",emoji:"🗿",desc:"Vijayanagara Empire ruins, boulder landscapes, UNESCO World Heritage.",tags:["heritage"]},
+    {name:"Gokarna",emoji:"🏖️",desc:"Om Beach, Mahabaleshwar Temple, peaceful backpacker coastline.",tags:["beach","spiritual"]},
+    {name:"Bengaluru",emoji:"🌆",desc:"Silicon Valley of India, Cubbon Park, ISKCON temple, Lalbagh gardens.",tags:["heritage"]},
+    {name:"Chikmagalur",emoji:"☕",desc:"Coffee plantation heartland, Mullayanagiri peak, Baba Budangiri.",tags:["nature","hill"]},
+  ],
+  "Maharashtra":[
+    {name:"Mumbai",emoji:"🌆",desc:"Gateway of India, Marine Drive, Elephanta Caves, street food capital.",tags:["heritage","beach"]},
+    {name:"Aurangabad",emoji:"🏛️",desc:"Ajanta & Ellora caves (UNESCO), Bibi Ka Maqbara, Daulatabad Fort.",tags:["heritage"]},
+    {name:"Lonavala",emoji:"🌧️",desc:"Monsoon waterfalls, Pawna Lake camping, Rajmachi Fort trek.",tags:["nature","hill"]},
+    {name:"Mahabaleshwar",emoji:"🍓",desc:"Strawberry farms, Venna Lake boating, Pratapgarh Fort, panoramic ghats.",tags:["hill","nature"]},
+    {name:"Nashik",emoji:"🍷",desc:"Wine capital of India, Trimbakeshwar, Pandavleni Caves, Godavari.",tags:["heritage","spiritual"]},
+  ],
+  "Gujarat":[
+    {name:"Ahmedabad",emoji:"🕌",desc:"UNESCO Heritage City, Sabarmati Gandhi Ashram, Adalaj stepwell.",tags:["heritage"]},
+    {name:"Rann of Kutch",emoji:"🌕",desc:"White salt desert, Rann Utsav festival, tribal art, full moon nights.",tags:["nature"]},
+    {name:"Gir Forest",emoji:"🦁",desc:"Last wild habitat of Asiatic lions, jeep safari, Sasan Gir.",tags:["nature"]},
+    {name:"Dwarka",emoji:"🌊",desc:"Sacred Char Dham city, Dwarkadhish Temple, Beyt Dwarka island.",tags:["spiritual","heritage"]},
+    {name:"Somnath",emoji:"🕌",desc:"Jyotirlinga Shiva temple, coastal sunset, Junagadh nearby.",tags:["spiritual","heritage"]},
+  ],
+  "Northeast India":[
+    {name:"Kaziranga",emoji:"🦏",desc:"One-horned rhino sanctuary, UNESCO, elephant and jeep safari.",tags:["nature"]},
+    {name:"Shillong",emoji:"🌧️",desc:"Scotland of the East, Umiam Lake, living root bridges nearby.",tags:["nature","hill"]},
+    {name:"Cherrapunji",emoji:"💧",desc:"Among world's wettest places, double-decker living root bridges.",tags:["nature"]},
+    {name:"Gangtok",emoji:"❄️",desc:"Sikkim capital, Kanchenjunga views, Rumtek Monastery, Nathula Pass.",tags:["spiritual","hill"]},
+    {name:"Ziro Valley",emoji:"🌾",desc:"Apatani tribe heritage, paddy-fish farming, Ziro Music Festival.",tags:["nature","heritage"]},
+    {name:"Tawang",emoji:"🏔️",desc:"Largest monastery in India, Sela Pass at 13,700 ft, Madhuri Lake.",tags:["spiritual","nature"]},
+  ],
+  "J&K / Ladakh":[
+    {name:"Srinagar",emoji:"🛶",desc:"Dal Lake houseboats, Mughal Shalimar gardens, Shankaracharya Hill.",tags:["nature","heritage"]},
+    {name:"Leh",emoji:"🏔️",desc:"High altitude desert, Pangong Tso, Khardung La pass, monasteries.",tags:["nature","spiritual"]},
+    {name:"Gulmarg",emoji:"⛷️",desc:"Asia's highest gondola, premier skiing, Alpather Lake, wildflower meadows.",tags:["hill","nature"]},
+    {name:"Pahalgam",emoji:"🌲",desc:"Valley of Shepherds, Betaab Valley, Aru meadows, Amarnath base.",tags:["nature","spiritual"]},
+    {name:"Nubra Valley",emoji:"🐪",desc:"Double-humped Bactrian camels, Diskit Monastery, sand dunes at altitude.",tags:["nature","spiritual"]},
+  ],
+  "Madhya Pradesh":[
+    {name:"Khajuraho",emoji:"🏛️",desc:"UNESCO erotic temple sculptures, Chandela dynasty masterpieces.",tags:["heritage"]},
+    {name:"Bandhavgarh",emoji:"🐯",desc:"Highest tiger density in India, Bandhavgarh Fort, sloth bears.",tags:["nature"]},
+    {name:"Orchha",emoji:"🕌",desc:"Bundelkhand heritage, Ram Raja Temple, riverside cenotaphs.",tags:["heritage","spiritual"]},
+    {name:"Pachmarhi",emoji:"🌿",desc:"Only hill station of Madhya Pradesh, Bee Falls, Pandav Caves.",tags:["hill","nature"]},
+  ],
+};
+
+const allIndia=[];
+Object.keys(indiaData).forEach(k=>{if(k!=="All States")allIndia.push(...indiaData[k].map(p=>({...p,state:k})))});
+indiaData["All States"]=allIndia;
+
+let activeFilter='all';
+let activeState='All States';
+
+function createStars(){
+  const c=document.getElementById('stars');
+  for(let i=0;i<120;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*4}s`;
+    c.appendChild(s);
+  }
+}
+
+function animCounter(el,target,sfx=''){
+  let n=0;const step=Math.ceil(target/60);
+  const iv=setInterval(()=>{n=Math.min(n+step,target);el.textContent=n.toLocaleString()+sfx;if(n>=target)clearInterval(iv);},25);
+}
+
+function formatLocalTime(zone){
+  if(!zone) return 'N/A';
+  try{
+    return new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',timeZone:zone,timeZoneName:'short'});
+  }catch{
+    return 'N/A';
+  }
+}
+
+let modalTimeInterval;
+function updateModalLocalTime(zone){
+  const el=document.getElementById('modalLocalTime');
+  if(el) el.textContent=formatLocalTime(zone);
+}
+
+function renderDest(data){
+  const g=document.getElementById('destGrid');
+  if(!data.length){g.innerHTML='<p style="color:var(--muted);padding:40px;grid-column:1/-1;text-align:center">No destinations found. Try a different search!</p>';return;}
+  g.innerHTML='';
+  data.forEach(d=>{
+    const el=document.createElement('div');
+    el.className='dest-card reveal';
+    el.innerHTML=`
+      <div class="dest-img" style="background:linear-gradient(135deg,var(--surface2),var(--surface3))">
+        <span style="position:relative;z-index:1">${d.emoji}</span>
+        <div class="dest-badge">${d.badge}</div>
+      </div>
+      <div class="dest-body">
+        <div class="dest-country">${d.country.toUpperCase()} · ${d.continent.toUpperCase()}</div>
+        <div class="dest-name">${d.name}</div>
+        <div class="dest-desc">${d.desc}</div>
+        <div class="dest-time"><span>🕘 ${formatLocalTime(d.timezone)}</span></div>
+        <div class="dest-meta">
+          ${d.tags.includes('solo')?'<span class="dest-tag solo">🎒 Solo</span>':''}
+          ${d.tags.includes('couple')?'<span class="dest-tag couple">💑 Couple</span>':''}
+          ${d.tags.includes('family')?'<span class="dest-tag family">👨‍👩‍👧 Family</span>':''}
+        </div>
+        <div class="dest-footer">
+          <div class="best-time">Best time: <span>${d.best}</span></div>
+          <button class="dest-btn" onclick="openModal(${d.id})">Explore →</button>
+        </div>
+      </div>`;
+    g.appendChild(el);
+  });
+  observeReveal();
+}
+
+function filterDest(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  let data=destinations;
+  if(activeFilter!=='all') data=data.filter(d=>d.continent===activeFilter||d.tags.includes(activeFilter));
+  if(q) data=data.filter(d=>d.name.toLowerCase().includes(q)||d.country.toLowerCase().includes(q)||d.continent.toLowerCase().includes(q)||d.desc.toLowerCase().includes(q));
+  renderDest(data);
+}
+
+function setFilter(f,el){
+  activeFilter=f;
+  document.querySelectorAll('.filter-chips .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  filterDest();
+}
+
+function openModal(id){
+  const d=destinations.find(x=>x.id===id);if(!d)return;
+  document.getElementById('modalHero').innerHTML=`<span style="position:relative;z-index:1;font-size:100px">${d.emoji}</span>`;
+  document.getElementById('modalTitle').textContent=d.name;
+  document.getElementById('modalCountry').textContent=`${d.country} · ${d.continent.charAt(0).toUpperCase()+d.continent.slice(1)}`;
+  document.getElementById('infoGrid').innerHTML=`
+    <div class="info-box"><label>Best Time to Visit</label><strong>${d.best}</strong></div>
+    <div class="info-box"><label>Local Time</label><strong id="modalLocalTime">${formatLocalTime(d.timezone)}</strong></div>
+    <div class="info-box"><label>Budget Level</label><strong>${d.budget}</strong></div>
+    <div class="info-box"><label>Visa Info</label><strong>${d.visa}</strong></div>
+    <div class="info-box"><label>Currency</label><strong>${d.currency}</strong></div>`;
+  updateModalLocalTime(d.timezone);
+  clearInterval(modalTimeInterval);
+  modalTimeInterval=setInterval(()=>updateModalLocalTime(d.timezone),30000);
+  document.getElementById('modalDesc').innerHTML=`
+    <p style="margin-bottom:16px;font-size:15px;color:var(--text)">${d.desc}</p>
+    <p style="margin-bottom:10px"><strong style="color:var(--gold)">🎒 Solo:</strong> ${d.solo}</p>
+    <p style="margin-bottom:10px"><strong style="color:#FF6B9D">💑 Couple:</strong> ${d.couple}</p>
+    <p><strong style="color:var(--teal)">👨‍👩‍👧 Family:</strong> ${d.family}</p>`;
+  document.getElementById('modalHistory').innerHTML=`<p style="margin-bottom:16px;font-size:15px;color:var(--text);font-family:'Playfair Display',serif;font-style:italic">The Story of ${d.name}</p>${d.history}`;
+  document.getElementById('modalPlan').innerHTML=`
+    <div style="background:var(--surface2);border-radius:14px;padding:20px;margin-bottom:16px">
+      <p style="font-size:14px;color:var(--gold);font-weight:600;margin-bottom:8px">✈️ Getting There</p>
+      <p style="font-size:13px;color:var(--muted);line-height:1.7">Search for flights to ${d.name} — book 6–8 weeks ahead for the best fares. Major international airports serve this destination. Consider train or bus options from nearby cities.</p>
+    </div>
+    <div style="background:var(--surface2);border-radius:14px;padding:20px;margin-bottom:16px">
+      <p style="font-size:14px;color:var(--gold);font-weight:600;margin-bottom:8px">🌤️ Current Weather & Conditions</p>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Ask our AI guide for live weather context and what conditions are like in ${d.name} right now.</p>
+      <button onclick="closeModalDirect();quickAsk('What is the current weather, temperature, and travel conditions in ${d.name}, ${d.country}? Is it a good time to visit?')" style="background:var(--gold);color:var(--deep);border:none;padding:10px 22px;border-radius:10px;cursor:pointer;font-weight:700;font-size:13px;transition:all .2s">Ask AI Guide About Weather →</button>
+    </div>
+    <div style="background:var(--surface2);border-radius:14px;padding:20px">
+      <p style="font-size:14px;color:var(--gold);font-weight:600;margin-bottom:8px">📋 Quick Facts</p>
+      <p style="font-size:13px;color:var(--muted)">🗣️ Language: ${d.lang} &nbsp;|&nbsp; 💰 Currency: ${d.currency} &nbsp;|&nbsp; 💼 Budget: ${d.budget}</p>
+    </div>`;
+  document.querySelectorAll('.m-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelector('.m-tab').classList.add('active');
+  document.getElementById('tab-overview').classList.add('active');
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal(e){if(e.target===document.getElementById('modalOverlay'))closeModalDirect();}
+function closeModalDirect(){
+  clearInterval(modalTimeInterval);
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+function switchTab(id,el){
+  document.querySelectorAll('.m-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+}
+
+function renderStateTabs(){
+  const c=document.getElementById('stateTabs');c.innerHTML='';
+  Object.keys(indiaData).forEach(s=>{
+    const b=document.createElement('button');
+    b.className='state-tab'+(s===activeState?' active':'');
+    b.textContent=s==='All States'?'🇮🇳 All States':s;
+    b.onclick=()=>{activeState=s;renderStateTabs();renderIndia();};
+    c.appendChild(b);
+  });
+}
+
+function renderIndia(){
+  const g=document.getElementById('indiaGrid');g.innerHTML='';
+  const places=indiaData[activeState]||[];
+  const tc={heritage:'t-heritage',nature:'t-nature',spiritual:'t-spiritual',beach:'t-beach',hill:'t-hill',fort:'t-fort'};
+  places.forEach(p=>{
+    const el=document.createElement('div');
+    el.className='india-card reveal';
+    el.innerHTML=`
+      <div class="india-card-img" style="background:linear-gradient(135deg,rgba(255,153,51,.08),rgba(19,136,8,.08))">
+        <span>${p.emoji}</span>
+      </div>
+      <div class="india-card-body">
+        <div class="india-card-state">${p.state||activeState}</div>
+        <div class="india-card-name">${p.name}</div>
+        <div class="india-card-desc">${p.desc}</div>
+        <div class="india-card-tags">${(p.tags||[]).map(t=>`<span class="india-tag ${tc[t]||''}">${t}</span>`).join('')}</div>
+      </div>`;
+    el.onclick=()=>{quickAsk(`Tell me about ${p.name}${p.state?', '+p.state:''},  India — history, best season to visit, weather now, and tips for solo/couple/family travellers.`);openChat();};
+    g.appendChild(el);
+  });
+  observeReveal();
+}
+
+let chatOpen=false;
+function toggleChat(){
+  chatOpen=!chatOpen;
+  document.getElementById('chatWindow').classList.toggle('open',chatOpen);
+  document.getElementById('chatToggle').textContent=chatOpen?'✕':'🌍';
+}
+function openChat(){if(!chatOpen)toggleChat();}
+
+function quickAsk(q){
+  if(!chatOpen)openChat();
+  document.getElementById('chatInput').value=q;
+  sendChat();
+}
+
+function findPlaceByQuery(query){
+  const text=query.toLowerCase();
+  let place=destinations.find(d=>text.includes(d.name.toLowerCase())||text.includes(d.country.toLowerCase()));
+  if(place) return place;
+  for(const state of Object.keys(indiaData)){
+    for(const p of indiaData[state]){
+      const name=p.name.toLowerCase();
+      if(text.includes(name)||text.includes(state.toLowerCase())||text.includes(`${name}, ${state.toLowerCase()}`)||text.includes(`${state.toLowerCase()} ${name}`)){
+        return {
+          ...p,
+          country:'India',
+          continent:'asia',
+          timezone:'Asia/Kolkata',
+          best:'Oct–Mar',
+          budget:'Varies',
+          visa:'E-Visa / Visa on arrival',
+          lang:'Hindi / English',
+          currency:'INR',
+          history:`${p.name} is one of the most celebrated ${p.tags?.join(', ')} destinations in ${state}. ${p.desc}`
+        };
+      }
+    }
+  }
+  return null;
+}
+
+function normalizeText(text){
+  return text.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+}
+
+function generateBotResponse(question){
+  const text=normalizeText(question);
+  const place=findPlaceByQuery(question);
+  const lines=[];
+  if(/help|what can you do|guide|recommend|assist/.test(text)){
+    lines.push("I’m your local WanderAI travel guide. Ask me for destination history, local time, best time to visit, weather tips, visa advice, budget guidance, or recommendations for solo, couple, and family travel.");
+  }
+  if(place){
+    lines.push(`${place.emoji || ''} ${place.name}${place.country ? ', ' + place.country : ''} — ${place.desc}`);
+    if(/history/.test(text)){
+      lines.push(place.history || `This destination has rich history and cultural significance.`);
+    }
+    if(/best time|when to visit|season|travel season/.test(text)){
+      lines.push(`Best time to visit: ${place.best || 'varies by season'}.`);
+    }
+    if(/weather|temperature|conditions|climate/.test(text)){
+      lines.push(`Local time there is ${formatLocalTime(place.timezone)}. Expect typical seasonal conditions around ${place.best || 'the recommended travel window'} and check a live local forecast before you go.`);
+    }
+    if(/solo/.test(text) && place.solo){
+      lines.push(`Solo travel tip: ${place.solo}`);
+    }
+    if(/couple/.test(text) && place.couple){
+      lines.push(`Couple travel tip: ${place.couple}`);
+    }
+    if(/family/.test(text) && place.family){
+      lines.push(`Family travel tip: ${place.family}`);
+    }
+    if(/visa/.test(text)){
+      lines.push(`Visa note: ${place.visa || 'Check your country-specific visa requirements before travel.'}`);
+    }
+    if(/budget|cost|price/.test(text)){
+      lines.push(`Budget level: ${place.budget || 'Varies depending on style of travel.'}`);
+    }
+    if(!/history|weather|best time|season|solo|couple|family|visa|budget|cost|time/.test(text)){
+      lines.push(`Quick facts: language ${place.lang || 'N/A'}, currency ${place.currency || 'N/A'}, visa ${place.visa || 'N/A'}.`);
+    }
+  }
+  if(!place){
+    if(/weather|temperature|conditions/.test(text)){
+      lines.push("I can give seasonal weather guidance for destinations in this guide. Try asking about a specific place like Paris, Bali, Goa, or Jaipur.");
+    }
+    if(/time|local time/.test(text)){
+      lines.push("I can show local time for listed destinations. Ask about a city or destination name from the guide.");
+    }
+    if(/visa|budget|cost/.test(text)){
+      lines.push("I can help with visa advice, budget levels, and travel planning for the destinations shown in this guide.");
+    }
+    if(lines.length===0){
+      lines.push("Sorry, I couldn't match that to a destination in the current guide. Please ask about a destination shown on the page, like Paris, Kyoto, Maldives, Jaipur, or Kerala.");
+    }
+  }
+  return lines.join(' ');
+}
+
+async function sendChat(){
+  const inp=document.getElementById('chatInput');
+  const q=inp.value.trim();if(!q)return;
+  addMsg(q,'user');inp.value='';showTyping();
+  const response=generateBotResponse(q);
+  removeTyping();
+  addMsg(response,'bot');
+}
+
+function addMsg(text,role){
+  const c=document.getElementById('chatMsgs');
+  const d=document.createElement('div');
+  d.className=`msg ${role}`;
+  const t=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  d.innerHTML=`<div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div><div class="msg-time">${t}</div>`;
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+
+function showTyping(){
+  const c=document.getElementById('chatMsgs');
+  const d=document.createElement('div');d.className='msg bot';d.id='typing';
+  d.innerHTML='<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+function removeTyping(){const t=document.getElementById('typing');if(t)t.remove();}
+
+function observeReveal(){
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+  },{threshold:.1});
+  document.querySelectorAll('.reveal:not(.visible)').forEach(el=>obs.observe(el));
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModalDirect();});
+
+window.onload=()=>{
+  createStars();
+  renderDest(destinations);
+  renderStateTabs();
+  renderIndia();
+  observeReveal();
+  setTimeout(()=>{
+    animCounter(document.getElementById('c1'),500,'+');
+    animCounter(document.getElementById('c2'),195,'+');
+    animCounter(document.getElementById('c3'),300,'+');
+    animCounter(document.getElementById('c4'),50,'K+');
+  },1200);
+};
+</script>
+</body>
+</html>
