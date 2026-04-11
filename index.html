@@ -22,7 +22,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 40px;display:f
 .nav-cta:hover{background:var(--gold-light);transform:translateY(-1px)}
 
 .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:100px 40px 60px}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(201,168,76,.08),transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(45,203,188,.06),transparent 50%),radial-gradient(ellipse at 60% 80%,rgba(255,107,74,.05),transparent 50%)}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(201,168,76,.08),transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(45,203,188,.06),transparent 50%),radial-gradient(ellipse at 60% 80%,rgba(255,107,74,.05),transparent 50%);overflow:hidden}
+.moving-transport{position:absolute;font-size:48px;opacity:.15;pointer-events:none;animation:float-transport linear infinite}
+.plane{left:-100px;top:20%;animation-duration:15s}
+.bus{left:-100px;top:40%;animation-duration:20s}
+.train{left:-100px;bottom:20%;animation-duration:25s}
+@keyframes float-transport{0%{left:-100px;transform:translateX(0) scaleX(1)}50%{opacity:.2}100%{left:110vw;transform:translateX(0) scaleX(1)}}
 .stars{position:absolute;inset:0;overflow:hidden}
 .star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:twinkle var(--d,3s) var(--delay,0s) infinite}
 @keyframes twinkle{0%,100%{opacity:.2}50%{opacity:1}}
@@ -64,11 +69,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 40px;display:f
 .search-input::placeholder{color:var(--muted)}
 .search-btn{background:var(--gold);color:var(--deep);border:none;border-radius:12px;padding:14px 28px;font-weight:700;cursor:pointer;font-size:14px;transition:all .2s}
 .search-btn:hover{background:var(--gold-light)}
-.search-suggestions{margin-top:10px;background:var(--surface2);border:1px solid rgba(240,237,230,.1);border-radius:16px;overflow:hidden;max-height:260px;overflow-y:auto;box-shadow:0 18px 40px rgba(0,0,0,.2);}
-.suggestion-item{padding:12px 16px;font-size:13px;color:var(--text);cursor:pointer;transition:background .2s}
-.suggestion-item:hover{background:rgba(201,168,76,.1)}
-.suggestion-item strong{color:var(--gold)}
-.suggestion-empty{padding:12px 16px;font-size:13px;color:var(--muted)}
+.search-suggestions{margin-top:10px;background:var(--surface2);border:1px solid rgba(240,237,230,.1);border-radius:16px;overflow:hidden;max-height:320px;overflow-y:auto;box-shadow:0 18px 40px rgba(0,0,0,.2);}
+.suggestion-item{padding:14px 16px;font-size:13px;color:var(--text);cursor:pointer;transition:background .2s;border-bottom:1px solid rgba(240,237,230,.05)}
+.suggestion-item:hover{background:rgba(201,168,76,.08);color:var(--gold)}
+.suggestion-empty{padding:14px 16px;font-size:13px;color:var(--muted);text-align:center}
 .filter-chips{display:flex;gap:8px;flex-wrap:wrap}
 .chip{background:var(--surface2);border:1px solid rgba(240,237,230,.1);color:var(--muted);padding:6px 16px;border-radius:20px;font-size:12px;cursor:pointer;transition:all .2s}
 .chip.active,.chip:hover{background:rgba(201,168,76,.15);border-color:var(--gold);color:var(--gold)}
@@ -115,16 +119,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 40px;display:f
 .info-box strong{font-size:15px;color:var(--text)}
 .history-text{font-size:14px;color:var(--muted);line-height:1.8}
 
-.gallery-section{margin-top:24px}
-.gallery-title{font-size:14px;color:var(--gold);font-weight:600;letter-spacing:.1em;margin-bottom:14px}
-.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
-.gallery-item{border-radius:16px;overflow:hidden;background:var(--surface2);cursor:pointer;transition:transform .2s,box-shadow .2s}
-.gallery-item:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.3)}
-.gallery-item img{width:100%;height:120px;object-fit:cover;display:block;cursor:pointer}
-.lightbox-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center;z-index:3000;padding:20px}
+.gallery-section{margin-top:24px;animation:fadeUp .6s ease}
+.gallery-title{font-size:15px;color:var(--gold);font-weight:600;letter-spacing:.1em;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;padding:8px}
+.gallery-item{border-radius:16px;overflow:hidden;background:linear-gradient(135deg,rgba(201,168,76,.2),rgba(45,203,188,.2));cursor:pointer;transition:all .3s;position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center;border:1px solid rgba(201,168,76,.1)}
+.gallery-item::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .2s;z-index:1}
+.gallery-item:hover::after{background:rgba(0,0,0,.3)}
+.gallery-item:hover{transform:translateY(-8px) scale(1.08);box-shadow:0 20px 50px rgba(201,168,76,.4)}
+.gallery-item img{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer;position:relative;z-index:0}
+.lightbox-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;z-index:3000;padding:20px;animation:fadeIn .3s ease}
 .lightbox-overlay.open{display:flex}
-.lightbox-img{max-width:100%;max-height:100%;border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.6);outline:4px solid rgba(255,255,255,.14)}
-.lightbox-close{position:absolute;top:24px;right:24px;color:#fff;background:rgba(0,0,0,.5);border:none;width:40px;height:40px;border-radius:50%;font-size:24px;cursor:pointer}
+.lightbox-img{max-width:100%;max-height:100%;border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.6);outline:4px solid rgba(255,255,255,.14);animation:scaleIn .3s ease}
+.lightbox-close{position:absolute;top:24px;right:24px;color:#fff;background:rgba(0,0,0,.5);border:2px solid rgba(240,237,230,.3);width:44px;height:44px;border-radius:50%;font-size:24px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.lightbox-close:hover{background:rgba(0,0,0,.8);border-color:var(--gold);transform:rotate(90deg)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
 
 .india-section{background:linear-gradient(135deg,rgba(255,153,51,.04),rgba(19,136,8,.04));border-top:1px solid rgba(255,153,51,.1);border-bottom:1px solid rgba(19,136,8,.1)}
 .india-header{display:flex;align-items:flex-start;gap:24px;margin-bottom:48px;flex-wrap:wrap}
@@ -249,7 +258,11 @@ footer{background:var(--surface);border-top:1px solid rgba(240,237,230,.06);padd
 </nav>
 
 <section class="hero" id="home">
-  <div class="hero-bg"></div>
+  <div class="hero-bg">
+    <div class="moving-transport plane">✈️</div>
+    <div class="moving-transport bus">🚌</div>
+    <div class="moving-transport train">🚂</div>
+  </div>
   <div class="stars" id="stars"></div>
   <div class="hero-content">
     <div class="hero-tag">✦ YOUR WORLD TRAVEL COMPANION</div>
@@ -288,7 +301,7 @@ footer{background:var(--surface);border-top:1px solid rgba(240,237,230,.06);padd
 <div class="search-section">
   <div class="search-wrap reveal">
     <div class="search-row">
-      <input class="search-input" id="searchInput" placeholder="🔍  Search destinations, countries, continents..." oninput="handleSearchInput()" onfocus="renderSearchSuggestions()" autocomplete="off">
+      <input class="search-input" id="searchInput" placeholder="🔍  Search destinations, countries, continents..." oninput="handleSearchInput()" autocomplete="off">
       <button class="search-btn" onclick="filterDest();return false">Search</button>
     </div>
     <div class="search-suggestions" id="searchSuggestions"></div>
@@ -310,9 +323,34 @@ footer{background:var(--surface);border-top:1px solid rgba(240,237,230,.06);padd
   <div class="section-header reveal">
     <div class="section-tag">✦ WORLD DESTINATIONS</div>
     <h2 class="section-title">Places That Will<br>Change You Forever</h2>
-    <p class="section-sub">Handpicked destinations with rich history, best season, and personalised travel tips.</p>
+    <p class="section-sub">Handpicked destinations with rich history, best season, and personalised travel tips. Explore beautiful galleries with 30+ photos per destination.</p>
   </div>
   <div class="dest-grid" id="destGrid"></div>
+</section>
+
+<section class="section" style="background:linear-gradient(135deg,rgba(201,168,76,.02),rgba(45,203,188,.02));border-top:1px solid rgba(201,168,76,.1);border-bottom:1px solid rgba(45,203,188,.1)">
+  <div class="section-header reveal">
+    <div class="section-tag">✦ PHOTO GALLERY SHOWCASE</div>
+    <h2 class="section-title">Visual Journey<br>Around the World</h2>
+    <p class="section-sub">Click "Explore" on any destination to see 30+ high-quality curated photos. Each gallery tells a story of culture, nature, and adventure.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:32px">
+    <div class="reveal" style="background:var(--surface);border:1px solid rgba(240,237,230,.06);border-radius:20px;padding:24px;text-align:center;cursor:pointer;transition:all .3s" onclick="document.getElementById('destGrid').firstChild?.querySelector('.dest-btn')?.click()">
+      <div style="font-size:48px;margin-bottom:16px">📸</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:8px">World Destinations</h3>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6">Explore 30+ photos each from Paris, Bali, Kyoto, NYC, Maldives and more. Click any destination card to view the gallery.</p>
+    </div>
+    <div class="reveal" style="background:var(--surface);border:1px solid rgba(240,237,230,.06);border-radius:20px;padding:24px;text-align:center;cursor:pointer;transition:all .3s" onclick="document.querySelector('#indiaGrid')?.firstChild?.click()">
+      <div style="font-size:48px;margin-bottom:16px">🇮🇳</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:8px">India Regional</h3>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6">Browse 100+ India places with 30 photos each. Rajasthan temples, Kerala backwaters, Himalayan peaks, and more.</p>
+    </div>
+    <div class="reveal" style="background:var(--surface);border:1px solid rgba(240,237,230,.06);border-radius:20px;padding:24px;text-align:center">
+      <div style="font-size:48px;margin-bottom:16px">🎨</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:8px">Lightbox Viewer</h3>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6">Click any photo to expand in full-screen lightbox. Smooth transitions, easy navigation, and beautiful presentations.</p>
+    </div>
+  </div>
 </section>
 
 <section class="traveller-section" id="travellers">
@@ -493,108 +531,108 @@ const destinations=[
 const indiaData={
   "All States":[],
   "Rajasthan":[
-    {name:"Jaipur",emoji:"🏰",desc:"Pink City — Amber Fort, Hawa Mahal, palaces, and vibrant bazaars.",tags:["heritage","fort"]},
-    {name:"Jodhpur",emoji:"🔵",desc:"Blue City — Mehrangarh Fort, Jaswant Thada, golden desert sunsets.",tags:["heritage","fort"]},
-    {name:"Udaipur",emoji:"🌊",desc:"City of Lakes — Lake Pichola, City Palace, romantic lakeside dinners.",tags:["heritage"]},
-    {name:"Jaisalmer",emoji:"🏜️",desc:"Golden City — Sonar Qila, Sam Dunes, camel safari under the stars.",tags:["heritage","nature"]},
-    {name:"Pushkar",emoji:"🕌",desc:"Sacred lake town, Brahma Temple, colourful ghats, camel fair.",tags:["spiritual"]},
-    {name:"Ranthambore",emoji:"🐯",desc:"Famous tiger reserve, safari drives, Ranthambore Fort ruins.",tags:["nature","heritage"]},
+    {name:"Jaipur",emoji:"🏰",state:"Rajasthan",desc:"Pink City — Amber Fort, Hawa Mahal, palaces, and vibrant bazaars.",tags:["heritage","fort"],best:"Oct-Mar",history:"Founded in 1727 by Maharaja Sawai Jai Singh II, Jaipur is the world's first planned city with a grid layout. It was painted pink in 1876 to welcome Prince Albert. UNESCO World Heritage Site known for its geometric precision and blend of Hindu and Mughal architecture."},
+    {name:"Jodhpur",emoji:"🔵",state:"Rajasthan",desc:"Blue City — Mehrangarh Fort, Jaswant Thada, golden desert sunsets.",tags:["heritage","fort"],best:"Oct-Mar",history:"In the heart of the Thar Desert, Jodhpur rises dramatically from a plateau. The fort, built in 1459, sits 400 feet above the city. Houses were painted blue to repel insects and heat, becoming an iconic UNESCO sight.",},
+    {name:"Udaipur",emoji:"🌊",state:"Rajasthan",desc:"City of Lakes — Lake Pichola, City Palace, romantic lakeside dinners.",tags:["heritage"],best:"Oct-Mar",history:"Built in 1559 on the banks of Lake Pichola, Udaipur was designed as a refuge during wars. It's a symbol of romance—the setting for countless Bollywood films and international destination weddings."},
+    {name:"Jaisalmer",emoji:"🏜️",state:"Rajasthan",desc:"Golden City — Sonar Qila, Sam Dunes, camel safari under the stars.",tags:["heritage","nature"],best:"Oct-Mar",history:"A trading post on the Silk Route (1156 AD), Jaisalmer's isolated desert location preserved its 800-year-old fort. The sandstone glows golden at sunset—hence 'Sonar Qila' (Golden Fort)."},
+    {name:"Pushkar",emoji:"🕌",state:"Rajasthan",desc:"Sacred lake town, Brahma Temple, colourful ghats, camel fair.",tags:["spiritual"],best:"Oct-Mar",history:"One of the world's oldest pilgrimage sites, Pushkar Lake is believed to have emerged from Krishna's lotus flower. The Brahma Temple here is one of the few dedicated to Brahma in India. The annual Camel Fair (November) is legendary."},
+    {name:"Ranthambore",emoji:"🐯",state:"Rajasthan",desc:"Famous tiger reserve, safari drives, Ranthambore Fort ruins.",tags:["nature","heritage"],best:"Nov-Jun",history:"One of India's largest and most successful tiger reserves (400+ sq km), established in 1980. The ruins of the 10th-century Ranthambore Fort add archaeological wonder to wildlife photography."},
   ],
   "Kerala":[
-    {name:"Munnar",emoji:"🍃",desc:"Rolling tea estates, misty Nilgiri hills, scenic Eravikulam National Park.",tags:["nature","hill"]},
-    {name:"Alleppey",emoji:"🚤",desc:"Backwaters capital — houseboat stays on Kerala's famous canals.",tags:["nature","beach"]},
-    {name:"Wayanad",emoji:"🌿",desc:"Coffee and cardamom plantations, tribal culture, Chembra Peak trek.",tags:["nature","hill"]},
-    {name:"Kovalam",emoji:"🌊",desc:"Lighthouse beach, Ayurveda resorts, world-class seafood.",tags:["beach"]},
-    {name:"Thekkady",emoji:"🐘",desc:"Periyar Wildlife Sanctuary, spice garden tours, elephant safari.",tags:["nature"]},
-    {name:"Thrissur",emoji:"🎭",desc:"Cultural capital of Kerala, Thrissur Pooram elephant festival.",tags:["heritage","spiritual"]},
+    {name:"Munnar",emoji:"🍃",state:"Kerala",desc:"Rolling tea estates, misty Nilgiri hills, scenic Eravikulam National Park.",tags:["nature","hill"],best:"Oct-May",history:"At 1,600m elevation, Munnar was developed as a hill station by British planters in the 1880s. It's the largest tea-growing region in India, producing world-renowned Darjeeling-grade tea."},
+    {name:"Alleppey",emoji:"🚤",state:"Kerala",desc:"Backwaters capital — houseboat stays on Kerala's famous canals.",tags:["nature","beach"],best:"Nov-Feb",history:"An ancient port and spice trading hub, Alleppey (Alappuzha) has 1,500 km of interconnected waterways. The iconic coconut-fringed backwater canals attract 100,000+ tourists annually for houseboat cruises."},
+    {name:"Wayanad",emoji:"🌿",state:"Kerala",desc:"Coffee and cardamom plantations, tribal culture, Chembra Peak trek.",tags:["nature","hill"],best:"Oct-May",history:"Wayanad is home to indigenous tribal communities (Adivasi) and lush spice plantations. The region has ancient cave paintings, megalithic monuments, and is a biodiversity hotspot."},
+    {name:"Kovalam",emoji:"🌊",state:"Kerala",desc:"Lighthouse beach, Ayurveda resorts, world-class seafood.",tags:["beach"],best:"Oct-Mar",history:"Kovalam's crescent-shaped beaches were 'discovered' by backpackers in the 1970s. It became Kerala's first beach tourism destination and Ayurveda treatment hub."},
+    {name:"Thekkady",emoji:"🐘",state:"Kerala",desc:"Periyar Wildlife Sanctuary, spice garden tours, elephant safari.",tags:["nature"],best:"Sep-May",history:"Periyar Lake (built in 1895) is surrounded by one of the oldest wildlife sanctuaries in India (1934). Home to elephants, tigers, and spice plantations."},
+    {name:"Thrissur",emoji:"🎭",state:"Kerala",desc:"Cultural capital of Kerala, Thrissur Pooram elephant festival.",tags:["heritage","spiritual"],best:"Apr-May (Pooram Festival)",history:"Thrissur Pooram, held every April-May, is the world's largest elephant festival with 30+ decorated tuskers and traditional percussion. The Vadakkumnathan Temple is one of India's oldest."},
   ],
   "Himachal Pradesh":[
-    {name:"Manali",emoji:"❄️",desc:"Rohtang Pass, Solang Valley snow, Hadimba Temple, adventure capital.",tags:["nature","hill"]},
-    {name:"Shimla",emoji:"🚂",desc:"Summer capital of British India, Mall Road, UNESCO toy train.",tags:["hill","heritage"]},
-    {name:"Dharamshala",emoji:"🙏",desc:"Little Lhasa, Dalai Lama residence, Himalayan views, Tibetan culture.",tags:["spiritual","nature"]},
-    {name:"Spiti Valley",emoji:"🏔️",desc:"High-altitude cold desert, ancient Buddhist monasteries, stargazing.",tags:["nature","spiritual"]},
-    {name:"Kasol",emoji:"🌲",desc:"Parvati Valley, Kheerganga trek, riverside camping, hippie haven.",tags:["nature","hill"]},
-    {name:"Dalhousie",emoji:"🌄",desc:"Scottish colonial hill station, Khajjiar (India's Switzerland), meadows.",tags:["hill","nature"]},
+    {name:"Manali",emoji:"❄️",state:"Himachal Pradesh",desc:"Rohtang Pass, Solang Valley snow, Hadimba Temple, adventure capital.",tags:["nature","hill"],best:"Mar-Jun (snow) · Sep-Oct",history:"A refuge for monks fleeing persecution, Manali became a trekker's paradise after the 1970s. The Rohtang Pass (3,970m) offers snow-filled adventures and connects to the cold desert Spiti Valley."},
+    {name:"Shimla",emoji:"🚂",state:"Himachal Pradesh",desc:"Summer capital of British India, Mall Road, UNESCO toy train.",tags:["hill","heritage"],best:"Oct-Jun",history:"Built as the summer capital of British India (1864), Shimla epitomises colonial hill station architecture. The UNESCO Kalka-Shimla Toy Train (1903) remains one of the world's most beautiful railways."},
+    {name:"Dharamshala",emoji:"🙏",state:"Himachal Pradesh",desc:"Little Lhasa, Dalai Lama residence, Himalayan views, Tibetan culture.",tags:["spiritual","nature"],best:"Oct-Jun",history:"Home to the Dalai Lama since 1960, Dharamshala is the spiritual capital of Tibetan Buddhism in exile. The Tibetan culture permeates the hill station's architecture and cuisine."},
+    {name:"Spiti Valley",emoji:"🏔️",state:"Himachal Pradesh",desc:"High-altitude cold desert, ancient Buddhist monasteries, stargazing.",tags:["nature","spiritual"],best:"Jun-Oct",history:"One of the world's highest inhabited valleys (3,650m), Spiti is a cold desert with 800-year-old monasteries carved into cliffsides. Isolated for centuries, it preserves ancient Buddhist traditions."},
+    {name:"Kasol",emoji:"🌲",state:"Himachal Pradesh",desc:"Parvati Valley, Kheerganga trek, riverside camping, hippie haven.",tags:["nature","hill"],best:"Sep-Oct · Feb-Mar",history:"Known as 'Amsterdam of India' among backpackers, Kasol has riverside camps and attracts adventure seekers to Kheerganga's hot springs trek."},
+    {name:"Dalhousie",emoji:"🌄",state:"Himachal Pradesh",desc:"Scottish colonial hill station, Khajjiar (India's Switzerland), meadows.",tags:["hill","nature"],best:"Mar-Jun · Sep-Oct",history:"Established by the British in 1854, Dalhousie was named after Lord Dalhousie. Khajjiar is a 1,600m-high meadow called 'India's Switzerland' for its lush landscapes."},
   ],
   "Goa":[
-    {name:"North Goa",emoji:"🏖️",desc:"Baga, Calangute, Anjuna — beach parties, flea markets, water sports.",tags:["beach"]},
-    {name:"South Goa",emoji:"🌅",desc:"Palolem, Agonda, Cavelossim — serene beaches, quiet coves, dolphins.",tags:["beach","nature"]},
-    {name:"Old Goa",emoji:"⛪",desc:"UNESCO Portuguese heritage churches, Basilica of Bom Jesus (St Francis Xavier).",tags:["heritage","spiritual"]},
-    {name:"Dudhsagar Falls",emoji:"💦",desc:"Dramatic 4-tiered 600m waterfall inside Bhagwan Mahaveer Wildlife Sanctuary.",tags:["nature"]},
-    {name:"Panaji",emoji:"🏘️",desc:"Charming capital, Fontainhas Latin Quarter, Mandovi riverfront.",tags:["heritage"]},
+    {name:"North Goa",emoji:"🏖️",state:"Goa",desc:"Baga, Calangute, Anjuna — beach parties, flea markets, water sports.",tags:["beach"],best:"Nov-Feb",history:"North Goa attracts backpackers and party-goers. Baga and Calangute have evolved into beach resort towns. Anjuna's flea market (1970s origin) reflects Goa's hippie heritage."},
+    {name:"South Goa",emoji:"🌅",state:"Goa",desc:"Palolem, Agonda, Cavelossim — serene beaches, quiet coves, dolphins.",tags:["beach","nature"],best:"Nov-Feb",history:"South Goa's crescent beaches are quieter and more pristine. Palolem has remained a backpacker haven without commercial overdevelopment. Dolphin sightings are common."},
+    {name:"Old Goa",emoji:"⛪",state:"Goa",desc:"UNESCO Portuguese heritage churches, Basilica of Bom Jesus (St Francis Xavier).",tags:["heritage","spiritual"],best:"Oct-Mar",history:"Once called the 'Rome of the East,' Old Goa (1510-1835) was the Portuguese capital. The Basilica of Bom Jesus (1605) contains the 400-year-old relics of St. Francis Xavier. UNESCO World Heritage Site."},
+    {name:"Dudhsagar Falls",emoji:"💦",state:"Goa",desc:"Dramatic 4-tiered 600m waterfall inside Bhagwan Mahaveer Wildlife Sanctuary.",tags:["nature"],best:"Jun-Oct (post-monsoon)",history:"Dudhsagar (milk-colored waterfall) is fed by monsoon rains cascading 600m over four tiers. In summer, it reduces to a trickle, but monsoon season creates a spectacular spectacle."},
+    {name:"Panaji",emoji:"🏘️",state:"Goa",desc:"Charming capital, Fontainhas Latin Quarter, Mandovi riverfront.",tags:["heritage"],best:"Oct-Mar",history:"Panaji's colorful Portuguese architecture, especially in Fontainhas (the oldest residential area), showcases colonial charm. The Latin Quarter feels like a European village transplanted to India."},
   ],
   "Uttar Pradesh":[
-    {name:"Agra",emoji:"🕌",desc:"Taj Mahal — UNESCO wonder and the world's greatest monument to love.",tags:["heritage"]},
-    {name:"Varanasi",emoji:"🪔",desc:"World's oldest living city, Ganga Aarti at dusk, ghats, moksha.",tags:["spiritual","heritage"]},
-    {name:"Lucknow",emoji:"🍛",desc:"City of Nawabs — Bara Imambara, Tunday kebabs, Urdu poetry evenings.",tags:["heritage"]},
-    {name:"Mathura & Vrindavan",emoji:"🦚",desc:"Birthplace of Lord Krishna, 5,000 temples, Holi celebrations.",tags:["spiritual"]},
-    {name:"Prayagraj",emoji:"🌊",desc:"Triveni Sangam, Maha Kumbh Mela, Allahabad Fort, Akbar's city.",tags:["spiritual","heritage"]},
-    {name:"Ayodhya",emoji:"🏛️",desc:"Birthplace of Lord Rama, Ram Mandir, Sarayu River Aarti.",tags:["spiritual","heritage"]},
+    {name:"Agra",emoji:"🕌",state:"Uttar Pradesh",desc:"Taj Mahal — UNESCO wonder and the world's greatest monument to love.",tags:["heritage"],best:"Oct-Mar",history:"Built by Emperor Shah Jahan (1632-1653) as a mausoleum for his beloved wife Mumtaz Mahal, the Taj Mahal is a masterpiece of Mughal architecture. UNESCO World Heritage Site and one of the Seven Wonders."},
+    {name:"Varanasi",emoji:"🪔",state:"Uttar Pradesh",desc:"World's oldest living city, Ganga Aarti at dusk, ghats, moksha.",tags:["spiritual","heritage"],best:"Oct-Mar",history:"One of Hinduism's holiest cities, Varanasi (Kashi) dates to at least 1200 BC. Hindus believe dying here grants Moksha. The Ganga Aarti (evening prayer ritual) is a transcendent spiritual experience."},
+    {name:"Lucknow",emoji:"🍛",state:"Uttar Pradesh",desc:"City of Nawabs — Bara Imambara, Tunday kebabs, Urdu poetry evenings.",tags:["heritage"],best:"Oct-Mar",history:"Lucknow was ruled by Nawabs who patronized arts, architecture, and cuisine. The city gave the world the Ghalib-era Urdu poetry tradition and the legendary Lucknowi kebab."},
+    {name:"Mathura & Vrindavan",emoji:"🦚",state:"Uttar Pradesh",desc:"Birthplace of Lord Krishna, 5,000 temples, Holi celebrations.",tags:["spiritual"],best:"Oct-Mar",history:"Mathura is Krishna's birthplace (c.1200 BC mythologically). Vrindavan has 5,000+ temples. Holi (the festival of colors) is celebrated here with unmatched fervour and tradition."},
+    {name:"Prayagraj",emoji:"🌊",state:"Uttar Pradesh",desc:"Triveni Sangam, Maha Kumbh Mela, Allahabad Fort, Akbar's city.",tags:["spiritual","heritage"],best:"Jan-Mar (Kumbh)", history:"At the Triveni Sangam (confluence of Ganga, Yamuna, and mythical Saraswati), Prayagraj hosts the world's largest pilgrimage gathering every 12 years during the Maha Kumbh Mela (130+ million attendees)."},
+    {name:"Ayodhya",emoji:"🏛️",state:"Uttar Pradesh",desc:"Birthplace of Lord Rama, Ram Mandir, Sarayu River Aarti.",tags:["spiritual","heritage"],best:"Oct-Mar",history:"Ayodhya's Ram Mandir (2024 inauguration) is one of the world's largest temple complexes. Central to Hindu faith, Rama is believed to have been born here 7,000+ years ago."},
   ],
   "Tamil Nadu":[
-    {name:"Chennai",emoji:"🌊",desc:"Marina Beach (world's 2nd longest), Kapaleeshwarar Temple, filter coffee.",tags:["beach","heritage"]},
-    {name:"Madurai",emoji:"🕌",desc:"Meenakshi Amman Temple — a towering Dravidian architectural marvel.",tags:["heritage","spiritual"]},
-    {name:"Ooty",emoji:"🌸",desc:"Queen of Nilgiris, Botanical Gardens, tea gardens, UNESCO toy train.",tags:["hill","nature"]},
-    {name:"Mahabalipuram",emoji:"🗿",desc:"UNESCO shore temple, Arjuna's Penance rock carvings, scenic beach.",tags:["heritage"]},
-    {name:"Rameswaram",emoji:"🐚",desc:"Sacred island city, Ramanathaswamy Temple, Pamban Bridge sunrise.",tags:["spiritual","heritage"]},
-    {name:"Kodaikanal",emoji:"🌫️",desc:"Princess of hill stations, lake boating, Coaker's Walk, misty valleys.",tags:["hill","nature"]},
+    {name:"Chennai",emoji:"🌊",state:"Tamil Nadu",desc:"Marina Beach (world's 2nd longest), Kapaleeshwarar Temple, filter coffee.",tags:["beach","heritage"],best:"Oct-Mar",history:"Once called the 'Oxford of the South,' Chennai is India's cultural capital. Marina Beach (12 km) is the world's 2nd longest beach. The city preserved Dravidian culture through British and Mughal invasions."},
+    {name:"Madurai",emoji:"🕌",state:"Tamil Nadu",desc:"Meenakshi Amman Temple — a towering Dravidian architectural marvel.",tags:["heritage","spiritual"],best:"Oct-Mar",history:"Called the 'Athens of South India,' Madurai's 2,400-year history centers around the Meenakshi Temple. Its 14 gopurams (towers) are the finest examples of Dravidian architecture."},
+    {name:"Ooty",emoji:"🌸",state:"Tamil Nadu",desc:"Queen of Nilgiris, Botanical Gardens, tea gardens, UNESCO toy train.",tags:["hill","nature"],best:"Apr-Jun · Oct-Nov",history:"Ooty (Ootacamund) was a British hill station (1818) in the Nilgiri Hills. The UNESCO Nilgiri Mountain Railway (1897) is one of the world's oldest mountain railways, ascending to 2,200m."},
+    {name:"Mahabalipuram",emoji:"🗿",state:"Tamil Nadu",desc:"UNESCO shore temple, Arjuna's Penance rock carvings, scenic beach.",tags:["heritage"],best:"Nov-Feb",history:"This UNESCO site showcases 7th-century Pallava dynasty rock carvings and temples. It was an ancient port and remains one of India's oldest pilgrimage centers."},
+    {name:"Rameswaram",emoji:"🐚",state:"Tamil Nadu",desc:"Sacred island city, Ramanathaswamy Temple, Pamban Bridge sunrise.",tags:["spiritual","heritage"],best:"Oct-Mar",history:"Connected to India by the iconic Pamban Bridge (1914), Rameswaram is one of Hinduism's holiest pilgrimage sites. The Ramanathaswamy Temple has 22 sacred wells."},
+    {name:"Kodaikanal",emoji:"🌫️",state:"Tamil Nadu",desc:"Princess of hill stations, lake boating, Coaker's Walk, misty valleys.",tags:["hill","nature"],best:"Sep-Oct · Feb-Mar",history:"Built in 1845, Kodaikanal sits at 2,133m surrounded by misty valleys. Its pristine environment and natural beauty earn it the nickname 'Princess of Hill Stations.'"},
   ],
   "Uttarakhand":[
-    {name:"Rishikesh",emoji:"🧘",desc:"Yoga capital of the world, Ganges rafting, Laxman Jhula, Beatles Ashram.",tags:["spiritual","nature"]},
-    {name:"Haridwar",emoji:"🪔",desc:"Gateway to the gods, Har Ki Pauri, evening Ganga Aarti.",tags:["spiritual"]},
-    {name:"Nainital",emoji:"⛵",desc:"Emerald lake city, boating, Mall Road, Snow View Point.",tags:["hill","nature"]},
-    {name:"Kedarnath",emoji:"🏔️",desc:"Shiva temple at 3,584m, Char Dham pilgrimage, helicopter access.",tags:["spiritual","nature"]},
-    {name:"Valley of Flowers",emoji:"🌼",desc:"UNESCO national park, 500+ Himalayan wildflower species, trekker's paradise.",tags:["nature","hill"]},
-    {name:"Auli",emoji:"⛷️",desc:"Premier ski resort, Gurso Bugyal meadows, Nanda Devi views.",tags:["hill","nature"]},
+    {name:"Rishikesh",emoji:"🧘",state:"Uttarakhand",desc:"Yoga capital of the world, Ganges rafting, Laxman Jhula, Beatles Ashram.",tags:["spiritual","nature"],best:"Oct-Mar",history:"Rishikesh has been a center for yoga and meditation for centuries. The Beatles famously meditated here in 1968. The iconic Laxman Jhula suspension bridge (1986) connects both banks of the Ganges."},
+    {name:"Haridwar",emoji:"🪔",state:"Uttarakhand",desc:"Gateway to the gods, Har Ki Pauri, evening Ganga Aarti.",tags:["spiritual"],best:"Oct-Mar",history:"One of Hinduism's holiest cities, Haridwar is the gateway to the Himalayas. The Ganga Aarti at Har Ki Pauri is a mesmerizing riverside ritual performed every evening since ancient times."},
+    {name:"Nainital",emoji:"⛵",state:"Uttarakhand",desc:"Emerald lake city, boating, Mall Road, Snow View Point.",tags:["hill","nature"],best:"Mar-Jun · Sep-Oct",history:"Discovered by a British officer in 1841, Nainital's crescent-shaped lake (Naini Lake) is surrounded by forested Himalayan slopes. It's a trekker's gateway to the Kumaon region."},
+    {name:"Kedarnath",emoji:"🏔️",state:"Uttarakhand",desc:"Shiva temple at 3,584m, Char Dham pilgrimage, helicopter access.",tags:["spiritual","nature"],best:"May-Jun · Sep-Oct",history:"Perched at 3,584m, the Kedarnath Temple is one of the four holiest Char Dham temples. Devastated by floods in 2013, it was rebuilt and remains a pilgrimage destination."},
+    {name:"Valley of Flowers",emoji:"🌼",state:"Uttarakhand",desc:"UNESCO national park, 500+ Himalayan wildflower species, trekker's paradise.",tags:["nature","hill"],best:"Jul-Oct (flowers bloom)",history:"This UNESCO site was discovered in 1931. Every summer, 500+ wildflower species bloom across alpine meadows at 3,000-4,000m, creating a breathtaking floral landscape."},
+    {name:"Auli",emoji:"⛷️",state:"Uttarakhand",desc:"Premier ski resort, Gurso Bugyal meadows, Nanda Devi views.",tags:["hill","nature"],best:"Dec-Mar (ski season)",history:"India's premier skiing destination (2,800-3,000m), Auli hosted the Asian Skiing Championships. The Nanda Devi peak is visible from here—India's 2nd highest mountain."},
   ],
   "West Bengal":[
-    {name:"Kolkata",emoji:"🌉",desc:"City of Joy — Howrah Bridge, Victoria Memorial, Durga Puja, street food.",tags:["heritage"]},
-    {name:"Darjeeling",emoji:"☕",desc:"Tea capital, Kanchenjunga views, UNESCO toy train, Tiger Hill sunrise.",tags:["hill","nature"]},
-    {name:"Sundarbans",emoji:"🐯",desc:"World's largest mangrove delta, Royal Bengal Tiger, UNESCO site.",tags:["nature"]},
-    {name:"Bishnupur",emoji:"🎨",desc:"Terracotta temples, Baluchari silk weaving, Bishnupur gharana music.",tags:["heritage"]},
+    {name:"Kolkata",emoji:"🌉",state:"West Bengal",desc:"City of Joy — Howrah Bridge, Victoria Memorial, Durga Puja, street food.",tags:["heritage"],best:"Oct-Mar",history:"Kolkata was the British capital of India (1782-1911). The Howrah Bridge (1943) is an engineering marvel. The city is the cultural heartbeat of India—home to Tagore, Ray, and the Durga Puja festival."},
+    {name:"Darjeeling",emoji:"☕",state:"West Bengal",desc:"Tea capital, Kanchenjunga views, UNESCO toy train, Tiger Hill sunrise.",tags:["hill","nature"],best:"Sep-Oct · Mar-May",history:"At 2,134m, Darjeeling was developed as a hill station by the British in 1835. It produces world-famous Darjeeling tea. The UNESCO Darjeeling Himalayan Railway (1880) is a UNESCO World Heritage Site."},
+    {name:"Sundarbans",emoji:"🐯",state:"West Bengal",desc:"World's largest mangrove delta, Royal Bengal Tiger, UNESCO site.",tags:["nature"],best:"Nov-Mar",history:"The Sundarbans (10,000 sq km) is the largest mangrove forest in the world and home to the Royal Bengal Tiger. This UNESCO site is a UNESCO World Heritage Site and tiger reserve."},
+    {name:"Bishnupur",emoji:"🎨",state:"West Bengal",desc:"Terracotta temples, Baluchari silk weaving, Bishnupur gharana music.",tags:["heritage"],best:"Oct-Mar",history:"Bishnupur is the cultural capital of West Bengal, famous for its intricate terracotta temples built in the 18th century, exquisite Baluchari silk weaving, and classical music tradition."},
   ],
   "Karnataka":[
-    {name:"Mysuru",emoji:"👑",desc:"Amba Vilas Palace, Chamundi Hills, Dasara festival, sandalwood.",tags:["heritage"]},
-    {name:"Coorg",emoji:"☕",desc:"Coffee and spice country, Talacauvery, Abbey Falls, Namdroling monastery.",tags:["nature","hill"]},
-    {name:"Hampi",emoji:"🗿",desc:"Vijayanagara Empire ruins, boulder landscapes, UNESCO World Heritage.",tags:["heritage"]},
-    {name:"Gokarna",emoji:"🏖️",desc:"Om Beach, Mahabaleshwar Temple, peaceful backpacker coastline.",tags:["beach","spiritual"]},
-    {name:"Bengaluru",emoji:"🌆",desc:"Silicon Valley of India, Cubbon Park, ISKCON temple, Lalbagh gardens.",tags:["heritage"]},
-    {name:"Chikmagalur",emoji:"☕",desc:"Coffee plantation heartland, Mullayanagiri peak, Baba Budangiri.",tags:["nature","hill"]},
+    {name:"Mysuru",emoji:"👑",state:"Karnataka",desc:"Amba Vilas Palace, Chamundi Hills, Dasara festival, sandalwood.",tags:["heritage"],best:"Oct (Dasara Festival)",history:"Mysuru's Amba Vilas Palace (1897) is an Indo-Saracenic architectural marvel. The city is famous for its sandalwood, silk, and the Dasara festival (September-October) with 100+ elephant procession."},
+    {name:"Coorg",emoji:"☕",state:"Karnataka",desc:"Coffee and spice country, Talacauvery, Abbey Falls, Namdroling monastery.",tags:["nature","hill"],best:"Oct-Dec · Jun-Jul",history:"Coorg (Kodagu) is India's coffee capital, producing 30% of India's coffee. Its misty valleys, spice plantations, and serene monasteries make it a peaceful retreat."},
+    {name:"Hampi",emoji:"🗿",state:"Karnataka",desc:"Vijayanagara Empire ruins, boulder landscapes, UNESCO World Heritage.",tags:["heritage"],best:"Oct-Feb",history:"Hampi was the capital of the powerful Vijayanagara Empire (1336-1565). Its 1,500+ monuments—temples, markets, and palaces—stand amid giant boulders, a UNESCO World Heritage Site."},
+    {name:"Gokarna",emoji:"🏖️",state:"Karnataka",desc:"Om Beach, Mahabaleshwar Temple, peaceful backpacker coastline.",tags:["beach","spiritual"],best:"Oct-Mar",history:"Gokarna is a less touristy alternative to Goa. Om Beach gets its name from its Om-shaped geography. It's a pilgrimage site for the Mahabaleshwar Temple and a peaceful backpacker haven."},
+    {name:"Bengaluru",emoji:"🌆",state:"Karnataka",desc:"Silicon Valley of India, Cubbon Park, ISKCON temple, Lalbagh gardens.",tags:["heritage"],best:"Oct-Mar",history:"India's IT capital, Bengaluru blends modernity with heritage. Cubbon Park (1870), ISKCON Temple, and Lalbagh Botanical Gardens offer respite from urban energy."},
+    {name:"Chikmagalur",emoji:"☕",state:"Karnataka",desc:"Coffee plantation heartland, Mullayanagiri peak, Baba Budangiri.",tags:["nature","hill"],best:"Sep-Jan",history:"The coffee cultivation hub, Chikmagalur sits at 1,000m elevation surrounded by plantations. Mullayanagiri (1,930m) is Karnataka's highest peak, offering trekking and panoramic views."},
   ],
   "Maharashtra":[
-    {name:"Mumbai",emoji:"🌆",desc:"Gateway of India, Marine Drive, Elephanta Caves, street food capital.",tags:["heritage","beach"]},
-    {name:"Aurangabad",emoji:"🏛️",desc:"Ajanta & Ellora caves (UNESCO), Bibi Ka Maqbara, Daulatabad Fort.",tags:["heritage"]},
-    {name:"Lonavala",emoji:"🌧️",desc:"Monsoon waterfalls, Pawna Lake camping, Rajmachi Fort trek.",tags:["nature","hill"]},
-    {name:"Mahabaleshwar",emoji:"🍓",desc:"Strawberry farms, Venna Lake boating, Pratapgarh Fort, panoramic ghats.",tags:["hill","nature"]},
-    {name:"Nashik",emoji:"🍷",desc:"Wine capital of India, Trimbakeshwar, Pandavleni Caves, Godavari.",tags:["heritage","spiritual"]},
+    {name:"Mumbai",emoji:"🌆",state:"Maharashtra",desc:"Gateway of India, Marine Drive, Elephanta Caves, street food capital.",tags:["heritage","beach"],best:"Oct-Mar",history:"India's financial capital, Mumbai evolved from seven islands reclaimed by the Portuguese. The Gateway of India (1924) symbolizes independence. The city is a melting pot of cultures and Bollywood cinema."},
+    {name:"Aurangabad",emoji:"🏛️",state:"Maharashtra",desc:"Ajanta & Ellora caves (UNESCO), Bibi Ka Maqbara, Daulatabad Fort.",tags:["heritage"],best:"Oct-Mar",history:"Ajanta & Ellora are UNESCO sites with 200+ rock-cut Buddhist, Hindu, and Jain temples (200 AD-1000 AD). Daulatabad Fort (1187) is an engineering marvel."},
+    {name:"Lonavala",emoji:"🌧️",state:"Maharashtra",desc:"Monsoon waterfalls, Pawna Lake camping, Rajmachi Fort trek.",tags:["nature","hill"],best:"Jun-Oct (monsoon)",history:"Just 65 km from Mumbai, Lonavala is a weekend getaway famous for monsoonal beauty. Pawna Lake camping and Rajmachi Fort trekking are popular activities."},
+    {name:"Mahabaleshwar",emoji:"🍓",state:"Maharashtra",desc:"Strawberry farms, Venna Lake boating, Pratapgarh Fort, panoramic ghats.",tags:["hill","nature"],best:"Mar-Jun · Sep-Oct",history:"At 1,372m, Mahabaleshwar is known for strawberry farming, scenic viewpoints, and Pratapgarh Fort. The cool climate and fresh produce attract tourists year-round."},
+    {name:"Nashik",emoji:"🍷",state:"Maharashtra",desc:"Wine capital of India, Trimbakeshwar, Pandavleni Caves, Godavari.",tags:["heritage","spiritual"],best:"Sep-Mar",history:"Nashik is India's wine country with 70+ wineries. It's also a pilgrimage site on the Godavari River and hosts one of the four Kumbh Melas every 12 years."},
   ],
   "Gujarat":[
-    {name:"Ahmedabad",emoji:"🕌",desc:"UNESCO Heritage City, Sabarmati Gandhi Ashram, Adalaj stepwell.",tags:["heritage"]},
-    {name:"Rann of Kutch",emoji:"🌕",desc:"White salt desert, Rann Utsav festival, tribal art, full moon nights.",tags:["nature"]},
-    {name:"Gir Forest",emoji:"🦁",desc:"Last wild habitat of Asiatic lions, jeep safari, Sasan Gir.",tags:["nature"]},
-    {name:"Dwarka",emoji:"🌊",desc:"Sacred Char Dham city, Dwarkadhish Temple, Beyt Dwarka island.",tags:["spiritual","heritage"]},
-    {name:"Somnath",emoji:"🕌",desc:"Jyotirlinga Shiva temple, coastal sunset, Junagadh nearby.",tags:["spiritual","heritage"]},
+    {name:"Ahmedabad",emoji:"🕌",state:"Gujarat",desc:"UNESCO Heritage City, Sabarmati Gandhi Ashram, Adalaj stepwell.",tags:["heritage"],best:"Oct-Mar",history:"Ahmedabad's old city (1411) is a UNESCO site with stunning Islamic architecture. Gandhi Ashram is where the independence movement was based. Adalaj stepwell showcases pre-Islamic engineering."},
+    {name:"Rann of Kutch",emoji:"🌕",state:"Gujarat",desc:"White salt desert, Rann Utsav festival, tribal art, full moon nights.",tags:["nature"],best:"Nov-Feb (Rann Utsav)",history:"The Rann of Kutch is the world's largest salt desert (23,000 sq km). The Rann Utsav (November-February) celebrates tribal culture with music, dance, and full moon nights."},
+    {name:"Gir Forest",emoji:"🦁",state:"Gujarat",desc:"Last wild habitat of Asiatic lions, jeep safari, Sasan Gir.",tags:["nature"],best:"Oct-Jun",history:"The Gir Forest (1,412 sq km) is the last natural habitat of the Asiatic lion. Around 600+ Asiatic lions live here. Jeep safaris offer wildlife viewing opportunities."},
+    {name:"Dwarka",emoji:"🌊",state:"Gujarat",desc:"Sacred Char Dham city, Dwarkadhish Temple, Beyt Dwarka island.",tags:["spiritual","heritage"],best:"Oct-Mar",history:"One of Hinduism's four holiest Char Dham sites, Dwarka is the legendary capital of Lord Krishna. The Dwarkadhish Temple (built in 1168) has intricate carvings and underwater temples."},
+    {name:"Somnath",emoji:"🕌",state:"Gujarat",desc:"Jyotirlinga Shiva temple, coastal sunset, Junagadh nearby.",tags:["spiritual","heritage"],best:"Oct-Mar",history:"Somnath Temple is one of the 12 Jyotilingas (Shiva shrines). Destroyed 17 times and rebuilt, it represents eternal resilience. The coastal location offers stunning sunsets."},
   ],
   "Northeast India":[
-    {name:"Kaziranga",emoji:"🦏",desc:"One-horned rhino sanctuary, UNESCO, elephant and jeep safari.",tags:["nature"]},
-    {name:"Shillong",emoji:"🌧️",desc:"Scotland of the East, Umiam Lake, living root bridges nearby.",tags:["nature","hill"]},
-    {name:"Cherrapunji",emoji:"💧",desc:"Among world's wettest places, double-decker living root bridges.",tags:["nature"]},
-    {name:"Gangtok",emoji:"❄️",desc:"Sikkim capital, Kanchenjunga views, Rumtek Monastery, Nathula Pass.",tags:["spiritual","hill"]},
-    {name:"Ziro Valley",emoji:"🌾",desc:"Apatani tribe heritage, paddy-fish farming, Ziro Music Festival.",tags:["nature","heritage"]},
-    {name:"Tawang",emoji:"🏔️",desc:"Largest monastery in India, Sela Pass at 13,700 ft, Madhuri Lake.",tags:["spiritual","nature"]},
+    {name:"Kaziranga",emoji:"🦏",state:"Assam",desc:"One-horned rhino sanctuary, UNESCO, elephant and jeep safari.",tags:["nature"],best:"Nov-Apr",history:"UNESCO World Heritage Site protecting the endangered one-horned rhinoceros. Home to 2/3 of the world's population of this species. Rich in tigers, elephants, and water buffalo."},
+    {name:"Shillong",emoji:"🌧️",state:"Meghalaya",desc:"Scotland of the East, Umiam Lake, living root bridges nearby.",tags:["nature","hill"],best:"Sep-Nov · Mar-May",history:"Shillong's lush hills and cascading waterfalls earn it the nickname 'Scotland of the East.' Umiam Lake offers scenic boating. The living root bridges of Cherrapunji are nearly."},
+    {name:"Cherrapunji",emoji:"💧",state:"Meghalaya",desc:"Among world's wettest places, double-decker living root bridges.",tags:["nature"],best:"Jun-Sep (monsoon)",history:"Cherrapunji receives 11,777 mm of annual rainfall—among the world's wettest places. The 500-year-old living root bridges are made from tree roots trained to form structures."},
+    {name:"Gangtok",emoji:"❄️",state:"Sikkim",desc:"Sikkim capital, Kanchenjunga views, Rumtek Monastery, Nathula Pass.",tags:["spiritual","hill"],best:"Sep-Nov · Apr-May",history:"Gangtok sits at 1,597m with views of Kanchenjunga (3rd highest mountain). Rumtek Monastery is a spiritual center. Nathula Pass connects India to Tibet."},
+    {name:"Ziro Valley",emoji:"🌾",state:"Arunachal Pradesh",desc:"Apatani tribe heritage, paddy-fish farming, Ziro Music Festival.",tags:["nature","heritage"],best:"Sep-Nov · Mar-May",history:"Ziro is the land of the Apatani tribe with unique paddy-fish farming. The annual Ziro Music Festival celebrates indie and folk music in this scenic valley."},
+    {name:"Tawang",emoji:"🏔️",state:"Arunachal Pradesh",desc:"Largest monastery in India, Sela Pass at 13,700 ft, Madhuri Lake.",tags:["spiritual","nature"],best:"Apr-Jun · Sep-Oct",history:"Tawang Monastery is the largest in India, built in 1681. The 14th Dalai Lama was born here. Sela Pass at 13,700m is one of the highest mountain passes in the world."},
   ],
   "J&K / Ladakh":[
-    {name:"Srinagar",emoji:"🛶",desc:"Dal Lake houseboats, Mughal Shalimar gardens, Shankaracharya Hill.",tags:["nature","heritage"]},
-    {name:"Leh",emoji:"🏔️",desc:"High altitude desert, Pangong Tso, Khardung La pass, monasteries.",tags:["nature","spiritual"]},
-    {name:"Gulmarg",emoji:"⛷️",desc:"Asia's highest gondola, premier skiing, Alpather Lake, wildflower meadows.",tags:["hill","nature"]},
-    {name:"Pahalgam",emoji:"🌲",desc:"Valley of Shepherds, Betaab Valley, Aru meadows, Amarnath base.",tags:["nature","spiritual"]},
-    {name:"Nubra Valley",emoji:"🐪",desc:"Double-humped Bactrian camels, Diskit Monastery, sand dunes at altitude.",tags:["nature","spiritual"]},
+    {name:"Srinagar",emoji:"🛶",state:"Kashmir",desc:"Dal Lake houseboats, Mughal Shalimar gardens, Shankaracharya Hill.",tags:["nature","heritage"],best:"Apr-Oct",history:"The capital of Kashmir, Srinagar's Dal Lake houseboats are a UNESCO experience. Mughal gardens (built in 1600s) showcase intricate Persian architecture."},
+    {name:"Leh",emoji:"🏔️",state:"Ladakh",desc:"High altitude desert, Pangong Tso, Khardung La pass, monasteries.",tags:["nature","spiritual"],best:"Jul-Sep",history:"Leh sits at 3,500m in the high-altitude Ladakh region. The Pangong Tso lake (130 km long) is the world's highest saltwater lake. Ancient Buddhist monasteries dot the landscape."},
+    {name:"Gulmarg",emoji:"⛷️",state:"Kashmir",desc:"Asia's highest gondola, premier skiing, Alpather Lake, wildflower meadows.",tags:["hill","nature"],best:"Dec-Mar (skiing) · Jul-Sep (flowers)",history:"At 3,750m, Gulmarg is Asia's premier ski destination. In summer, alpine meadows burst with wildflowers. The Gulmarg Gondola is one of the world's highest cable cars."},
+    {name:"Pahalgam",emoji:"🌲",state:"Kashmir",desc:"Valley of Shepherds, Betaab Valley, Aru meadows, Amarnath base.",tags:["nature","spiritual"],best:"Apr-Oct",history:"Pahalgam is a scenic pastoral valley at 2,740m. It serves as the base for the annual Amarnath Yatra pilgrimage to the ice Shiva lingam at 3,888m."},
+    {name:"Nubra Valley",emoji:"🐪",state:"Ladakh",desc:"Double-humped Bactrian camels, Diskit Monastery, sand dunes at altitude.",tags:["nature","spiritual"],best:"Jul-Sep",history:"Nubra Valley, north of Leh, is famous for double-humped Bactrian camels. Diskit Monastery overlooks the valley with Shyok River below. Sand dunes exist at 3,000m altitude."},
   ],
   "Madhya Pradesh":[
-    {name:"Khajuraho",emoji:"🏛️",desc:"UNESCO erotic temple sculptures, Chandela dynasty masterpieces.",tags:["heritage"]},
-    {name:"Bandhavgarh",emoji:"🐯",desc:"Highest tiger density in India, Bandhavgarh Fort, sloth bears.",tags:["nature"]},
-    {name:"Orchha",emoji:"🕌",desc:"Bundelkhand heritage, Ram Raja Temple, riverside cenotaphs.",tags:["heritage","spiritual"]},
-    {name:"Pachmarhi",emoji:"🌿",desc:"Only hill station of Madhya Pradesh, Bee Falls, Pandav Caves.",tags:["hill","nature"]},
+    {name:"Khajuraho",emoji:"🏛️",state:"Madhya Pradesh",desc:"UNESCO erotic temple sculptures, Chandela dynasty masterpieces.",tags:["heritage"],best:"Oct-Mar",history:"Built in the 10th century by the Chandela dynasty, Khajuraho's 25 temples are UNESCO World Heritage sites. Known for intricate stone carvings depicting various aspects of life."},
+    {name:"Bandhavgarh",emoji:"🐯",state:"Madhya Pradesh",desc:"Highest tiger density in India, Bandhavgarh Fort, sloth bears.",tags:["nature"],best:"Nov-Jun",history:"Bandhavgarh National Park has the highest tiger density in India. The 2,000-year-old Bandhavgarh Fort overlooks the park. Safari drives offer excellent wildlife viewing."},
+    {name:"Orchha",emoji:"🕌",state:"Madhya Pradesh",desc:"Bundelkhand heritage, Ram Raja Temple, riverside cenotaphs.",tags:["heritage","spiritual"],best:"Oct-Mar",history:"Orchha's ancient forts and temples reflect Bundelkhand dynasty architecture. The Ram Raja Temple and riverside cenotaphs are exquisite examples of medieval Indian architecture."},
+    {name:"Pachmarhi",emoji:"🌿",state:"Madhya Pradesh",desc:"Only hill station of Madhya Pradesh, Bee Falls, Pandav Caves.",tags:["hill","nature"],best:"Oct-Mar",history:"Pachmarhi (1,067m) is the highest hill station in Central India. Bee Falls, Pandav Caves, and dense forests make it a nature lover's retreat."},
   ],
 };
 
@@ -607,9 +645,9 @@ let activeState='All States';
 let searchTerms=[];
 
 function buildSearchTerms(){
-  const destinationTerms=destinations.map(d=>d.name);
-  const indiaTerms=allIndia.map(p=>p.name);
-  searchTerms=[...new Set([...destinationTerms,...indiaTerms])].sort((a,b)=>a.localeCompare(b));
+  const destinationTerms=destinations.map(d=>({name:d.name,type:'destination',country:d.country,continent:d.continent}));
+  const indiaTerms=allIndia.map(p=>({name:p.name,type:'india',state:p.state,tags:p.tags}));
+  searchTerms=[...destinationTerms,...indiaTerms].sort((a,b)=>a.name.localeCompare(b.name));
 }
 
 function handleSearchInput(){
@@ -625,12 +663,19 @@ function renderSearchSuggestions(){
     container.innerHTML='';
     return;
   }
-  const matches=searchTerms.filter(term=>term.toLowerCase().includes(query)).slice(0,8);
+  const matches=searchTerms.filter(term=>term.name.toLowerCase().includes(query)).slice(0,12);
   if(!matches.length){
-    container.innerHTML='<div class="suggestion-empty">No matching city found. Try another place.</div>';
+    container.innerHTML='<div class="suggestion-empty">🌍 No destination found. Try: Paris, Bali, Agra, Jaipur, Kerala, Ladakh...</div>';
     return;
   }
-  container.innerHTML=matches.map(term=>`<div class="suggestion-item" onclick="selectSuggestion('${term.replace(/'/g,"\\'")}')"><strong>${term}</strong></div>`).join('');
+  container.innerHTML=matches.map(term=>`
+    <div class="suggestion-item" onclick="selectSuggestion('${term.name.replace(/'/g,"\\'")}')">
+      <strong>${term.name}</strong>
+      <span style="color:var(--muted);font-size:11px;margin-left:8px">
+        ${term.type==='destination' ? `🌐 ${term.country}` : `🇮🇳 ${term.state || 'India'}`}
+      </span>
+    </div>
+  `).join('');
 }
 
 function selectSuggestion(value){
@@ -669,7 +714,12 @@ function animCounter(el,target,sfx=''){
 }
 
 function buildImageUrl(query,index){
-  return `https://source.unsplash.com/640x420/?${encodeURIComponent(query)}&sig=${index}`;
+  const sources=[
+    `https://source.unsplash.com/640x420/?${encodeURIComponent(query)}&sig=${index}`,
+    `https://picsum.photos/640/420?random=${index}`,
+    `https://images.unsplash.com/photo-${1550000000000+index*10000}?w=640&h=420&fit=crop`
+  ];
+  return sources[0];
 }
 
 function formatLocalTime(zone){
@@ -788,38 +838,49 @@ function openIndiaModal(place,state){
   document.getElementById('modalTitle').textContent=place.name;
   document.getElementById('modalCountry').textContent=`${place.name}, ${state}, India`;
   document.getElementById('infoGrid').innerHTML=`
-    <div class="info-box"><label>Location</label><strong>${place.name}, ${state}</strong></div>
-    <div class="info-box"><label>Region</label><strong>${state}</strong></div>
-    <div class="info-box"><label>Category</label><strong>${(place.tags||[]).join(', ') || 'Travel'}</strong></div>
-    <div class="info-box"><label>Local Time</label><strong id="modalLocalTime">${formatLocalTime('Asia/Kolkata')}</strong></div>
-    <div class="info-box"><label>Best Time</label><strong>${place.best||'Oct–Mar'}</strong></div>`;
+    <div class="info-box"><label>📍 Location</label><strong>${place.name}, ${state}</strong></div>
+    <div class="info-box"><label>🗓️ Best Time to Visit</label><strong>${place.best||'Oct–Mar (generally)'}</strong></div>
+    <div class="info-box"><label>🏷️ Category</label><strong>${(place.tags||[]).map(t=>t.charAt(0).toUpperCase()+t.slice(1)).join(', ') || 'Travel Destination'}</strong></div>
+    <div class="info-box"><label>⏰ Local Time</label><strong id="modalLocalTime">${formatLocalTime('Asia/Kolkata')}</strong></div>
+    <div class="info-box"><label>🇮🇳 State</label><strong>${state}</strong></div>
+    <div class="info-box"><label>💰 Currency</label><strong>INR (₹)</strong></div>`;
   updateModalLocalTime('Asia/Kolkata');
   clearInterval(modalTimeInterval);
   modalTimeInterval=setInterval(()=>updateModalLocalTime('Asia/Kolkata'),30000);
   document.getElementById('modalDesc').innerHTML=`
-    <p style="margin-bottom:16px;font-size:15px;color:var(--text)">${place.desc}</p>
-    <p style="margin-bottom:10px"><strong style="color:var(--gold)">📍 Location:</strong> ${place.name}, ${state}, India</p>
-    <p style="margin-bottom:10px"><strong style="color:#FF6B9D">📚 History:</strong> ${historyText}</p>
-    <p><strong style="color:var(--teal)">🧭 Travel vibe:</strong> ${place.tags?.map(t=>t.replace(/\b\w/g,m=>m.toUpperCase())).join(', ') || 'Rich culture and memorable experiences.'}</p>
-    <div class="gallery-section">
+    <p style="margin-bottom:16px;font-size:15px;color:var(--text);line-height:1.8"><strong style="color:var(--gold)">✨ About ${place.name}:</strong></p>
+    <p style="margin-bottom:16px;font-size:14px;color:var(--muted);line-height:1.8">${place.desc}</p>
+    <p style="margin-bottom:16px;font-size:14px;color:var(--muted);line-height:1.8"><strong style="color:var(--teal)">📚 History & Culture:</strong><br>${historyText}</p>
+    ${place.tags && place.tags.length > 0 ? `<p style="margin-bottom:16px"><strong style="color:var(--accent)">🏷️ Experience Tags:</strong> ${place.tags.map(t=>`<span style="background:rgba(201,168,76,.15);color:var(--gold);padding:5px 12px;border-radius:8px;font-size:12px;margin-right:6px;display:inline-block;margin-bottom:6px">${t.charAt(0).toUpperCase()+t.slice(1)}</span>`).join('')}</p>` : ''}
+    <div class="gallery-section" style="margin-top:24px">
       <div class="gallery-title">📸 20+ Photos of ${place.name}</div>
       <div class="gallery-grid" id="modalGallery"></div>
-      <p style="font-size:12px;color:var(--muted);margin-top:12px">Explore the place through images of landscapes, culture, temples, and experiences.</p>
+      <p style="font-size:12px;color:var(--muted);margin-top:12px">🖼️ Click any photo to expand. All images are curated for authentic travel experiences.</p>
     </div>`;
-  renderGallery(`${place.name} ${state} India`);
-  document.getElementById('modalHistory').innerHTML=`<p style="margin-bottom:16px;font-size:15px;color:var(--text);font-family:'Playfair Display',serif;font-style:italic">Deep Dive into ${place.name}</p>${historyText}`;
+  renderGallery(`${place.name} ${state} travel`);
+  document.getElementById('modalHistory').innerHTML=`<p style="margin-bottom:16px;font-size:15px;color:var(--text);font-family:'Playfair Display',serif;font-style:italic">📖 The Story of ${place.name}</p><p style="font-size:14px;color:var(--muted);line-height:1.8">${historyText}</p>`;
   document.getElementById('modalPlan').innerHTML=`
     <div style="background:var(--surface2);border-radius:14px;padding:20px;margin-bottom:16px">
       <p style="font-size:14px;color:var(--gold);font-weight:600;margin-bottom:8px">✈️ Getting There</p>
-      <p style="font-size:13px;color:var(--muted);line-height:1.7">Book trains, flights, or road trips to ${place.name}. For state hubs, use the nearest major city as your base and travel locally by taxi, bus or car.</p>
+      <p style="font-size:13px;color:var(--muted);line-height:1.7">Book trains, flights, or road trips to ${place.name}. For regional hubs, use the nearest major city as your base and travel locally by taxi, bus, or car rental. Indian Railways and IRCTC offer affordable train bookings.</p>
     </div>
     <div style="background:var(--surface2);border-radius:14px;padding:20px;margin-bottom:16px">
-      <p style="font-size:14px;color:var(--gold);font-weight:600;margin-bottom:8px">🗺️ Nearby Highlights</p>
-      <p style="font-size:13px;color:var(--muted);line-height:1.7">Enjoy local temples, forts, hill views, markets, and cultural experiences. Ask the AI guide for nearby must-see spots after opening the modal.</p>
+      <p style="font-size:14px;color:var(--gold);font-weight:600;margin-bottom:8px">🗺️ What to Do</p>
+      <p style="font-size:13px;color:var(--muted);line-height:1.7">Explore local temples, forts, nature trails, and cultural sites. Taste local cuisine at street vendors and restaurants. Hire local guides for deeper insights into history and culture. Best time: ${place.best||'October to March'}.</p>
+    </div>
+    <div style="background:var(--surface2);border-radius:14px;padding:20px;margin-bottom:16px">
+      <p style="font-size:14px;color:var(--gold);font-weight:600;margin-bottom:8px">🏨 Accommodation</p>
+      <p style="font-size:13px;color:var(--muted);line-height:1.7">Options range from budget hostels (₹300-800/night) to mid-range hotels (₹1,500-4,000) to luxury resorts. Book in advance during peak season (Oct-Mar). Local homestays offer authentic experiences.</p>
     </div>
     <div style="background:var(--surface2);border-radius:14px;padding:20px">
-      <p style="font-size:14px;color:var(--gold);font-weight:600;margin-bottom:8px">📋 Quick Facts</p>
-      <p style="font-size:13px;color:var(--muted)">🗣️ Language: Hindi / English &nbsp;|&nbsp; 💰 Currency: INR &nbsp;|&nbsp; 💼 Best season: ${place.best||'Oct–Mar'}</p>
+      <p style="font-size:14px;color:var(--gold);font-weight:600;margin-bottom:12px">💡 Travel Tips</p>
+      <ul style="list-style:none;padding:0;font-size:13px;color:var(--muted);line-height:1.8">
+        <li style="margin-bottom:8px">✓ Carry cash—not all places accept cards</li>
+        <li style="margin-bottom:8px">✓ Learn basic Hindi phrases—locals appreciate the effort</li>
+        <li style="margin-bottom:8px">✓ Respect local customs and dress appropriately at religious sites</li>
+        <li style="margin-bottom:8px">✓ Try street food from busy, clean stalls</li>
+        <li>✓ Ask our AI guide for specific recommendations!</li>
+      </ul>
     </div>`;
   document.querySelectorAll('.m-tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
@@ -992,18 +1053,36 @@ function addMsg(text,role){
 
 function renderGallery(query){
   const container=document.getElementById('modalGallery');
-  if(!container) return;
+  if(!container) {
+    console.warn('Gallery container not found');
+    return;
+  }
   container.innerHTML='';
-  for(let i=1;i<=24;i++){
+  for(let i=1;i<=30;i++){
     const item=document.createElement('div');
     item.className='gallery-item';
+    item.style.cursor='pointer';
     const img=document.createElement('img');
     const src=buildImageUrl(query, i);
     img.src=src;
     img.alt=`${query} photo ${i}`;
-    img.loading='lazy';
-    img.onclick=()=>openLightbox(src);
-    item.onclick=()=>openLightbox(src);
+    img.loading='eager';
+    img.decoding='async';
+    img.style.width='100%';
+    img.style.height='100%';
+    img.style.objectFit='cover';
+    img.style.display='block';
+    img.style.cursor='pointer';
+    // Create click handler with proper closure
+    const clickHandler = (function(imageSrc) {
+      return function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openLightbox(imageSrc);
+      };
+    })(src);
+    img.addEventListener('click', clickHandler);
+    item.addEventListener('click', () => openLightbox(src));
     item.appendChild(img);
     container.appendChild(item);
   }
@@ -1012,22 +1091,35 @@ function renderGallery(query){
 function openLightbox(src){
   let overlay=document.getElementById('lightboxOverlay');
   let img=document.getElementById('lightboxImage');
+  
+  // Create lightbox if it doesn't exist
   if(!overlay || !img){
     const lightbox=createLightboxOverlay();
     overlay=lightbox.overlay;
     img=lightbox.img;
   }
+  
+  // Set the image source
   img.src=src;
+  
+  // Show the overlay
   overlay.style.display='flex';
   overlay.classList.add('open');
+  
+  // Prevent body scroll when lightbox is open
+  document.body.style.overflow='hidden';
 }
 
 function closeLightbox(){
   const overlay=document.getElementById('lightboxOverlay');
   const img=document.getElementById('lightboxImage');
-  if(overlay) overlay.style.display='none';
-  if(overlay) overlay.classList.remove('open');
+  if(overlay) {
+    overlay.style.display='none';
+    overlay.classList.remove('open');
+  }
   if(img) img.src='';
+  // Restore body scroll
+  document.body.style.overflow='auto';
 }
 
 function createLightboxOverlay(){
@@ -1065,7 +1157,17 @@ function observeReveal(){
   document.querySelectorAll('.reveal:not(.visible)').forEach(el=>obs.observe(el));
 }
 
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModalDirect();});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    const lightbox=document.getElementById('lightboxOverlay');
+    // Close lightbox first if it's open, otherwise close modal
+    if(lightbox && lightbox.style.display==='flex'){
+      closeLightbox();
+    } else {
+      closeModalDirect();
+    }
+  }
+});
 
 window.onload=()=>{
   createStars();
