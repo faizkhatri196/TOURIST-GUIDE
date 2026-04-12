@@ -123,6 +123,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 40px;display:f
 .info-box strong{font-size:15px;color:var(--text)}
 .history-text{font-size:14px;color:var(--muted);line-height:1.8}
 
+.fav-btn{position:absolute;top:16px;left:16px;background:rgba(10,10,15,.7);backdrop-filter:blur(8px);border:1px solid rgba(240,237,230,.2);color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:all .2s;font-size:14px}
+.fav-btn:hover{transform:scale(1.1);background:rgba(10,10,15,.9)}
+.fav-btn.active{color:#FF6B9D;border-color:#FF6B9D;background:rgba(255,107,157,.15)}
+
 .india-section{background:linear-gradient(135deg,rgba(255,153,51,.04),rgba(19,136,8,.04));border-top:1px solid rgba(255,153,51,.1);border-bottom:1px solid rgba(19,136,8,.1)}
 .india-header{display:flex;align-items:flex-start;gap:24px;margin-bottom:48px;flex-wrap:wrap}
 .india-flag{font-size:48px}
@@ -295,6 +299,7 @@ footer{background:var(--surface);border-top:1px solid rgba(240,237,230,.06);padd
     <div class="search-suggestions" id="searchSuggestions"></div>
     <div class="filter-chips" id="filterChips">
       <div class="chip active" onclick="setFilter('all',this)">All</div>
+      <div class="chip" onclick="setFilter('favorites',this)">❤️ Favorites</div>
       <div class="chip" onclick="setFilter('asia',this)">Asia</div>
       <div class="chip" onclick="setFilter('europe',this)">Europe</div>
       <div class="chip" onclick="setFilter('americas',this)">Americas</div>
@@ -619,6 +624,24 @@ function handleSearchInput(){
   renderSearchSuggestions();
 }
 
+function getFavs() { return JSON.parse(localStorage.getItem('wander_favs') || '[]'); }
+function toggleFav(e, name) {
+  e.stopPropagation();
+  let favs = getFavs();
+  const btn = e.currentTarget;
+  if(favs.includes(name)) {
+    favs = favs.filter(n => n !== name);
+    btn.classList.remove('active');
+    btn.innerHTML = '🤍';
+  } else {
+    favs.push(name);
+    btn.classList.add('active');
+    btn.innerHTML = '❤️';
+  }
+  localStorage.setItem('wander_favs', JSON.stringify(favs));
+  if(activeFilter === 'favorites') filterAll();
+}
+
 function renderSearchSuggestions(){
   const input=document.getElementById('searchInput');
   const query=input.value.trim().toLowerCase();
@@ -716,14 +739,17 @@ function renderDest(data){
   const g=document.getElementById('destGrid');
   if(!data.length){g.innerHTML='<p style="color:var(--muted);padding:40px;grid-column:1/-1;text-align:center">No destinations found. Try a different search!</p>';return;}
   g.innerHTML='';
+  const favs = getFavs();
   data.forEach((d, i)=>{
     const imageUrl=buildImageUrl(d.name, d.id);
     const el=document.createElement('div');
     el.className='dest-card reveal visible';
     el.style.animation=`staggerIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards`;
     el.style.animationDelay=`${i * 0.05}s`;
+    const isFav = favs.includes(d.name);
     el.innerHTML=`
       <div class="dest-img" style="background-image:url('${imageUrl}')">
+        <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(event, '${d.name.replace(/'/g, "\\'")}')">${isFav ? '❤️' : '🤍'}</button>
         <span style="position:relative;z-index:1">${d.emoji}</span>
         <div class="dest-badge">${d.badge}</div>
       </div>
@@ -750,13 +776,16 @@ function renderDest(data){
 function filterAll(){
   const q=document.getElementById('searchInput').value.toLowerCase();
   
+  const favs = getFavs();
   let data=destinations;
-  if(activeFilter!=='all') data=data.filter(d=>d.continent===activeFilter||d.tags.includes(activeFilter));
+  if(activeFilter==='favorites') data=data.filter(d=>favs.includes(d.name));
+  else if(activeFilter!=='all') data=data.filter(d=>d.continent===activeFilter||d.tags.includes(activeFilter));
   if(q) data=data.filter(d=>d.name.toLowerCase().includes(q)||d.country.toLowerCase().includes(q)||d.continent.toLowerCase().includes(q)||d.desc.toLowerCase().includes(q));
   renderDest(data);
   
   let indData=indiaData[activeState]||[];
-  if(activeFilter!=='all') indData=indData.filter(d=>d.tags&&d.tags.includes(activeFilter));
+  if(activeFilter==='favorites') indData=allIndia.filter(d=>favs.includes(d.name));
+  else if(activeFilter!=='all') indData=indData.filter(d=>d.tags&&d.tags.includes(activeFilter));
   if(q) indData=indData.filter(d=>d.name.toLowerCase().includes(q)||d.desc.toLowerCase().includes(q)||(d.state||activeState).toLowerCase().includes(q));
   renderIndia(indData);
 }
@@ -1023,14 +1052,17 @@ function renderIndia(dataOverride){
   const places=dataOverride || indiaData[activeState]||[];
   if(!places.length){g.innerHTML='<p style="color:var(--muted);padding:40px;grid-column:1/-1;text-align:center">No places found in this region.</p>';return;}
   const tc={heritage:'t-heritage',nature:'t-nature',spiritual:'t-spiritual',beach:'t-beach',hill:'t-hill',fort:'t-fort'};
+  const favs = getFavs();
   places.forEach((p, i)=>{
     const imgUrl=buildImageUrl(`${p.name} ${p.state||activeState} India`, i + 100);
     const el=document.createElement('div');
     el.className='india-card reveal visible';
     el.style.animation=`staggerIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards`;
     el.style.animationDelay=`${i * 0.05}s`;
+    const isFav = favs.includes(p.name);
     el.innerHTML=`
       <div class="india-card-img" style="background-image:url('${imgUrl}');background-size:cover;background-position:center;position:relative">
+        <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(event, '${p.name.replace(/'/g, "\\'")}')">${isFav ? '❤️' : '🤍'}</button>
         <div style="position:absolute;inset:0;background:rgba(0,0,0,0.5)"></div>
         <span style="position:relative;z-index:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5))">${p.emoji}</span>
       </div>
