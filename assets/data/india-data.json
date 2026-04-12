@@ -1,0 +1,11 @@
+{
+  "Rajasthan": [
+    {"name":"Jaipur","emoji":"🏰","state":"Rajasthan","desc":"Pink City — Amber Fort, Hawa Mahal, palaces, and vibrant bazaars.","tags":["heritage","fort"],"best":"Oct–Mar","history":"Founded in 1727 by Maharaja Sawai Jai Singh II, Jaipur is the world's first planned city with a grid layout."},
+    {"name":"Jodhpur","emoji":"🔵","state":"Rajasthan","desc":"Blue City — Mehrangarh Fort, Jaswant Thada, golden desert sunsets.","tags":["heritage","fort"],"best":"Oct–Mar","history":"In the heart of the Thar Desert, Jodhpur's iconic blue-painted houses and imposing fort define the landscape."}
+  ],
+  "Kerala": [
+    {"name":"Munnar","emoji":"🍃","state":"Kerala","desc":"Rolling tea estates, misty Nilgiri hills, scenic Eravikulam National Park.","tags":["nature","hill"],"best":"Oct–May","history":"Munnar sits at 1,600m elevation and is India's largest tea-growing region."},
+    {"name":"Alleppey","emoji":"🚤","state":"Kerala","desc":"Backwaters capital — houseboat stays on Kerala's famous canals.","tags":["nature","beach"],"best":"Nov–Feb","history":"Alleppey has 1,500 km of interconnected waterways attracting tourists for houseboat cruises."}
+  ],
+  "All States": []
+}

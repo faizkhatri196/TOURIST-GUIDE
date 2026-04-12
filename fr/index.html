@@ -3,130 +3,279 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WanderWorld — Choose Your Language</title>
+<title>WanderWorld — Global Travel Guide</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-:root{--gold:#C9A84C;--gold-light:#E8C97A;--deep:#0A0A0F;--surface:#12121A;--surface2:#1A1A26;--surface3:#22223A;--text:#F0EDE6;--muted:#9994AA;--accent:#FF6B4A;--teal:#2DCBBC}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--deep);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;min-height:100vh;display:flex;flex-direction:column}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--surface)}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
-
-nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(10,10,15,.95),transparent);backdrop-filter:blur(10px)}
-.logo{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold);letter-spacing:1px}
-.logo span{color:var(--text)}
-
-.hero{flex:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:100px 40px 60px}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(201,168,76,.08),transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(45,203,188,.06),transparent 50%),radial-gradient(ellipse at 60% 80%,rgba(255,107,74,.05),transparent 50%);overflow:hidden}
-.stars{position:absolute;inset:0;overflow:hidden}
-.star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:twinkle var(--d,3s) var(--delay,0s) infinite}
-@keyframes twinkle{0%,100%{opacity:.2}50%{opacity:1}}
-.hero-content{text-align:center;max-width:900px;position:relative;z-index:1;animation:fadeUp .8s .4s both}
-.hero-tag{display:inline-block;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:var(--gold);font-size:11px;font-weight:600;letter-spacing:3px;padding:6px 20px;border-radius:20px;margin-bottom:32px}
-.hero h1{font-family:'Playfair Display',serif;font-size:clamp(48px,8vw,96px);line-height:1.0;margin-bottom:24px}
-.hero h1 em{color:var(--gold);font-style:normal}
-.hero p{font-size:18px;color:var(--muted);max-width:560px;margin:0 auto 48px;line-height:1.7}
-
-.lang-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;max-width:1000px;margin:0 auto;animation:fadeUp .8s .6s both}
-.lang-card{background:var(--surface);border:1px solid rgba(240,237,230,.06);border-radius:24px;padding:32px;text-align:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
-.lang-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--gold),var(--accent));transform:scaleX(0);transform-origin:center;transition:transform .3s}
-.lang-card:hover{transform:translateY(-8px);border-color:rgba(201,168,76,.3);box-shadow:0 24px 60px rgba(0,0,0,.4)}
-.lang-card:hover::before{transform:scaleX(1)}
-.lang-emoji{font-size:56px;margin-bottom:16px;display:block}
-.lang-name{font-family:'Playfair Display',serif;font-size:24px;margin-bottom:8px;color:var(--text)}
-.lang-native{font-size:12px;color:var(--muted);margin-bottom:16px;font-weight:500}
-.lang-btn{background:var(--gold);color:var(--deep);padding:10px 24px;border-radius:20px;font-weight:700;font-size:13px;border:none;cursor:pointer;transition:all .2s;display:inline-block;text-decoration:none}
-.lang-btn:hover{background:var(--gold-light);transform:translateY(-2px)}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-
-footer{background:var(--surface);border-top:1px solid rgba(240,237,230,.06);padding:32px 40px;text-align:center;color:var(--muted);font-size:12px;margin-top:auto}
-
-@media(max-width:900px){
-  nav{padding:16px 20px}
-  .hero{padding:100px 20px 60px}
-  .lang-grid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;padding:0 20px}
-}
-</style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="../assets/css/main.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 
 <nav>
   <div class="logo">Wander<span>World</span></div>
+  <ul class="nav-links">
+    <li><a href="#destinations">Destinations</a></li>
+    <li><a href="#india">🇮🇳 India</a></li>
+    <li><a href="#travellers">Travel Types</a></li>
+    <li><a href="#" onclick="openChat();return false">AI Guide</a></li>
+  </ul>
+  <button class="nav-cta" onclick="openChat()">Chat with AI Guide</button>
 </nav>
 
-<section class="hero">
+<section class="hero" id="home">
   <div class="hero-bg">
-    <div class="stars" id="stars"></div>
+    <div class="moving-transport plane">✈️</div>
+    <div class="moving-transport bus">🚌</div>
+    <div class="moving-transport train">🚂</div>
   </div>
+  <div class="stars" id="stars"></div>
   <div class="hero-content">
-    <div class="hero-tag">✦ SELECT YOUR LANGUAGE</div>
-    <h1>Welcome to <em>WanderWorld</em></h1>
-    <p>Choose your language below to explore incredible destinations across the globe.</p>
-    
-    <div class="lang-grid">
-      <div class="lang-card">
-        <span class="lang-emoji">🇬🇧</span>
-        <div class="lang-name">English</div>
-        <div class="lang-native">English</div>
-        <a href="en/index.html" class="lang-btn">Start Exploring</a>
-      </div>
-      
-      <div class="lang-card">
-        <span class="lang-emoji">🇫🇷</span>
-        <div class="lang-name">Français</div>
-        <div class="lang-native">French</div>
-        <a href="fr/index.html" class="lang-btn">Commencez</a>
-      </div>
-      
-      <div class="lang-card">
-        <span class="lang-emoji">🇪🇸</span>
-        <div class="lang-name">Español</div>
-        <div class="lang-native">Spanish</div>
-        <a href="es/index.html" class="lang-btn">Explorar</a>
-      </div>
-      
-      <div class="lang-card">
-        <span class="lang-emoji">🇩🇪</span>
-        <div class="lang-name">Deutsch</div>
-        <div class="lang-native">German</div>
-        <a href="de/index.html" class="lang-btn">Erkunden</a>
-      </div>
-      
-      <div class="lang-card">
-        <span class="lang-emoji">🇨🇳</span>
-        <div class="lang-name">中文</div>
-        <div class="lang-native">Chinese</div>
-        <a href="zh/index.html" class="lang-btn">开始</a>
-      </div>
-      
-      <div class="lang-card">
-        <span class="lang-emoji">🇯🇵</span>
-        <div class="lang-name">日本語</div>
-        <div class="lang-native">Japanese</div>
-        <a href="ja/index.html" class="lang-btn">探索する</a>
-      </div>
+    <div class="hero-tag">✦ YOUR WORLD TRAVEL COMPANION</div>
+    <h1>Discover Every<br><span class="line2">Corner of Earth</span></h1>
+    <p>Explore 500+ destinations worldwide — rich history, best season, live local time, and personalised timezone-aware travel tips.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="document.getElementById('destinations').scrollIntoView({behavior:'smooth'})">Explore Destinations</button>
+      <a href="#india" class="btn-outline">🇮🇳 India Special Section</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-num" id="c1">0</div><div class="stat-label">Destinations</div></div>
+      <div class="stat-item"><div class="stat-num" id="c2">0</div><div class="stat-label">Countries</div></div>
+      <div class="stat-item"><div class="stat-num" id="c3">0</div><div class="stat-label">India Places</div></div>
+      <div class="stat-item"><div class="stat-num" id="c4">0</div><div class="stat-label">Travellers Helped</div></div>
+    </div>
+  </div>
+  <div class="float-cards">
+    <div class="float-card">
+      <div class="fc-top"><div class="fc-dot"></div><div class="fc-label">LIVE AI GUIDE</div></div>
+      <div class="fc-val">Paris, France</div>
+      <div class="fc-sub">☀️ Ask about weather & tips</div>
+    </div>
+    <div class="float-card">
+      <div class="fc-top"><div class="fc-dot" style="background:#FF6B4A"></div><div class="fc-label">TRENDING NOW</div></div>
+      <div class="fc-val">Ladakh, India</div>
+      <div class="fc-sub">🏔️ Best season: Jun–Sep</div>
+    </div>
+    <div class="float-card">
+      <div class="fc-top"><div class="fc-dot" style="background:#C9A84C"></div><div class="fc-label">AI CHATBOT</div></div>
+      <div class="fc-val">Ask me anything!</div>
+      <div class="fc-sub">💬 Weather · Tips · History</div>
     </div>
   </div>
 </section>
 
+<div class="search-section">
+  <div class="search-wrap reveal">
+    <div class="search-row">
+      <input class="search-input" id="searchInput" placeholder="🔍  Search destinations, countries, continents..." oninput="handleSearchInput()" autocomplete="off">
+      <button class="search-btn" onclick="filterAll();return false">Search</button>
+    </div>
+    <div class="search-suggestions" id="searchSuggestions"></div>
+    <div class="filter-chips" id="filterChips">
+      <div class="chip active" onclick="setFilter('all',this)">All</div>
+      <div class="chip" onclick="setFilter('favorites',this)">❤️ Favorites</div>
+      <div class="chip" onclick="setFilter('asia',this)">Asia</div>
+      <div class="chip" onclick="setFilter('europe',this)">Europe</div>
+      <div class="chip" onclick="setFilter('americas',this)">Americas</div>
+      <div class="chip" onclick="setFilter('africa',this)">Africa</div>
+      <div class="chip" onclick="setFilter('oceania',this)">Oceania</div>
+      <div class="chip" onclick="setFilter('solo',this)">🎒 Solo</div>
+      <div class="chip" onclick="setFilter('couple',this)">💑 Couple</div>
+      <div class="chip" onclick="setFilter('family',this)">👨‍👩‍👧 Family</div>
+    </div>
+  </div>
+</div>
+
+<section class="section" id="destinations">
+  <div class="section-header reveal">
+    <div class="section-tag">✦ WORLD DESTINATIONS</div>
+    <h2 class="section-title">Places That Will<br>Change You Forever</h2>
+    <p class="section-sub">Handpicked destinations with rich history, best season, and personalised travel tips.</p>
+  </div>
+  <div class="dest-grid" id="destGrid"></div>
+</section>
+
+<section class="traveller-section" id="travellers">
+  <div style="text-align:center;margin-bottom:48px" class="reveal">
+    <div class="section-tag" style="display:inline-block">✦ TRAVEL YOUR WAY</div>
+    <h2 class="section-title">Every Journey is Unique</h2>
+    <p class="section-sub" style="margin:0 auto;text-align:center;max-width:480px">Whether you're solo, with your partner, or with the whole family — we have guides tailored for you.</p>
+  </div>
+  <div class="traveller-grid">
+    <div class="trav-card solo reveal">
+      <div class="trav-icon">🎒</div>
+      <div class="trav-name">Solo Travel</div>
+      <p class="trav-desc">Full freedom, flexible plans, and self-discovery at every step.</p>
+      <ul class="trav-tips">
+        <li>Stay in hostels to meet fellow travellers</li>
+        <li>Use travel apps for safety tracking</li>
+        <li>Join group tours at popular sights</li>
+        <li>Keep emergency contacts accessible</li>
+        <li>Travel light — one bag is freedom</li>
+      </ul>
+    </div>
+    <div class="trav-card couple reveal">
+      <div class="trav-icon">💑</div>
+      <div class="trav-name">Couple Travel</div>
+      <p class="trav-desc">Create unforgettable memories together with romantic escapes and shared adventures.</p>
+      <ul class="trav-tips">
+        <li>Book private accommodations for intimacy</li>
+        <li>Plan at least one surprise activity</li>
+        <li>Balance adventure with relaxation</li>
+        <li>Explore local restaurants at night</li>
+        <li>Capture golden hour moments together</li>
+      </ul>
+    </div>
+    <div class="trav-card family reveal">
+      <div class="trav-icon">👨‍👩‍👧‍👦</div>
+      <div class="trav-name">Family Travel</div>
+      <p class="trav-desc">Build lasting bonds through shared adventures that every age group enjoys.</p>
+      <ul class="trav-tips">
+        <li>Plan kid-friendly activities each day</li>
+        <li>Choose central, safe accommodation</li>
+        <li>Pack a travel first-aid kit always</li>
+        <li>Visit theme parks, zoos, nature parks</li>
+        <li>Keep snacks, water & games on hand</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section india-section" id="india">
+  <div class="india-header reveal">
+    <div class="india-flag">🇮🇳</div>
+    <div class="india-title-block">
+      <div class="section-tag">✦ INCREDIBLE INDIA</div>
+      <h2 class="section-title">All States · All Cities<br><em>All Wonders</em></h2>
+      <p class="section-sub">State-wise curated guide to every incredible corner of India.</p>
+    </div>
+  </div>
+  <div class="state-tabs" id="stateTabs"></div>
+  <div class="india-places" id="indiaGrid"></div>
+</section>
+
 <footer>
-  <p>© 2025 WanderWorld — Your intelligent global travel companion</p>
-  <p style="margin-top:8px;color:var(--gold)">✦ Available in 6 languages</p>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">Wander<span>World</span></div>
+      <p>Your intelligent global travel companion — combining curated destination guides with AI-powered insights.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="#destinations">World Destinations</a></li>
+        <li><a href="#india">India Special</a></li>
+        <li><a href="#travellers">Travel Types</a></li>
+        <li><a href="#" onclick="openChat();return false">AI Guide Chat</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Regions</h4>
+      <ul>
+        <li><a href="#">Asia Pacific</a></li>
+        <li><a href="#">Europe</a></li>
+        <li><a href="#">Americas</a></li>
+        <li><a href="#">Africa & Middle East</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>India</h4>
+      <ul>
+        <li><a href="#">North India</a></li>
+        <li><a href="#">South India</a></li>
+        <li><a href="#">East India</a></li>
+        <li><a href="#">Northeast India</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 WanderWorld — Crafted for explorers everywhere.</p>
+    <p style="color:var(--gold)">✦ Powered by AI · Live Weather · Real Stories</p>
+  </div>
 </footer>
 
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <div class="modal-hero" id="modalHero"></div>
+    <div class="modal-body">
+      <div id="modalTitle" style="font-family:'Playfair Display',serif;font-size:28px;margin-bottom:4px"></div>
+      <div id="modalCountry" style="font-size:13px;color:var(--muted);margin-bottom:20px"></div>
+      <div class="modal-tabs">
+        <button class="m-tab active" onclick="switchTab('overview',this)">Overview</button>
+        <button class="m-tab" onclick="switchTab('history',this)">History</button>
+        <button class="m-tab" onclick="switchTab('plan',this)">Plan Trip</button>
+      </div>
+      <div class="tab-content active" id="tab-overview">
+        <div id="mapView" style="height:220px; border-radius:16px; margin-bottom:24px; background:var(--surface2); overflow:hidden; display:flex; align-items:center; justify-content:center; border:1px solid rgba(201,168,76,.15); z-index:1"></div>
+        <div class="info-grid" id="infoGrid"></div>
+        <div id="modalDesc" style="font-size:14px;color:var(--muted);line-height:1.8"></div>
+      </div>
+      <div class="tab-content" id="tab-history">
+        <div class="history-text" id="modalHistory"></div>
+      </div>
+      <div class="tab-content" id="tab-plan">
+        <div id="modalPlan"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="chatbot-fab">
+  <div class="chat-window" id="chatWindow">
+    <div class="chat-header">
+      <div class="chat-header-top">
+        <div class="chat-avatar">🌍</div>
+        <div>
+          <div class="chat-name">WanderAI Guide</div>
+          <div class="chat-status">● Online — Powered by Local AI</div>
+        </div>
+      </div>
+      <div class="chat-subtitle">Ask about weather, history, best time & more!</div>
+    </div>
+    <div class="chat-msgs" id="chatMsgs">
+      <div class="msg bot">
+        <div class="msg-bubble">Namaste! 🙏✈️ I'm your WanderWorld guide. Ask me about any destination!</div>
+        <div class="msg-time">Just now</div>
+      </div>
+    </div>
+    <div class="chat-quick">
+      <button class="quick-btn" onclick="quickAsk('What is the weather like in Paris, France right now?')">🌤 Paris weather</button>
+      <button class="quick-btn" onclick="quickAsk('Best time to visit Rajasthan, India?')">📅 Rajasthan timing</button>
+      <button class="quick-btn" onclick="quickAsk('Top places for couples in Kerala?')">💑 Kerala couples</button>
+      <button class="quick-btn" onclick="quickAsk('Solo travel tips for India?')">🎒 Solo tips</button>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-input" id="chatInput" placeholder="Ask about any destination..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chat-send" onclick="sendChat()">➤</button>
+    </div>
+  </div>
+  <button class="chat-toggle" onclick="toggleChat()" id="chatToggle">🌍</button>
+</div>
+
+<!-- Load Core Application Logic -->
+<script src="../assets/js/core.js"></script>
+
+<!-- Load India Destinations Data (from separate file) -->
+<script src="../assets/data/india/data.js"></script>
+
+<!-- Initialize Application -->
 <script>
-// Generate stars in background
-const starsContainer = document.getElementById('stars');
-for (let i = 0; i < 50; i++) {
-  const star = document.createElement('div');
-  star.className = 'star';
-  star.style.setProperty('--d', Math.random() * 3 + 2 + 's');
-  star.style.setProperty('--delay', Math.random() * 3 + 's');
-  star.style.left = Math.random() * 100 + '%';
-  star.style.top = Math.random() * 100 + '%';
-  starsContainer.appendChild(star);
-}
+  // After India data is loaded from external file, initialize the application
+  window.addEventListener('DOMContentLoaded', function() {
+    buildSearchTerms();
+    renderDest(destinations);
+    renderStateTabs();
+    renderIndia();
+    observeReveal();
+    createStars();
+    
+    setTimeout(() => {
+      animCounter(document.getElementById('c1'), 500, '+');
+      animCounter(document.getElementById('c2'), 195, '+');
+      animCounter(document.getElementById('c3'), 300, '+');
+      animCounter(document.getElementById('c4'), 50, 'K+');
+    }, 1200);
+  });
 </script>
 
 </body>
