@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WanderWorld — Global Travel Guide</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root{--gold:#C9A84C;--gold-light:#E8C97A;--deep:#0A0A0F;--surface:#12121A;--surface2:#1A1A26;--surface3:#22223A;--text:#F0EDE6;--muted:#9994AA;--accent:#FF6B4A;--teal:#2DCBBC;--india:#FF9933;--india2:#138808}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -61,11 +63,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 40px;display:f
 .section-sub{font-size:16px;color:var(--muted);max-width:520px;line-height:1.7}
 .section-header{margin-bottom:56px}
 
+@keyframes staggerIn{from{opacity:0;transform:translateY(40px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
 .search-section{padding:0 40px 80px}
-.search-wrap{background:var(--surface);border:1px solid rgba(201,168,76,.2);border-radius:24px;padding:32px;max-width:900px;margin:0 auto}
+.search-wrap{background:var(--surface);border:1px solid rgba(201,168,76,.2);border-radius:24px;padding:32px;max-width:900px;margin:0 auto;transition:all .3s ease}
+.search-wrap:focus-within{border-color:rgba(201,168,76,.4);box-shadow:0 16px 50px rgba(0,0,0,.5);transform:translateY(-2px)}
 .search-row{display:flex;gap:12px;margin-bottom:20px}
-.search-input{flex:1;background:var(--surface2);border:1px solid rgba(240,237,230,.1);border-radius:12px;padding:14px 20px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;transition:border .2s}
-.search-input:focus{border-color:var(--gold)}
+.search-input{flex:1;background:var(--surface2);border:1px solid rgba(240,237,230,.1);border-radius:12px;padding:14px 20px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;transition:all .3s ease}
+.search-input:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(201,168,76,.15)}
 .search-input::placeholder{color:var(--muted)}
 .search-btn{background:var(--gold);color:var(--deep);border:none;border-radius:12px;padding:14px 28px;font-weight:700;cursor:pointer;font-size:14px;transition:all .2s}
 .search-btn:hover{background:var(--gold-light)}
@@ -107,7 +111,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 40px;display:f
 .modal-hero{height:280px;display:flex;align-items:center;justify-content:center;font-size:100px;position:relative;border-radius:20px 20px 0 0;overflow:hidden}
 .modal-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,var(--surface))}
 .modal-body{padding:32px}
-.modal-close{position:absolute;top:20px;right:20px;background:rgba(0,0,0,.5);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;z-index:10}
+.modal-close{position:absolute;top:20px;right:20px;background:rgba(0,0,0,.5);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;z-index:100}
 .modal-tabs{display:flex;gap:4px;background:var(--surface2);border-radius:12px;padding:4px;margin-bottom:24px}
 .m-tab{flex:1;padding:8px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:13px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
 .m-tab.active{background:var(--gold);color:var(--deep);font-weight:600}
@@ -118,22 +122,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 40px;display:f
 .info-box label{font-size:11px;color:var(--muted);display:block;margin-bottom:4px}
 .info-box strong{font-size:15px;color:var(--text)}
 .history-text{font-size:14px;color:var(--muted);line-height:1.8}
-
-.gallery-section{margin-top:24px;animation:fadeUp .6s ease}
-.gallery-title{font-size:15px;color:var(--gold);font-weight:600;letter-spacing:.1em;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;padding:8px}
-.gallery-item{border-radius:16px;overflow:hidden;background:linear-gradient(135deg,rgba(201,168,76,.2),rgba(45,203,188,.2));cursor:pointer;transition:all .3s;position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center;border:1px solid rgba(201,168,76,.1)}
-.gallery-item::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .2s;z-index:1}
-.gallery-item:hover::after{background:rgba(0,0,0,.3)}
-.gallery-item:hover{transform:translateY(-8px) scale(1.08);box-shadow:0 20px 50px rgba(201,168,76,.4)}
-.gallery-item img{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer;position:relative;z-index:0}
-.lightbox-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;z-index:3000;padding:20px;animation:fadeIn .3s ease}
-.lightbox-overlay.open{display:flex}
-.lightbox-img{max-width:100%;max-height:100%;border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.6);outline:4px solid rgba(255,255,255,.14);animation:scaleIn .3s ease}
-.lightbox-close{position:absolute;top:24px;right:24px;color:#fff;background:rgba(0,0,0,.5);border:2px solid rgba(240,237,230,.3);width:44px;height:44px;border-radius:50%;font-size:24px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
-.lightbox-close:hover{background:rgba(0,0,0,.8);border-color:var(--gold);transform:rotate(90deg)}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes scaleIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
 
 .india-section{background:linear-gradient(135deg,rgba(255,153,51,.04),rgba(19,136,8,.04));border-top:1px solid rgba(255,153,51,.1);border-bottom:1px solid rgba(19,136,8,.1)}
 .india-header{display:flex;align-items:flex-start;gap:24px;margin-bottom:48px;flex-wrap:wrap}
@@ -302,7 +290,7 @@ footer{background:var(--surface);border-top:1px solid rgba(240,237,230,.06);padd
   <div class="search-wrap reveal">
     <div class="search-row">
       <input class="search-input" id="searchInput" placeholder="🔍  Search destinations, countries, continents..." oninput="handleSearchInput()" autocomplete="off">
-      <button class="search-btn" onclick="filterDest();return false">Search</button>
+      <button class="search-btn" onclick="filterAll();return false">Search</button>
     </div>
     <div class="search-suggestions" id="searchSuggestions"></div>
     <div class="filter-chips" id="filterChips">
@@ -326,31 +314,6 @@ footer{background:var(--surface);border-top:1px solid rgba(240,237,230,.06);padd
     <p class="section-sub">Handpicked destinations with rich history, best season, and personalised travel tips. Explore beautiful galleries with 30+ photos per destination.</p>
   </div>
   <div class="dest-grid" id="destGrid"></div>
-</section>
-
-<section class="section" style="background:linear-gradient(135deg,rgba(201,168,76,.02),rgba(45,203,188,.02));border-top:1px solid rgba(201,168,76,.1);border-bottom:1px solid rgba(45,203,188,.1)">
-  <div class="section-header reveal">
-    <div class="section-tag">✦ PHOTO GALLERY SHOWCASE</div>
-    <h2 class="section-title">Visual Journey<br>Around the World</h2>
-    <p class="section-sub">Click "Explore" on any destination to see 30+ high-quality curated photos. Each gallery tells a story of culture, nature, and adventure.</p>
-  </div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:32px">
-    <div class="reveal" style="background:var(--surface);border:1px solid rgba(240,237,230,.06);border-radius:20px;padding:24px;text-align:center;cursor:pointer;transition:all .3s" onclick="document.getElementById('destGrid').firstChild?.querySelector('.dest-btn')?.click()">
-      <div style="font-size:48px;margin-bottom:16px">📸</div>
-      <h3 style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:8px">World Destinations</h3>
-      <p style="font-size:13px;color:var(--muted);line-height:1.6">Explore 30+ photos each from Paris, Bali, Kyoto, NYC, Maldives and more. Click any destination card to view the gallery.</p>
-    </div>
-    <div class="reveal" style="background:var(--surface);border:1px solid rgba(240,237,230,.06);border-radius:20px;padding:24px;text-align:center;cursor:pointer;transition:all .3s" onclick="document.querySelector('#indiaGrid')?.firstChild?.click()">
-      <div style="font-size:48px;margin-bottom:16px">🇮🇳</div>
-      <h3 style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:8px">India Regional</h3>
-      <p style="font-size:13px;color:var(--muted);line-height:1.6">Browse 100+ India places with 30 photos each. Rajasthan temples, Kerala backwaters, Himalayan peaks, and more.</p>
-    </div>
-    <div class="reveal" style="background:var(--surface);border:1px solid rgba(240,237,230,.06);border-radius:20px;padding:24px;text-align:center">
-      <div style="font-size:48px;margin-bottom:16px">🎨</div>
-      <h3 style="font-family:'Playfair Display',serif;font-size:20px;margin-bottom:8px">Lightbox Viewer</h3>
-      <p style="font-size:13px;color:var(--muted);line-height:1.6">Click any photo to expand in full-screen lightbox. Smooth transitions, easy navigation, and beautiful presentations.</p>
-    </div>
-  </div>
 </section>
 
 <section class="traveller-section" id="travellers">
@@ -466,6 +429,7 @@ footer{background:var(--surface);border-top:1px solid rgba(240,237,230,.06);padd
         <button class="m-tab" onclick="switchTab('plan',this)">Plan Trip</button>
       </div>
       <div class="tab-content active" id="tab-overview">
+        <div id="mapView" style="height:220px; border-radius:16px; margin-bottom:24px; background:var(--surface2); overflow:hidden; display:flex; align-items:center; justify-content:center; border:1px solid rgba(201,168,76,.15); z-index:1"></div>
         <div class="info-grid" id="infoGrid"></div>
         <div id="modalDesc" style="font-size:14px;color:var(--muted);line-height:1.8"></div>
       </div>
@@ -651,7 +615,7 @@ function buildSearchTerms(){
 }
 
 function handleSearchInput(){
-  filterDest();
+  filterAll();
   renderSearchSuggestions();
 }
 
@@ -669,7 +633,7 @@ function renderSearchSuggestions(){
     return;
   }
   container.innerHTML=matches.map(term=>`
-    <div class="suggestion-item" onclick="selectSuggestion('${term.name.replace(/'/g,"\\'")}')">
+    <div class="suggestion-item" onclick="selectSuggestion('${term.name.replace(/'/g,"\\'")}', '${term.type}', '${term.state || ''}')">
       <strong>${term.name}</strong>
       <span style="color:var(--muted);font-size:11px;margin-left:8px">
         ${term.type==='destination' ? `🌐 ${term.country}` : `🇮🇳 ${term.state || 'India'}`}
@@ -678,11 +642,25 @@ function renderSearchSuggestions(){
   `).join('');
 }
 
-function selectSuggestion(value){
+function selectSuggestion(name, type, state){
   const input=document.getElementById('searchInput');
-  input.value=value;
-  filterDest();
-  renderSearchSuggestions();
+  input.value=name;
+  clearSearchSuggestions();
+  filterAll();
+  
+  if(type==='destination'){
+    const d=destinations.find(x=>x.name===name);
+    if(d){
+      document.getElementById('destinations').scrollIntoView({behavior:'smooth'});
+      setTimeout(()=>openModal(d.id), 600);
+    }
+  } else if(type==='india'){
+    const p=indiaData[state]?.find(x=>x.name===name);
+    if(p){
+      document.getElementById('india').scrollIntoView({behavior:'smooth'});
+      setTimeout(()=>openIndiaModal(p, state), 600);
+    }
+  }
 }
 
 function clearSearchSuggestions(){
@@ -714,12 +692,9 @@ function animCounter(el,target,sfx=''){
 }
 
 function buildImageUrl(query,index){
-  const sources=[
-    `https://source.unsplash.com/640x420/?${encodeURIComponent(query)}&sig=${index}`,
-    `https://picsum.photos/640/420?random=${index}`,
-    `https://images.unsplash.com/photo-${1550000000000+index*10000}?w=640&h=420&fit=crop`
-  ];
-  return sources[0];
+  // Using an ultra-fast, 100% reliable image network to prevent loading timeouts
+  const seed = encodeURIComponent(query.replace(/[^a-zA-Z]/g, '') + index);
+  return `https://picsum.photos/seed/${seed}/640/420`;
 }
 
 function formatLocalTime(zone){
@@ -741,10 +716,12 @@ function renderDest(data){
   const g=document.getElementById('destGrid');
   if(!data.length){g.innerHTML='<p style="color:var(--muted);padding:40px;grid-column:1/-1;text-align:center">No destinations found. Try a different search!</p>';return;}
   g.innerHTML='';
-  data.forEach(d=>{
-    const imageUrl=buildImageUrl(`${d.name} ${d.country} travel`, d.id);
+  data.forEach((d, i)=>{
+    const imageUrl=buildImageUrl(d.name, d.id);
     const el=document.createElement('div');
-    el.className='dest-card reveal';
+    el.className='dest-card reveal visible';
+    el.style.animation=`staggerIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards`;
+    el.style.animationDelay=`${i * 0.05}s`;
     el.innerHTML=`
       <div class="dest-img" style="background-image:url('${imageUrl}')">
         <span style="position:relative;z-index:1">${d.emoji}</span>
@@ -770,19 +747,108 @@ function renderDest(data){
   observeReveal();
 }
 
-function filterDest(){
+function filterAll(){
   const q=document.getElementById('searchInput').value.toLowerCase();
+  
   let data=destinations;
   if(activeFilter!=='all') data=data.filter(d=>d.continent===activeFilter||d.tags.includes(activeFilter));
   if(q) data=data.filter(d=>d.name.toLowerCase().includes(q)||d.country.toLowerCase().includes(q)||d.continent.toLowerCase().includes(q)||d.desc.toLowerCase().includes(q));
   renderDest(data);
+  
+  let indData=indiaData[activeState]||[];
+  if(activeFilter!=='all') indData=indData.filter(d=>d.tags&&d.tags.includes(activeFilter));
+  if(q) indData=indData.filter(d=>d.name.toLowerCase().includes(q)||d.desc.toLowerCase().includes(q)||(d.state||activeState).toLowerCase().includes(q));
+  renderIndia(indData);
 }
 
 function setFilter(f,el){
   activeFilter=f;
   document.querySelectorAll('.filter-chips .chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
-  filterDest();
+  filterAll();
+}
+
+let currentMap = null;
+async function initMap(placeName, queryContext) {
+  const mapEl = document.getElementById('mapView');
+  if(!mapEl) return;
+  
+  if(currentMap) {
+    currentMap.remove();
+    currentMap = null;
+  }
+  
+  mapEl.innerHTML = '<span style="font-size:13px;color:var(--muted)">🌍 Locating destination...</span>';
+  
+  try {
+    // OpenStreetMap (Nominatim) is much better at finding exact places and regions
+    let searchName = placeName;
+    if (placeName.includes('North Goa') || placeName.includes('South Goa')) searchName = 'Goa';
+    
+    let geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchName + (queryContext ? ' ' + queryContext : ''))}&limit=1`);
+    let geoData = await geoRes.json();
+    
+    if (!geoData.length) {
+      geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchName)}&limit=1`);
+      geoData = await geoRes.json();
+    }
+    
+    if (geoData && geoData.length > 0) {
+      const latitude = geoData[0].lat;
+      const longitude = geoData[0].lon;
+      mapEl.innerHTML = '';
+      
+      currentMap = L.map('mapView', { zoomControl: false }).setView([latitude, longitude], 12);
+      L.control.zoom({ position: 'bottomright' }).addTo(currentMap);
+      
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap',
+        subdomains: 'abcd',
+        maxZoom: 19
+      }).addTo(currentMap);
+      
+      const icon = L.divIcon({ className: 'custom-map-marker', html: '<div style="font-size: 32px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6)); transform: translate(-50%, -100%);">📍</div>', iconSize: [0, 0] });
+      L.marker([latitude, longitude], { icon }).addTo(currentMap);
+      
+      setTimeout(() => { if(currentMap) currentMap.invalidateSize(); }, 300);
+    } else {
+      mapEl.innerHTML = '<span style="font-size:13px;color:var(--muted)">⚠️ Map data not available.</span>';
+    }
+  } catch(e) {
+    mapEl.innerHTML = '<span style="font-size:13px;color:var(--muted)">⚠️ Could not load map.</span>';
+  }
+}
+
+let exchangeRates = null;
+async function fetchRates() {
+  if (exchangeRates) return exchangeRates;
+  try {
+    const res = await fetch('https://open.er-api.com/v6/latest/USD');
+    const data = await res.json();
+    exchangeRates = data.rates;
+    return exchangeRates;
+  } catch (e) {
+    return null;
+  }
+}
+
+function getIsoCode(currStr) {
+  if(!currStr) return 'USD';
+  const map = {'Euro':'EUR','Yen':'JPY','USD':'USD','IDR':'IDR','PEN':'PEN','TZS':'TZS','MVR':'MVR','NZD':'NZD','EGP':'EGP','INR':'INR'};
+  for(let key in map) { if(currStr.includes(key)) return map[key]; }
+  return 'USD';
+}
+
+async function convertCurrency(targetCode) {
+  const from = document.getElementById('convFrom')?.value || 'USD';
+  const amount = parseFloat(document.getElementById('convAmount')?.value) || 0;
+  const resultEl = document.getElementById('convResult');
+  if (!resultEl) return;
+  resultEl.innerText = "Calculating...";
+  const rates = await fetchRates();
+  if (!rates || !rates[from] || !rates[targetCode]) { resultEl.innerText = "Unavailable"; return; }
+  const inTarget = (amount / rates[from]) * rates[targetCode];
+  resultEl.innerText = inTarget.toLocaleString('en-US', {maximumFractionDigits: 2}) + ' ' + targetCode;
 }
 
 function openModal(id){
@@ -790,6 +856,10 @@ function openModal(id){
   document.getElementById('modalHero').innerHTML=`<span style="position:relative;z-index:1;font-size:100px">${d.emoji}</span>`;
   document.getElementById('modalTitle').textContent=d.name;
   document.getElementById('modalCountry').textContent=`${d.country} · ${d.continent.charAt(0).toUpperCase()+d.continent.slice(1)}`;
+  
+  document.getElementById('mapView').innerHTML = '';
+  initMap(d.name, d.country);
+
   document.getElementById('infoGrid').innerHTML=`
     <div class="info-box"><label>Best Time to Visit</label><strong>${d.best}</strong></div>
     <div class="info-box"><label>Local Time</label><strong id="modalLocalTime">${formatLocalTime(d.timezone)}</strong></div>
@@ -803,15 +873,28 @@ function openModal(id){
     <p style="margin-bottom:16px;font-size:15px;color:var(--text)">${d.desc}</p>
     <p style="margin-bottom:10px"><strong style="color:var(--gold)">🎒 Solo:</strong> ${d.solo}</p>
     <p style="margin-bottom:10px"><strong style="color:#FF6B9D">💑 Couple:</strong> ${d.couple}</p>
-    <p><strong style="color:var(--teal)">👨‍👩‍👧 Family:</strong> ${d.family}</p>
-    <div class="gallery-section">
-      <div class="gallery-title">📸 20+ Photos of ${d.name}</div>
-      <div class="gallery-grid" id="modalGallery"></div>
-      <p style="font-size:12px;color:var(--muted);margin-top:12px">Click any photo to expand it. Images are curated for the destination and travel experience.</p>
-    </div>`;
-  renderGallery(`${d.name} ${d.country}`);
+    <p><strong style="color:var(--teal)">👨‍👩‍👧 Family:</strong> ${d.family}</p>`;
   document.getElementById('modalHistory').innerHTML=`<p style="margin-bottom:16px;font-size:15px;color:var(--text);font-family:'Playfair Display',serif;font-style:italic">The Story of ${d.name}</p>${d.history}`;
+  
+  const isoCode = getIsoCode(d.currency);
   document.getElementById('modalPlan').innerHTML=`
+    <div style="background:var(--surface2);border-radius:14px;padding:20px;margin-bottom:16px">
+      <p style="font-size:14px;color:var(--gold);font-weight:600;margin-bottom:12px">💱 Budget Estimator</p>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <input type="number" id="convAmount" value="100" oninput="convertCurrency('${isoCode}')" style="width:80px;background:var(--surface);border:1px solid rgba(240,237,230,.1);border-radius:8px;padding:8px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none">
+        <select id="convFrom" onchange="convertCurrency('${isoCode}')" style="background:var(--surface);border:1px solid rgba(240,237,230,.1);border-radius:8px;padding:8px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer">
+          <option value="USD" selected>USD</option>
+          <option value="EUR">EUR</option>
+          <option value="GBP">GBP</option>
+          <option value="INR">INR</option>
+          <option value="AUD">AUD</option>
+          <option value="CAD">CAD</option>
+        </select>
+        <span style="color:var(--muted);font-size:13px">to</span>
+        <strong id="convToCode" style="color:var(--gold);font-size:14px">${isoCode}</strong>
+        <span style="font-size:18px;font-weight:700;margin-left:auto;color:var(--text)" id="convResult">...</span>
+      </div>
+    </div>
     <div style="background:var(--surface2);border-radius:14px;padding:20px;margin-bottom:16px">
       <p style="font-size:14px;color:var(--gold);font-weight:600;margin-bottom:8px">✈️ Getting There</p>
       <p style="font-size:13px;color:var(--muted);line-height:1.7">Search for flights to ${d.name} — book 6–8 weeks ahead for the best fares. Major international airports serve this destination. Consider train or bus options from nearby cities.</p>
@@ -830,6 +913,7 @@ function openModal(id){
   document.querySelector('.m-tab').classList.add('active');
   document.getElementById('tab-overview').classList.add('active');
   document.getElementById('modalOverlay').classList.add('open');
+  convertCurrency(isoCode);
 }
 
 function openIndiaModal(place,state){
@@ -837,6 +921,10 @@ function openIndiaModal(place,state){
   document.getElementById('modalHero').innerHTML=`<span style="position:relative;z-index:1;font-size:100px">${place.emoji}</span>`;
   document.getElementById('modalTitle').textContent=place.name;
   document.getElementById('modalCountry').textContent=`${place.name}, ${state}, India`;
+  
+  document.getElementById('mapView').innerHTML = '';
+  initMap(place.name, 'India');
+
   document.getElementById('infoGrid').innerHTML=`
     <div class="info-box"><label>📍 Location</label><strong>${place.name}, ${state}</strong></div>
     <div class="info-box"><label>🗓️ Best Time to Visit</label><strong>${place.best||'Oct–Mar (generally)'}</strong></div>
@@ -851,15 +939,25 @@ function openIndiaModal(place,state){
     <p style="margin-bottom:16px;font-size:15px;color:var(--text);line-height:1.8"><strong style="color:var(--gold)">✨ About ${place.name}:</strong></p>
     <p style="margin-bottom:16px;font-size:14px;color:var(--muted);line-height:1.8">${place.desc}</p>
     <p style="margin-bottom:16px;font-size:14px;color:var(--muted);line-height:1.8"><strong style="color:var(--teal)">📚 History & Culture:</strong><br>${historyText}</p>
-    ${place.tags && place.tags.length > 0 ? `<p style="margin-bottom:16px"><strong style="color:var(--accent)">🏷️ Experience Tags:</strong> ${place.tags.map(t=>`<span style="background:rgba(201,168,76,.15);color:var(--gold);padding:5px 12px;border-radius:8px;font-size:12px;margin-right:6px;display:inline-block;margin-bottom:6px">${t.charAt(0).toUpperCase()+t.slice(1)}</span>`).join('')}</p>` : ''}
-    <div class="gallery-section" style="margin-top:24px">
-      <div class="gallery-title">📸 20+ Photos of ${place.name}</div>
-      <div class="gallery-grid" id="modalGallery"></div>
-      <p style="font-size:12px;color:var(--muted);margin-top:12px">🖼️ Click any photo to expand. All images are curated for authentic travel experiences.</p>
-    </div>`;
-  renderGallery(`${place.name} ${state} travel`);
+    ${place.tags && place.tags.length > 0 ? `<p style="margin-bottom:16px"><strong style="color:var(--accent)">🏷️ Experience Tags:</strong> ${place.tags.map(t=>`<span style="background:rgba(201,168,76,.15);color:var(--gold);padding:5px 12px;border-radius:8px;font-size:12px;margin-right:6px;display:inline-block;margin-bottom:6px">${t.charAt(0).toUpperCase()+t.slice(1)}</span>`).join('')}</p>` : ''}`;
   document.getElementById('modalHistory').innerHTML=`<p style="margin-bottom:16px;font-size:15px;color:var(--text);font-family:'Playfair Display',serif;font-style:italic">📖 The Story of ${place.name}</p><p style="font-size:14px;color:var(--muted);line-height:1.8">${historyText}</p>`;
   document.getElementById('modalPlan').innerHTML=`
+    <div style="background:var(--surface2);border-radius:14px;padding:20px;margin-bottom:16px">
+      <p style="font-size:14px;color:var(--gold);font-weight:600;margin-bottom:12px">💱 Budget Estimator</p>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <input type="number" id="convAmount" value="100" oninput="convertCurrency('INR')" style="width:80px;background:var(--surface);border:1px solid rgba(240,237,230,.1);border-radius:8px;padding:8px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none">
+        <select id="convFrom" onchange="convertCurrency('INR')" style="background:var(--surface);border:1px solid rgba(240,237,230,.1);border-radius:8px;padding:8px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer">
+          <option value="USD" selected>USD</option>
+          <option value="EUR">EUR</option>
+          <option value="GBP">GBP</option>
+          <option value="AUD">AUD</option>
+          <option value="CAD">CAD</option>
+        </select>
+        <span style="color:var(--muted);font-size:13px">to</span>
+        <strong id="convToCode" style="color:var(--gold);font-size:14px">INR</strong>
+        <span style="font-size:18px;font-weight:700;margin-left:auto;color:var(--text)" id="convResult">...</span>
+      </div>
+    </div>
     <div style="background:var(--surface2);border-radius:14px;padding:20px;margin-bottom:16px">
       <p style="font-size:14px;color:var(--gold);font-weight:600;margin-bottom:8px">✈️ Getting There</p>
       <p style="font-size:13px;color:var(--muted);line-height:1.7">Book trains, flights, or road trips to ${place.name}. For regional hubs, use the nearest major city as your base and travel locally by taxi, bus, or car rental. Indian Railways and IRCTC offer affordable train bookings.</p>
@@ -887,18 +985,26 @@ function openIndiaModal(place,state){
   document.querySelector('.m-tab').classList.add('active');
   document.getElementById('tab-overview').classList.add('active');
   document.getElementById('modalOverlay').classList.add('open');
+  convertCurrency('INR');
 }
 
 function closeModal(e){if(e.target===document.getElementById('modalOverlay'))closeModalDirect();}
 function closeModalDirect(){
   clearInterval(modalTimeInterval);
   document.getElementById('modalOverlay').classList.remove('open');
+  if(currentMap) {
+    currentMap.remove();
+    currentMap = null;
+  }
 }
 function switchTab(id,el){
   document.querySelectorAll('.m-tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('tab-'+id).classList.add('active');
+  if(id === 'overview' && currentMap) {
+    setTimeout(() => currentMap.invalidateSize(), 100);
+  }
 }
 
 function renderStateTabs(){
@@ -907,21 +1013,26 @@ function renderStateTabs(){
     const b=document.createElement('button');
     b.className='state-tab'+(s===activeState?' active':'');
     b.textContent=s==='All States'?'🇮🇳 All States':s;
-    b.onclick=()=>{activeState=s;renderStateTabs();renderIndia();};
+    b.onclick=()=>{activeState=s;renderStateTabs();filterAll();};
     c.appendChild(b);
   });
 }
 
-function renderIndia(){
+function renderIndia(dataOverride){
   const g=document.getElementById('indiaGrid');g.innerHTML='';
-  const places=indiaData[activeState]||[];
+  const places=dataOverride || indiaData[activeState]||[];
+  if(!places.length){g.innerHTML='<p style="color:var(--muted);padding:40px;grid-column:1/-1;text-align:center">No places found in this region.</p>';return;}
   const tc={heritage:'t-heritage',nature:'t-nature',spiritual:'t-spiritual',beach:'t-beach',hill:'t-hill',fort:'t-fort'};
-  places.forEach(p=>{
+  places.forEach((p, i)=>{
+    const imgUrl=buildImageUrl(`${p.name} ${p.state||activeState} India`, i + 100);
     const el=document.createElement('div');
-    el.className='india-card reveal';
+    el.className='india-card reveal visible';
+    el.style.animation=`staggerIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards`;
+    el.style.animationDelay=`${i * 0.05}s`;
     el.innerHTML=`
-      <div class="india-card-img" style="background:linear-gradient(135deg,rgba(255,153,51,.08),rgba(19,136,8,.08))">
-        <span>${p.emoji}</span>
+      <div class="india-card-img" style="background-image:url('${imgUrl}');background-size:cover;background-position:center;position:relative">
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.5)"></div>
+        <span style="position:relative;z-index:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5))">${p.emoji}</span>
       </div>
       <div class="india-card-body">
         <div class="india-card-state">${p.state||activeState}</div>
@@ -979,65 +1090,37 @@ function normalizeText(text){
   return text.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
 }
 
-function generateBotResponse(question){
-  const text=normalizeText(question);
+async function generateBotResponse(question){
+  // Add a small delay to make it feel natural
+  await new Promise(resolve => setTimeout(resolve, 600));
+  
+  const text = question.toLowerCase();
   const place=findPlaceByQuery(question);
-  const lines=[];
-  if(/help|what can you do|guide|recommend|assist/.test(text)){
-    lines.push("I’m your local WanderAI travel guide. Ask me for destination history, local time, best time to visit, weather tips, visa advice, budget guidance, or recommendations for solo, couple, and family travel.");
+  
+  if (text.match(/hello|hi|hey|help|what can you do/)) {
+    return "Hello! 👋 I am your simple local travel guide. You can ask me about the history, best time to visit, or weather for any destination on this page (like Paris, Jaipur, or Bali).";
   }
-  if(place){
-    lines.push(`${place.emoji || ''} ${place.name}${place.country ? ', ' + place.country : ''} — ${place.desc}`);
-    if(/history/.test(text)){
-      lines.push(place.history || `This destination has rich history and cultural significance.`);
+  if (place) {
+    if (text.match(/history|story|past/)) {
+      return `<strong>📖 History of ${place.name}:</strong><br>${place.history}`;
     }
-    if(/best time|when to visit|season|travel season/.test(text)){
-      lines.push(`Best time to visit: ${place.best || 'varies by season'}.`);
+    if (text.match(/weather|time|when to go|best time/)) {
+      return `<strong>🌤️ When to visit ${place.name}:</strong><br>The best time to go is <strong>${place.best}</strong>. The current local time there is ${formatLocalTime(place.timezone)}.<br><br><em>Tip: Always check a live weather app before packing!</em>`;
     }
-    if(/weather|temperature|conditions|climate/.test(text)){
-      lines.push(`Local time there is ${formatLocalTime(place.timezone)}. Expect typical seasonal conditions around ${place.best || 'the recommended travel window'} and check a live local forecast before you go.`);
+    if (text.match(/budget|cost|money|currency|visa/)) {
+      return `<strong>💰 Travel Info for ${place.name}:</strong><br>• Currency: ${place.currency}<br>• Budget Level: ${place.budget || 'Varies'}<br>• Visa: ${place.visa || 'Check local guidelines'}`;
     }
-    if(/solo/.test(text) && place.solo){
-      lines.push(`Solo travel tip: ${place.solo}`);
-    }
-    if(/couple/.test(text) && place.couple){
-      lines.push(`Couple travel tip: ${place.couple}`);
-    }
-    if(/family/.test(text) && place.family){
-      lines.push(`Family travel tip: ${place.family}`);
-    }
-    if(/visa/.test(text)){
-      lines.push(`Visa note: ${place.visa || 'Check your country-specific visa requirements before travel.'}`);
-    }
-    if(/budget|cost|price/.test(text)){
-      lines.push(`Budget level: ${place.budget || 'Varies depending on style of travel.'}`);
-    }
-    if(!/history|weather|best time|season|solo|couple|family|visa|budget|cost|time/.test(text)){
-      lines.push(`Quick facts: language ${place.lang || 'N/A'}, currency ${place.currency || 'N/A'}, visa ${place.visa || 'N/A'}.`);
-    }
+    // Default place summary
+    return `<strong>✨ ${place.name} (${place.country || 'India'})</strong><br>${place.desc}<br><br><strong>🎒 Travel Tips:</strong><br>Best time to visit is ${place.best}.`;
   }
-  if(!place){
-    if(/weather|temperature|conditions/.test(text)){
-      lines.push("I can give seasonal weather guidance for destinations in this guide. Try asking about a specific place like Paris, Bali, Goa, or Jaipur.");
-    }
-    if(/time|local time/.test(text)){
-      lines.push("I can show local time for listed destinations. Ask about a city or destination name from the guide.");
-    }
-    if(/visa|budget|cost/.test(text)){
-      lines.push("I can help with visa advice, budget levels, and travel planning for the destinations shown in this guide.");
-    }
-    if(lines.length===0){
-      lines.push("Sorry, I couldn't match that to a destination in the current guide. Please ask about a destination shown on the page, like Paris, Kyoto, Maldives, Jaipur, or Kerala.");
-    }
-  }
-  return lines.join(' ');
+  return "I'm a simple local guide! 🌍 Try asking me about a specific place from the website, like:<br><em>'Tell me about the history of Rome'</em><br><em>'When is the best time to visit Goa?'</em>";
 }
 
 async function sendChat(){
   const inp=document.getElementById('chatInput');
   const q=inp.value.trim();if(!q)return;
   addMsg(q,'user');inp.value='';showTyping();
-  const response=generateBotResponse(q);
+  const response=await generateBotResponse(q);
   removeTyping();
   addMsg(response,'bot');
 }
@@ -1049,97 +1132,6 @@ function addMsg(text,role){
   const t=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   d.innerHTML=`<div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div><div class="msg-time">${t}</div>`;
   c.appendChild(d);c.scrollTop=c.scrollHeight;
-}
-
-function renderGallery(query){
-  const container=document.getElementById('modalGallery');
-  if(!container) {
-    console.warn('Gallery container not found');
-    return;
-  }
-  container.innerHTML='';
-  for(let i=1;i<=30;i++){
-    const item=document.createElement('div');
-    item.className='gallery-item';
-    item.style.cursor='pointer';
-    const img=document.createElement('img');
-    const src=buildImageUrl(query, i);
-    img.src=src;
-    img.alt=`${query} photo ${i}`;
-    img.loading='eager';
-    img.decoding='async';
-    img.style.width='100%';
-    img.style.height='100%';
-    img.style.objectFit='cover';
-    img.style.display='block';
-    img.style.cursor='pointer';
-    // Create click handler with proper closure
-    const clickHandler = (function(imageSrc) {
-      return function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        openLightbox(imageSrc);
-      };
-    })(src);
-    img.addEventListener('click', clickHandler);
-    item.addEventListener('click', () => openLightbox(src));
-    item.appendChild(img);
-    container.appendChild(item);
-  }
-}
-
-function openLightbox(src){
-  let overlay=document.getElementById('lightboxOverlay');
-  let img=document.getElementById('lightboxImage');
-  
-  // Create lightbox if it doesn't exist
-  if(!overlay || !img){
-    const lightbox=createLightboxOverlay();
-    overlay=lightbox.overlay;
-    img=lightbox.img;
-  }
-  
-  // Set the image source
-  img.src=src;
-  
-  // Show the overlay
-  overlay.style.display='flex';
-  overlay.classList.add('open');
-  
-  // Prevent body scroll when lightbox is open
-  document.body.style.overflow='hidden';
-}
-
-function closeLightbox(){
-  const overlay=document.getElementById('lightboxOverlay');
-  const img=document.getElementById('lightboxImage');
-  if(overlay) {
-    overlay.style.display='none';
-    overlay.classList.remove('open');
-  }
-  if(img) img.src='';
-  // Restore body scroll
-  document.body.style.overflow='auto';
-}
-
-function createLightboxOverlay(){
-  const overlay=document.createElement('div');
-  overlay.className='lightbox-overlay';
-  overlay.id='lightboxOverlay';
-  overlay.style.display='none';
-  overlay.onclick=function(event){ if(event.target===this) closeLightbox(); };
-  const closeBtn=document.createElement('button');
-  closeBtn.className='lightbox-close';
-  closeBtn.textContent='✕';
-  closeBtn.onclick=function(event){ event.stopPropagation(); closeLightbox(); };
-  const img=document.createElement('img');
-  img.className='lightbox-img';
-  img.id='lightboxImage';
-  img.alt='Expanded travel photo';
-  overlay.appendChild(closeBtn);
-  overlay.appendChild(img);
-  document.body.appendChild(overlay);
-  return {overlay,img};
 }
 
 function showTyping(){
@@ -1159,13 +1151,7 @@ function observeReveal(){
 
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
-    const lightbox=document.getElementById('lightboxOverlay');
-    // Close lightbox first if it's open, otherwise close modal
-    if(lightbox && lightbox.style.display==='flex'){
-      closeLightbox();
-    } else {
-      closeModalDirect();
-    }
+    closeModalDirect();
   }
 });
 
@@ -1184,9 +1170,5 @@ window.onload=()=>{
   },1200);
 };
 </script>
-<div class="lightbox-overlay" id="lightboxOverlay" onclick="if(event.target===this)closeLightbox()">
-  <button class="lightbox-close" onclick="closeLightbox();event.stopPropagation()">✕</button>
-  <img class="lightbox-img" id="lightboxImage" src="" alt="Expanded travel photo">
-</div>
 </body>
 </html>
