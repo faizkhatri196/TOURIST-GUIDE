@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User, Place } from '../models/Schemas.js';
-import { generateItinerary, generateBudgetPlan, chatTravelAssistant, generateHotelDetails, generateRouteDetails } from '../services/gemini.js';
+import { generateItinerary, generateBudgetPlan, chatTravelAssistant, generateHotelDetails, generateRouteDetails, generateSuperIntel } from '../services/gemini.js';
 import { worldDestinations, indiaStatesRaw } from '../config/seed.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
@@ -565,6 +565,20 @@ export const getRouteDetailsEndpoint = async (req: Request, res: Response): Prom
     }
     const routeIntel = await generateRouteDetails(origin, destination, mode || "driving");
     res.json({ routeIntel });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const getSuperIntelEndpoint = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { destination, segment } = req.body;
+    if (!destination || !segment) {
+      res.status(400).json({ error: "Destination and Segment are required" });
+      return;
+    }
+    const intel = await generateSuperIntel(destination, segment);
+    res.json({ intel });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

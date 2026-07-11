@@ -12,7 +12,8 @@ import {
   generateBudgetEndpoint,
   chatAssistantEndpoint,
   getHotelDetailsEndpoint,
-  getRouteDetailsEndpoint
+  getRouteDetailsEndpoint,
+  getSuperIntelEndpoint
 } from '../controllers/controllers.js';
 import { verifyToken } from '../middleware/auth.js';
 
@@ -36,5 +37,6 @@ router.post('/ai/budget', generateBudgetEndpoint);
 router.post('/ai/chat', chatAssistantEndpoint);
 router.post('/ai/hotel-details', getHotelDetailsEndpoint);
 router.post('/ai/route-details', getRouteDetailsEndpoint);
+router.post('/ai/super-intel', getSuperIntelEndpoint);
 
 export default router;

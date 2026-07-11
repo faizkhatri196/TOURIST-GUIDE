@@ -14,7 +14,9 @@ export default function ExplorePage() {
   const [selectedPlace, setSelectedPlace] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'All' | 'Global' | 'India'>('All');
   const [activeStateTab, setActiveStateTab] = useState('All');
-  const [detailTab, setDetailTab] = useState<'overview' | 'history' | 'tips'>('overview');
+  const [detailTab, setDetailTab] = useState<string>('overview');
+  const [superIntel, setSuperIntel] = useState<string>('');
+  const [superIntelLoading, setSuperIntelLoading] = useState(false);
 
   // Reviews input state
   const [reviewRating, setReviewRating] = useState(5);
@@ -67,6 +69,42 @@ export default function ExplorePage() {
 
     fetchPhotos();
   }, [selectedPlace]);
+
+  // Fetch Super Intel dossier segments
+  useEffect(() => {
+    if (!selectedPlace) {
+      setSuperIntel('');
+      return;
+    }
+
+    const aiSegments = ['ai-intel', 'transport', 'food-shop', 'itinerary'];
+    if (!aiSegments.includes(detailTab)) return;
+
+    let segmentKey = "";
+    if (detailTab === 'ai-intel') segmentKey = 'safety-accessibility';
+    else if (detailTab === 'transport') segmentKey = 'transport';
+    else if (detailTab === 'food-shop') segmentKey = 'food-shopping';
+    else if (detailTab === 'itinerary') segmentKey = 'itinerary-timeline';
+
+    const fetchSuperIntel = async () => {
+      setSuperIntelLoading(true);
+      setSuperIntel('');
+      try {
+        const res = await axios.post('http://localhost:5000/api/ai/super-intel', {
+          destination: selectedPlace.name,
+          segment: segmentKey
+        });
+        setSuperIntel(res.data.intel);
+      } catch (err) {
+        console.error(err);
+        setSuperIntel(`### AI Intelligence Engine Offline\n\nFailed to sync live telemetry data for **${selectedPlace.name}**. Please ensure the backend server is running.`);
+      } finally {
+        setSuperIntelLoading(false);
+      }
+    };
+
+    fetchSuperIntel();
+  }, [detailTab, selectedPlace]);
 
   // Fetch places
   useEffect(() => {
@@ -430,10 +468,10 @@ export default function ExplorePage() {
               </div>
 
               {/* Navigation Tabs inside modal */}
-              <div className="px-6 pt-4 border-b border-white/5 flex gap-4 text-xs font-semibold tracking-wider uppercase">
+              <div className="px-6 pt-4 border-b border-white/5 flex gap-4 text-xs font-semibold tracking-wider uppercase overflow-x-auto whitespace-nowrap scrollbar-none">
                 <button
                   onClick={() => setDetailTab('overview')}
-                  className={`pb-2.5 border-b-2 transition-all ${
+                  className={`pb-2.5 border-b-2 transition-all cursor-pointer ${
                     detailTab === 'overview' ? 'border-royal-blue text-white' : 'border-transparent text-zinc-500 hover:text-white'
                   }`}
                 >
@@ -441,7 +479,7 @@ export default function ExplorePage() {
                 </button>
                 <button
                   onClick={() => setDetailTab('history')}
-                  className={`pb-2.5 border-b-2 transition-all ${
+                  className={`pb-2.5 border-b-2 transition-all cursor-pointer ${
                     detailTab === 'history' ? 'border-royal-blue text-white' : 'border-transparent text-zinc-500 hover:text-white'
                   }`}
                 >
@@ -449,11 +487,43 @@ export default function ExplorePage() {
                 </button>
                 <button
                   onClick={() => setDetailTab('tips')}
-                  className={`pb-2.5 border-b-2 transition-all ${
+                  className={`pb-2.5 border-b-2 transition-all cursor-pointer ${
                     detailTab === 'tips' ? 'border-royal-blue text-white' : 'border-transparent text-zinc-500 hover:text-white'
                   }`}
                 >
-                  Travel Guide
+                  Guide
+                </button>
+                <button
+                  onClick={() => setDetailTab('ai-intel')}
+                  className={`pb-2.5 border-b-2 transition-all cursor-pointer ${
+                    detailTab === 'ai-intel' ? 'border-royal-blue text-white' : 'border-transparent text-zinc-500 hover:text-white'
+                  }`}
+                >
+                  🛡️ AI Intel
+                </button>
+                <button
+                  onClick={() => setDetailTab('transport')}
+                  className={`pb-2.5 border-b-2 transition-all cursor-pointer ${
+                    detailTab === 'transport' ? 'border-royal-blue text-white' : 'border-transparent text-zinc-500 hover:text-white'
+                  }`}
+                >
+                  🚄 Transport
+                </button>
+                <button
+                  onClick={() => setDetailTab('food-shop')}
+                  className={`pb-2.5 border-b-2 transition-all cursor-pointer ${
+                    detailTab === 'food-shop' ? 'border-royal-blue text-white' : 'border-transparent text-zinc-500 hover:text-white'
+                  }`}
+                >
+                  🍽️ Food & Shop
+                </button>
+                <button
+                  onClick={() => setDetailTab('itinerary')}
+                  className={`pb-2.5 border-b-2 transition-all cursor-pointer ${
+                    detailTab === 'itinerary' ? 'border-royal-blue text-white' : 'border-transparent text-zinc-500 hover:text-white'
+                  }`}
+                >
+                  📅 Itinerary
                 </button>
               </div>
 
@@ -569,6 +639,53 @@ export default function ExplorePage() {
                       <h4 className="text-[10px] font-mono text-royal-blue uppercase tracking-widest mb-1.5 font-bold">Emergency contacts</h4>
                       <p className="text-xs text-red-400 font-mono">{selectedPlace.emergencyContacts || 'Police: 112 / Medical: 112'}</p>
                     </div>
+                  </div>
+                )}
+
+                {/* AI Dynamic Intel Dossiers */}
+                {['ai-intel', 'transport', 'food-shop', 'itinerary'].includes(detailTab) && (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 border-b border-white/5 pb-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-green animate-pulse" />
+                      <h4 className="text-[10px] font-mono text-royal-blue uppercase tracking-widest font-bold">
+                        {detailTab === 'ai-intel' && "Destination Safety & Accessibility Profile"}
+                        {detailTab === 'transport' && "Transport Hub & Scenic Route Intelligence"}
+                        {detailTab === 'food-shop' && "Food AI & Local Shopping Bazaar Directory"}
+                        {detailTab === 'itinerary' && "AI 3-Day Neural Fast-Track Timeline"}
+                      </h4>
+                    </div>
+
+                    {superIntelLoading ? (
+                      <div className="py-16 flex flex-col items-center justify-center gap-3">
+                        <div className="w-8 h-8 border-2 border-royal-blue/30 border-t-emerald-green rounded-full animate-spin" />
+                        <span className="text-[10px] font-mono text-zinc-500 tracking-widest uppercase">SYNCING AI TELEMETRY CORE...</span>
+                      </div>
+                    ) : (
+                      <div className="prose prose-invert max-w-none text-xs text-zinc-300 leading-relaxed font-light font-sans space-y-4 bg-white/5 p-4 rounded-2xl border border-white/5">
+                        {superIntel.split('\n').map((line, index) => {
+                          if (line.startsWith('### ')) {
+                            return <h3 key={index} className="text-white font-bold text-sm mt-4 mb-2 border-b border-white/5 pb-1">{line.replace('### ', '')}</h3>;
+                          }
+                          if (line.startsWith('#### ')) {
+                            return <h4 key={index} className="text-emerald-green font-semibold text-[10.5px] mt-3 mb-1.5 uppercase font-mono tracking-wider">{line.replace('#### ', '')}</h4>;
+                          }
+                          if (line.startsWith('* ') || line.startsWith('- ')) {
+                            const cleaned = line.replace(/^\* /, '').replace(/^- /, '');
+                            const parts = cleaned.split(':');
+                            if (parts.length > 1) {
+                              return (
+                                <p key={index} className="pl-4 leading-normal">
+                                  <strong className="text-white font-mono">{parts[0]}:</strong>{parts.slice(1).join(':')}
+                                </p>
+                              );
+                            }
+                            return <p key={index} className="pl-4 leading-normal">{cleaned}</p>;
+                          }
+                          if (line.trim() === '') return <div key={index} className="h-1" />;
+                          return <p key={index} className="leading-relaxed">{line}</p>;
+                        })}
+                      </div>
+                    )}
                   </div>
                 )}
 
