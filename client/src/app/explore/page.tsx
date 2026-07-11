@@ -7,6 +7,124 @@ import { Search, Heart, Check, MapPin, Eye, Star, Info, MessageSquare, AlertCirc
 import { useAuth } from '../../context/AuthContext';
 import confetti from 'canvas-confetti';
 
+function parseMarkdownToJSX(content: string) {
+  const lines = content.split('\n');
+  const elements: React.ReactNode[] = [];
+  let currentTableRows: string[][] = [];
+  let inTable = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+
+    if (line.startsWith('|')) {
+      inTable = true;
+      const cells = line.split('|').map(c => c.trim()).filter((c, idx, arr) => idx > 0 && idx < arr.length - 1);
+      if (cells.every(c => c.startsWith('-') || c.startsWith(':'))) {
+        continue;
+      }
+      currentTableRows.push(cells);
+      continue;
+    } else {
+      if (inTable) {
+        if (currentTableRows.length > 0) {
+          const header = currentTableRows[0];
+          const body = currentTableRows.slice(1);
+          elements.push(
+            <div key={`table-${i}`} className="overflow-x-auto my-4 border border-white/10 rounded-xl bg-black/40">
+              <table className="min-w-full text-[10px] font-sans text-left text-zinc-300">
+                <thead className="bg-white/5 text-[9px] text-white uppercase tracking-wider font-mono border-b border-white/10">
+                  <tr>
+                    {header.map((cell, idx) => (
+                      <th key={idx} className="px-4 py-2.5 font-semibold">{cell}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {body.map((row, rowIdx) => (
+                    <tr key={rowIdx} className="hover:bg-white/5 transition-colors">
+                      {row.map((cell, cellIdx) => (
+                        <td key={cellIdx} className="px-4 py-2 font-light">{cell}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+        }
+        currentTableRows = [];
+        inTable = false;
+      }
+    }
+
+    if (line === '') {
+      elements.push(<div key={`space-${i}`} className="h-1.5" />);
+      continue;
+    }
+
+    if (line.startsWith('### ')) {
+      elements.push(
+        <h3 key={i} className="text-white font-bold text-xs mt-5 mb-2.5 border-b border-white/10 pb-1 font-mono uppercase tracking-wider flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-green" />
+          {line.replace('### ', '')}
+        </h3>
+      );
+      continue;
+    }
+
+    if (line.startsWith('#### ')) {
+      elements.push(<h4 key={i} className="text-emerald-green font-semibold text-[10px] mt-4 mb-2 uppercase font-mono tracking-wider">{line.replace('#### ', '')}</h4>);
+      continue;
+    }
+
+    if (line.startsWith('* ') || line.startsWith('- ')) {
+      const cleaned = line.replace(/^\* /, '').replace(/^- /, '');
+      const parts = cleaned.split(':');
+      if (parts.length > 1) {
+        elements.push(
+          <p key={i} className="pl-4 leading-relaxed text-[11px]">
+            <strong className="text-white font-mono">{parts[0]}:</strong>{parts.slice(1).join(':')}
+          </p>
+        );
+      } else {
+        elements.push(<p key={i} className="pl-4 leading-relaxed text-[11px] font-light text-zinc-300">{cleaned}</p>);
+      }
+      continue;
+    }
+
+    elements.push(<p key={i} className="leading-relaxed font-light text-[11px] text-zinc-300">{line}</p>);
+  }
+
+  if (inTable && currentTableRows.length > 0) {
+    const header = currentTableRows[0];
+    const body = currentTableRows.slice(1);
+    elements.push(
+      <div key="table-end" className="overflow-x-auto my-4 border border-white/10 rounded-xl bg-black/40">
+        <table className="min-w-full text-[10px] font-sans text-left text-zinc-300">
+          <thead className="bg-white/5 text-[9px] text-white uppercase tracking-wider font-mono border-b border-white/10">
+            <tr>
+              {header.map((cell, idx) => (
+                <th key={idx} className="px-4 py-2.5 font-semibold">{cell}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/5">
+            {body.map((row, rowIdx) => (
+              <tr key={rowIdx} className="hover:bg-white/5 transition-colors">
+                {row.map((cell, cellIdx) => (
+                  <td key={cellIdx} className="px-4 py-2 font-light">{cell}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  return elements;
+}
+
 export default function ExplorePage() {
   const { user, token, toggleFavorite, toggleVisited } = useAuth();
   const [places, setPlaces] = useState<any[]>([]);
@@ -661,29 +779,8 @@ export default function ExplorePage() {
                         <span className="text-[10px] font-mono text-zinc-500 tracking-widest uppercase">SYNCING AI TELEMETRY CORE...</span>
                       </div>
                     ) : (
-                      <div className="prose prose-invert max-w-none text-xs text-zinc-300 leading-relaxed font-light font-sans space-y-4 bg-white/5 p-4 rounded-2xl border border-white/5">
-                        {superIntel.split('\n').map((line, index) => {
-                          if (line.startsWith('### ')) {
-                            return <h3 key={index} className="text-white font-bold text-sm mt-4 mb-2 border-b border-white/5 pb-1">{line.replace('### ', '')}</h3>;
-                          }
-                          if (line.startsWith('#### ')) {
-                            return <h4 key={index} className="text-emerald-green font-semibold text-[10.5px] mt-3 mb-1.5 uppercase font-mono tracking-wider">{line.replace('#### ', '')}</h4>;
-                          }
-                          if (line.startsWith('* ') || line.startsWith('- ')) {
-                            const cleaned = line.replace(/^\* /, '').replace(/^- /, '');
-                            const parts = cleaned.split(':');
-                            if (parts.length > 1) {
-                              return (
-                                <p key={index} className="pl-4 leading-normal">
-                                  <strong className="text-white font-mono">{parts[0]}:</strong>{parts.slice(1).join(':')}
-                                </p>
-                              );
-                            }
-                            return <p key={index} className="pl-4 leading-normal">{cleaned}</p>;
-                          }
-                          if (line.trim() === '') return <div key={index} className="h-1" />;
-                          return <p key={index} className="leading-relaxed">{line}</p>;
-                        })}
+                      <div className="prose prose-invert max-w-none text-xs text-zinc-300 leading-relaxed font-light font-sans space-y-3 bg-white/5 p-4 rounded-2xl border border-white/5">
+                        {parseMarkdownToJSX(superIntel)}
                       </div>
                     )}
                   </div>
