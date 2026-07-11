@@ -3,7 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
-import { connectDB } from './config/db.js';
+import { connectDB, isDBConnected } from './config/db.js';
 import { seedDatabase } from './config/seed.js';
 import router from './routes/routes.js';
 
@@ -39,7 +39,11 @@ const startServer = async () => {
     await connectDB();
 
     // 2. Seed default travel destinations if collection is empty
-    await seedDatabase();
+    if (isDBConnected) {
+      await seedDatabase();
+    } else {
+      console.log("⚠️ Skipping database seed because MongoDB is offline. Starting server in sandbox mode.");
+    }
 
     // 3. Start listener
     app.listen(PORT, () => {
