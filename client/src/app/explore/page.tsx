@@ -466,11 +466,11 @@ export default function ExplorePage() {
                     <div className="space-y-2 mb-6">
                       <h4 className="text-[10px] font-mono text-royal-blue uppercase tracking-widest">Real Photo Gallery</h4>
                       {photosLoading ? (
-                        <div className="h-44 w-full bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center animate-pulse">
+                        <div className="h-32 sm:h-44 w-full bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center animate-pulse">
                           <span className="text-[10px] font-mono text-zinc-500">SYNCING REAL PHOTOS TELEMETRY...</span>
                         </div>
                       ) : placePhotos.length > 0 ? (
-                        <div className="grid grid-cols-3 gap-2 h-44">
+                        <div className="grid grid-cols-3 gap-2 h-32 sm:h-44">
                           <div className="col-span-2 h-full overflow-hidden rounded-2xl border border-white/10 relative group">
                             <img
                               src={placePhotos[0]}
@@ -482,14 +482,14 @@ export default function ExplorePage() {
                             </div>
                           </div>
                           <div className="col-span-1 flex flex-col gap-2 h-full">
-                            <div className="h-[84px] overflow-hidden rounded-xl border border-white/10 relative group">
+                            <div className="h-[60px] sm:h-[84px] overflow-hidden rounded-xl border border-white/10 relative group">
                               <img
                                 src={placePhotos[1] || placePhotos[0]}
                                 alt="Gallery item"
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                               />
                             </div>
-                            <div className="h-[84px] overflow-hidden rounded-xl border border-white/10 relative group">
+                            <div className="h-[60px] sm:h-[84px] overflow-hidden rounded-xl border border-white/10 relative group">
                               <img
                                 src={placePhotos[2] || placePhotos[0]}
                                 alt="Gallery item"

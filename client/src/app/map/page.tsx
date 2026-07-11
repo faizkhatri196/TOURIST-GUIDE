@@ -445,7 +445,7 @@ function MapContent() {
         </div>
 
         {/* 3D Map Viewport (Right Panel) */}
-        <div className="lg:col-span-3 h-[520px] rounded-2xl overflow-hidden border border-white/10 relative w-full">
+        <div className="lg:col-span-3 h-[380px] sm:h-[520px] rounded-2xl overflow-hidden border border-white/10 relative w-full">
           
           <RealMapWrapper
             origin={startPoint}
@@ -463,13 +463,13 @@ function MapContent() {
           />
 
           {/* Map Header Status overlay */}
-          <div className="absolute top-6 left-6 right-6 flex justify-between items-start pointer-events-none z-[999]">
-            <div className="bg-black/85 border border-white/10 px-4 py-2.5 rounded-xl backdrop-blur-md flex flex-col gap-0.5 font-mono text-[9px] tracking-widest uppercase">
+          <div className="absolute top-4 sm:top-6 left-4 sm:left-6 right-4 sm:right-6 flex justify-between items-start pointer-events-none z-[999]">
+            <div className="bg-black/85 border border-white/10 px-3 sm:px-4 py-2 rounded-xl backdrop-blur-md flex flex-col gap-0.5 font-mono text-[8px] sm:text-[9px] tracking-widest uppercase">
               <div className="text-white">ROUTE: {startPoint ? startPoint.split(',')[0] : 'EMPTY'} ➔ {endPoint ? endPoint.split(',')[0] : 'EMPTY'}</div>
               <div className="text-zinc-500">MODE: {mode.toUpperCase()} // SYS ACTIVE</div>
             </div>
             
-            <div className="bg-black/85 border border-white/10 p-2.5 rounded-xl backdrop-blur-md flex flex-col gap-1 text-[10px] text-zinc-400">
+            <div className="bg-black/85 border border-white/10 p-2 rounded-xl backdrop-blur-md flex-col gap-1 text-[9px] sm:text-[10px] text-zinc-400 hidden sm:flex">
               <div className="flex items-center gap-1.5">
                 <Shield className="w-3.5 h-3.5 text-emerald-green" /> Live Geolocation Active
               </div>
@@ -477,8 +477,8 @@ function MapContent() {
           </div>
 
           {/* Map footer layer-switching overlay HUD controls */}
-          <div className="absolute bottom-6 left-6 right-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 z-[999]">
-            <div className="bg-black/85 border border-white/10 px-4 py-2.5 rounded-xl backdrop-blur-md font-mono text-[9px] text-zinc-500 tracking-wider pointer-events-none">
+          <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 z-[999]">
+            <div className="bg-black/85 border border-white/10 px-4 py-2.5 rounded-xl backdrop-blur-md font-mono text-[9px] text-zinc-500 tracking-wider pointer-events-none hidden md:block">
               GPS SATELLITES: ONLINE // RADAR SCANNING REAL HOTEL MARKERS
             </div>
             
