@@ -25,6 +25,12 @@
   }
 }
 
+@theme {
+  --color-royal-blue: #3b82f6;
+  --color-emerald-green: #10b981;
+  --color-deepspace-black: #030712;
+}
+
 /* Custom Theme colors */
 :root {
   --royal-blue: #3b82f6;
