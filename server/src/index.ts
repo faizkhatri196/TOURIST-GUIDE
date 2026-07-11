@@ -24,6 +24,22 @@ app.use(cors({
 app.use(express.json());
 app.use(morgan('dev'));
 
+// Root Welcome Splash
+app.get('/', (req, res) => {
+  res.send(`
+    <div style="font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 90vh; background-color: #030712; color: #f4f4f5; text-align: center; padding: 20px;">
+      <h1 style="color: #3b82f6; margin-bottom: 8px;">Let's Travel World API Node</h1>
+      <p style="color: #9ca3af; margin-top: 0;">Production backend active and running on Render.</p>
+      <div style="margin-top: 20px; background-color: #111827; padding: 12px 24px; border-radius: 12px; border: 1px solid #1f2937; font-family: monospace; font-size: 13px;">
+        STATUS: <span style="color: #10b981; font-weight: bold;">ONLINE // SEED OK</span>
+      </div>
+      <p style="margin-top: 30px; font-size: 13px; color: #6b7280; max-width: 400px; line-height: 1.5;">
+        This is the API backend server. Please visit your frontend client website deployed on Vercel to access the Let's Travel World UI!
+      </p>
+    </div>
+  `);
+});
+
 // Healthy Check
 app.get('/health', (req, res) => {
   res.json({ status: 'healthy', timestamp: new Date(), service: "Let's Travel World Backend" });
