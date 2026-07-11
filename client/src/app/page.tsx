@@ -92,7 +92,7 @@ export default function Home() {
       </div>
 
       {/* FOREGROUND SYSTEM INTERFACE */}
-      <div className="relative z-10 w-full flex flex-col justify-between min-h-screen px-6 pt-24 pb-12 pointer-events-none">
+      <div className="relative z-10 w-full flex flex-col justify-between min-h-screen px-6 pt-24 pb-28 md:pb-12 pointer-events-none">
         
         {/* Hero Headline & Interactive search panel */}
         <div className="max-w-xl self-start flex flex-col pointer-events-auto">

@@ -98,7 +98,7 @@ function PlannerForm() {
   const budgets = ['Budget', 'Moderate', 'Luxury'];
 
   return (
-    <div className="min-h-screen bg-[#030712] pt-24 pb-16 px-6 font-sans text-zinc-100">
+    <div className="min-h-screen bg-[#030712] pt-24 pb-28 md:pb-16 px-6 font-sans text-zinc-100">
       
       {/* Header */}
       <div className="max-w-6xl mx-auto mb-10 text-center">

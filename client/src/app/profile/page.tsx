@@ -73,7 +73,7 @@ export default function ProfilePage() {
 
   if (!token || !user) {
     return (
-      <div className="min-h-screen bg-[#030712] pt-24 pb-16 px-6 font-sans text-zinc-100 flex flex-col items-center justify-center">
+      <div className="min-h-screen bg-[#030712] pt-24 pb-28 md:pb-16 px-6 font-sans text-zinc-100 flex flex-col items-center justify-center">
         <div className="max-w-md text-center glass-panel p-8 rounded-2xl border-dashed border-white/10">
           <ShieldAlert className="w-12 h-12 text-red-400 mx-auto mb-4" />
           <h2 className="text-base font-bold text-white mb-2">Access Telemetry Restricted</h2>
@@ -108,7 +108,7 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#030712] pt-24 pb-16 px-6 font-sans text-zinc-100">
+    <div className="min-h-screen bg-[#030712] pt-24 pb-28 md:pb-16 px-6 font-sans text-zinc-100">
       
       {/* Top Banner */}
       <div className="max-w-6xl mx-auto mb-10 flex flex-col md:flex-row items-center justify-between gap-6 bg-white/5 border border-white/10 p-6 rounded-3xl backdrop-blur-md">

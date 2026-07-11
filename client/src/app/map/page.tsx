@@ -237,7 +237,7 @@ function MapContent() {
   const co2Offset = (distance * (mode === 'flight' ? 0.25 : mode === 'driving' ? 0.12 : mode === 'train' ? 0.04 : 0)).toFixed(1);
 
   return (
-    <div className="min-h-screen bg-[#030712] pt-24 pb-16 px-6 font-sans text-zinc-100 flex flex-col items-center">
+    <div className="min-h-screen bg-[#030712] pt-24 pb-28 md:pb-16 px-6 font-sans text-zinc-100 flex flex-col items-center">
       
       {/* Page Title */}
       <div className="w-full max-w-7xl mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">

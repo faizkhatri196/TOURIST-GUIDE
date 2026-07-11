@@ -83,6 +83,41 @@ export const Navbar: React.FC = () => {
           </Link>
         )}
       </div>
+
+      {/* Premium Bottom Floating Nav Bar (iOS/Android Native Style) for Mobile Devices */}
+      <div className="fixed bottom-5 left-4 right-4 md:hidden z-[9999] bg-[#090d16]/80 border border-white/10 backdrop-blur-xl rounded-2xl px-2 py-2 flex justify-around items-center shadow-2xl shadow-black/80">
+        {navLinks.map((link) => {
+          const isActive = pathname === link.href;
+          const Icon = link.icon;
+          return (
+            <Link
+              key={link.name}
+              href={link.href}
+              className={`flex flex-col items-center gap-1.5 py-1 px-3.5 rounded-xl transition-all duration-300 ${
+                isActive 
+                  ? 'text-emerald-green scale-105 bg-white/5 font-semibold' 
+                  : 'text-zinc-500 hover:text-white'
+              }`}
+            >
+              <Icon className="w-4 h-4" />
+              <span className="text-[8px] tracking-wider uppercase font-sans font-medium">{link.name.replace('AI ', '').replace('Interactive ', '')}</span>
+            </Link>
+          );
+        })}
+        
+        {/* Profile / Account Tab */}
+        <Link
+          href={user ? "/profile" : "/auth"}
+          className={`flex flex-col items-center gap-1.5 py-1 px-3.5 rounded-xl transition-all duration-300 ${
+            pathname === '/profile' || pathname === '/auth'
+              ? 'text-emerald-green scale-105 bg-white/5 font-semibold'
+              : 'text-zinc-500 hover:text-white'
+          }`}
+        >
+          <User className="w-4 h-4" />
+          <span className="text-[8px] tracking-wider uppercase font-sans font-medium">{user ? 'Profile' : 'Account'}</span>
+        </Link>
+      </div>
     </nav>
   );
 };
