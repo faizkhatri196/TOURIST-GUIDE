@@ -329,11 +329,11 @@ function MapContent() {
                         <button
                           key={s.id}
                           type="button"
-                          onClick={() => {
+                          onMouseDown={() => {
                             setStartPoint(s.display_name);
                             setShowStartSuggestions(false);
                           }}
-                          className="w-full text-left px-3 py-2 border-b border-white/5 hover:bg-white/5 text-[11px] text-zinc-300 flex items-center gap-2"
+                          className="w-full text-left px-3 py-2 border-b border-white/5 hover:bg-white/5 text-[11px] text-zinc-300 flex items-center gap-2 cursor-pointer"
                         >
                           <span className="text-xs">📍</span>
                           <div className="truncate pr-2">
@@ -386,11 +386,11 @@ function MapContent() {
                         <button
                           key={s.id}
                           type="button"
-                          onClick={() => {
+                          onMouseDown={() => {
                             setEndPoint(s.display_name);
                             setShowEndSuggestions(false);
                           }}
-                          className="w-full text-left px-3 py-2 border-b border-white/5 hover:bg-white/5 text-[11px] text-zinc-300 flex items-center gap-2"
+                          className="w-full text-left px-3 py-2 border-b border-white/5 hover:bg-white/5 text-[11px] text-zinc-300 flex items-center gap-2 cursor-pointer"
                         >
                           <span className="text-xs">📍</span>
                           <div className="truncate pr-2">
