@@ -26,6 +26,7 @@ interface User {
   badges: Badge[];
   stats: Stats;
   isPremium?: boolean;
+  isVerified?: boolean;
 }
 
 interface AuthContextType {
@@ -39,6 +40,9 @@ interface AuthContextType {
   toggleVisited: (placeName: string) => Promise<void>;
   refreshProfile: () => Promise<void>;
   upgradePremium: () => Promise<void>;
+  verifyOTP: (email: string, otp: string) => Promise<void>;
+  forgotPassword: (email: string) => Promise<void>;
+  resetPassword: (email: string, otp: string, newPassword: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -209,6 +213,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const verifyOTP = async (email: string, otp: string) => {
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API_URL}/auth/verify-otp`, { email, otp });
+      const { token: userToken, user: userData } = res.data;
+      localStorage.setItem('token', userToken);
+      setToken(userToken);
+      setUser(userData);
+    } catch (err: any) {
+      console.error("OTP verification failed:", err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const forgotPassword = async (email: string) => {
+    try {
+      await axios.post(`${API_URL}/auth/forgot-password`, { email });
+    } catch (err) {
+      console.error("Forgot password request failed:", err);
+      throw err;
+    }
+  };
+
+  const resetPassword = async (email: string, otp: string, newPassword: string) => {
+    try {
+      await axios.post(`${API_URL}/auth/reset-password`, { email, otp, newPassword });
+    } catch (err) {
+      console.error("Reset password failed:", err);
+      throw err;
+    }
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -220,7 +258,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       toggleFavorite,
       toggleVisited,
       refreshProfile,
-      upgradePremium
+      upgradePremium,
+      verifyOTP,
+      forgotPassword,
+      resetPassword
     }}>
       {children}
     </AuthContext.Provider>

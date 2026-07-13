@@ -20,6 +20,9 @@ const UserSchema = new mongoose.Schema({
     points: { type: Number, default: 0 }
   },
   isPremium: { type: Boolean, default: false },
+  isVerified: { type: Boolean, default: false },
+  otpCode: { type: String, default: null },
+  otpExpires: { type: Date, default: null },
   createdAt: { type: Date, default: Date.now }
 });
 

@@ -14,7 +14,10 @@ import {
   getHotelDetailsEndpoint,
   getRouteDetailsEndpoint,
   getSuperIntelEndpoint,
-  upgradeToPremium
+  upgradeToPremium,
+  verifyOTP,
+  forgotPassword,
+  resetPassword
 } from '../controllers/controllers.js';
 import { verifyToken } from '../middleware/auth.js';
 
@@ -23,6 +26,9 @@ const router = Router();
 // Auth Routes
 router.post('/auth/register', register);
 router.post('/auth/login', login);
+router.post('/auth/verify-otp', verifyOTP);
+router.post('/auth/forgot-password', forgotPassword);
+router.post('/auth/reset-password', resetPassword);
 router.get('/auth/profile', verifyToken, getProfile);
 router.post('/auth/favorite', verifyToken, toggleFavorite);
 router.post('/auth/visited', verifyToken, toggleVisited);
