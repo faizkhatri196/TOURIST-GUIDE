@@ -3,12 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Compass, Sparkles, MapPin, Navigation, Award, ChevronRight, X } from 'lucide-react';
+import { Search, Compass, Sparkles, MapPin, Navigation, Award, ChevronRight, X, Shield, Calendar, Bell, DollarSign, Smartphone } from 'lucide-react';
 import GlobeWrapper from '../components/GlobeWrapper';
 import AIAssistant from '../components/AIAssistant';
 import Link from 'next/link';
+import { useAuth } from '../context/AuthContext';
 
 export default function Home() {
+  const { user, token } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [places, setPlaces] = useState<any[]>([]);
   const [filteredPlaces, setFilteredPlaces] = useState<any[]>([]);
@@ -17,6 +19,7 @@ export default function Home() {
 
   // Fetch all places on start
   useEffect(() => {
+    if (!user || !token) return; // Only fetch if logged in
     const fetchPlaces = async () => {
       try {
         const res = await axios.get('http://localhost:5000/api/places');
@@ -26,7 +29,7 @@ export default function Home() {
       }
     };
     fetchPlaces();
-  }, []);
+  }, [user, token]);
 
   // Handle Search Filtering
   useEffect(() => {
@@ -55,12 +58,10 @@ export default function Home() {
   ];
 
   const handleGlobePinSelect = (pin: any) => {
-    // Find place details from fetched list
     const foundPlace = places.find(p => p.name.toLowerCase() === pin.name.toLowerCase());
     if (foundPlace) {
       setSelectedPlace(foundPlace);
     } else {
-      // Create a mock view if not seeded
       setSelectedPlace({
         name: pin.name,
         country: pin.country,
@@ -81,13 +82,126 @@ export default function Home() {
     ? places.filter(p => p.state === 'Global').slice(0, 4)
     : places.filter(p => p.tags.map((t: string) => t.toLowerCase()).includes(activeCategory.toLowerCase())).slice(0, 4);
 
+  // GUEST LANDING / ABOUT US PAGE
+  if (!user || !token) {
+    return (
+      <div className="min-h-screen bg-black text-white font-sans relative overflow-hidden flex flex-col justify-between">
+        
+        {/* Glow Effects */}
+        <div className="absolute top-20 right-10 w-96 h-96 bg-royal-blue/10 rounded-full blur-3xl -z-10 pointer-events-none" />
+        <div className="absolute bottom-20 left-10 w-[500px] h-[500px] bg-emerald-green/5 rounded-full blur-3xl -z-10 pointer-events-none" />
+
+        <div className="max-w-5xl mx-auto px-6 pt-28 pb-16 space-y-16 w-full">
+          
+          {/* Hero Section */}
+          <div className="text-center space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5 text-royal-blue" />
+              <span className="font-mono text-[9px] tracking-widest text-zinc-300 uppercase font-bold">
+                Let's Travel AI // Autonomous Travel OS
+              </span>
+            </div>
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight">
+              Autonomous AI-Powered <br />
+              <span className="text-gradient bg-gradient-to-r from-white via-royal-blue to-emerald-green">
+                Travel Operating System
+              </span>
+            </h1>
+            <p className="text-zinc-500 text-xs font-light max-w-xl mx-auto leading-relaxed">
+              Plan, book, track, and manage your journeys across every city, village, and historic site. Experience minimal luxury built for modern global citizens.
+            </p>
+            <div className="pt-4">
+              <Link 
+                href="/auth" 
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-royal-blue to-emerald-green text-black text-xs font-bold uppercase tracking-wider rounded-full hover:opacity-90 transition-all shadow-lg shadow-royal-blue/10"
+              >
+                <span>Unlock Globe Dashboard</span>
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+
+          {/* About Us section */}
+          <div className="space-y-6">
+            <div className="text-center">
+              <h2 className="text-xl font-bold font-mono uppercase tracking-wider text-white">About the Platform</h2>
+              <p className="text-[11px] text-zinc-500 font-light">Unifying every segment of travel into one single terminal.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              
+              <div className="bg-white/5 border border-white/5 p-5 rounded-2xl space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-royal-blue">
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <h3 className="text-sm font-semibold text-white">Neural Trip Planning</h3>
+                <p className="text-zinc-400 text-xs font-light leading-relaxed">
+                  Generate instant day-by-day itineraries optimizing routes, transport nodes, budget limits, and weather forecasts automatically.
+                </p>
+              </div>
+
+              <div className="bg-white/5 border border-white/5 p-5 rounded-2xl space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-emerald-green">
+                  <Bell className="w-5 h-5" />
+                </div>
+                <h3 className="text-sm font-semibold text-white">Automated Price Prediction</h3>
+                <p className="text-zinc-400 text-xs font-light leading-relaxed">
+                  Integrates with GDS servers to monitor airfares and hotel prices, advising you whether to Buy immediately or Wait for price drops.
+                </p>
+              </div>
+
+              <div className="bg-white/5 border border-white/5 p-5 rounded-2xl space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400">
+                  <MapPin className="w-5 h-5" />
+                </div>
+                <h3 className="text-sm font-semibold text-white">Offline GIS Map Tiles</h3>
+                <p className="text-zinc-400 text-xs font-light leading-relaxed">
+                  Download high-resolution vector maps directly to local browser memory to keep GPS navigation functional completely offline.
+                </p>
+              </div>
+
+            </div>
+          </div>
+
+          {/* AI Itinerary Demo Preview */}
+          <div className="bg-white/5 border border-white/5 p-6 rounded-3xl space-y-4">
+            <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+              <Sparkles className="w-4 h-4 text-royal-blue" />
+              <h3 className="text-xs uppercase font-mono tracking-wider font-semibold text-white">Neural Itinerary Demo</h3>
+            </div>
+            <div className="space-y-4 text-xs font-sans">
+              <div className="flex items-center gap-3">
+                <span className="px-2 py-0.5 rounded bg-royal-blue/10 text-royal-blue font-mono text-[9px] uppercase font-bold">09:00 AM</span>
+                <span className="text-zinc-300 font-light">Heritage stroll around Kyoto Kiyomizu-dera Temple.</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="px-2 py-0.5 rounded bg-emerald-green/10 text-emerald-green font-mono text-[9px] uppercase font-bold">12:30 PM</span>
+                <span className="text-zinc-300 font-light">Traditional Kaiseki dining at Nishiki Market district.</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="px-2 py-0.5 rounded bg-white/5 text-zinc-400 font-mono text-[9px] uppercase font-bold">04:00 PM</span>
+                <span className="text-zinc-300 font-light">Bullet train transfer (Shinkansen Tokaido line) to Tokyo.</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Footer */}
+        <div className="border-t border-white/5 py-6 text-center text-[10px] text-zinc-650 font-mono">
+          Let's Travel World OS // Protected under secure sandbox guidelines.
+        </div>
+
+      </div>
+    );
+  }
+
+  // AUTHENTICATED USER DYNAMIC GLOBE VIEW
   return (
     <div className="relative min-h-screen bg-black overflow-hidden flex flex-col justify-between">
       
       {/* 3D GLOBE BACKGROUND CONTAINER */}
       <div className="absolute inset-0 z-0 h-screen w-screen">
         <GlobeWrapper onPinSelect={handleGlobePinSelect} />
-        {/* Subtle radial shading overlay */}
         <div className="absolute inset-0 bg-radial-gradient from-transparent via-black/30 to-black pointer-events-none" />
       </div>
 
@@ -227,7 +341,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* FLOATING DRAWERS / PLACE DETAILS PANEL */}
+      {/* PLACE DETAILS DRAWERS */}
       <AnimatePresence>
         {selectedPlace && (
           <motion.div
@@ -237,7 +351,6 @@ export default function Home() {
             className="fixed top-0 right-0 h-screen w-full md:w-[450px] bg-black/65 backdrop-blur-2xl border-l border-white/10 z-50 p-6 overflow-y-auto flex flex-col justify-between"
           >
             <div>
-              {/* Close Button */}
               <div className="flex items-center justify-between border-b border-white/5 pb-4 mb-6">
                 <div className="flex items-center gap-3">
                   <span className="text-3xl">{selectedPlace.emoji}</span>
@@ -254,7 +367,6 @@ export default function Home() {
                 </button>
               </div>
 
-              {/* Description */}
               <div className="mb-6">
                 <h4 className="text-[10px] font-mono text-royal-blue uppercase tracking-widest mb-2">Overview</h4>
                 <p className="text-xs text-zinc-300 font-light leading-relaxed">
@@ -262,7 +374,6 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* Stats / Ratings telemetry */}
               <div className="grid grid-cols-2 gap-3 mb-6 bg-white/5 p-4 rounded-xl border border-white/5">
                 <div>
                   <div className="text-[10px] text-zinc-500 uppercase tracking-wider">Safety Rating</div>
@@ -282,17 +393,15 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* History */}
               {selectedPlace.history && (
                 <div className="mb-6">
-                  <h4 className="text-[10px] font-mono text-royal-blue uppercase tracking-widest mb-2">History & Cultural roots</h4>
+                  <h4 className="text-[10px] font-mono text-royal-blue uppercase tracking-widest mb-2">History</h4>
                   <p className="text-xs text-zinc-400 font-light leading-relaxed italic">
                     {selectedPlace.history}
                   </p>
                 </div>
               )}
 
-              {/* Details List */}
               <div className="space-y-2 border-t border-white/5 pt-4">
                 <div className="flex justify-between text-xs py-1">
                   <span className="text-zinc-500">Local Language</span>
@@ -313,7 +422,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Quick Action Plan button */}
             <div className="mt-8 pt-4 border-t border-white/5 flex gap-3">
               <Link
                 href={`/planner?dest=${selectedPlace.name}`}
@@ -327,7 +435,6 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* FLOATING AI ASSISTANT SPEHERE */}
       <AIAssistant />
 
     </div>

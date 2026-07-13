@@ -10,13 +10,17 @@ export const Navbar: React.FC = () => {
   const pathname = usePathname();
   const { user, logout } = useAuth();
 
-  const navLinks = [
-    { name: 'Explore', href: '/explore', icon: Compass },
-    { name: 'AI Planner', href: '/planner', icon: Calendar },
-    { name: 'Interactive Map', href: '/map', icon: Map },
-    { name: 'Hotels', href: '/hotels', icon: Hotel },
-    { name: 'Premium', href: '/premium', icon: Sparkles },
-  ];
+  const navLinks = user
+    ? [
+        { name: 'Explore', href: '/explore', icon: Compass },
+        { name: 'AI Planner', href: '/planner', icon: Calendar },
+        { name: 'Interactive Map', href: '/map', icon: Map },
+        { name: 'Hotels', href: '/hotels', icon: Hotel },
+        { name: 'Premium', href: '/premium', icon: Sparkles },
+      ]
+    : [
+        { name: 'About OS', href: '/', icon: Compass }
+      ];
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex items-center justify-between bg-black/20 backdrop-blur-md border-b border-white/5 transition-all duration-300">

@@ -4,7 +4,8 @@ import React, { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { Sparkles, Calendar, DollarSign, Users, Plane, Settings, CheckCircle2, ChevronDown } from 'lucide-react';
+import { Sparkles, Calendar, DollarSign, Users, Plane, Settings, CheckCircle2, ChevronDown, Shield } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 export default function PlannerPage() {
   return (
@@ -19,7 +20,33 @@ export default function PlannerPage() {
 }
 
 function PlannerForm() {
+  const { user, token } = useAuth();
   const searchParams = useSearchParams();
+
+  if (!user || !token) {
+    return (
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center pt-24 px-6 relative">
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-royal-blue/10 rounded-full blur-3xl -z-10" />
+        <div className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-emerald-green/5 rounded-full blur-3xl -z-10" />
+        <div className="max-w-md w-full bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-2xl text-center space-y-6 shadow-2xl">
+          <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-royal-blue mx-auto">
+            <Shield className="w-8 h-8 animate-pulse" />
+          </div>
+          <h2 className="text-2xl font-bold tracking-tight">Access Restrictions Active</h2>
+          <p className="text-zinc-400 text-xs font-light leading-relaxed">
+            Let's Travel World requires a secure registration/sign-in token to query live global travel metrics, neural itineraries, and GDS routing servers.
+          </p>
+          <a
+            href="/auth"
+            className="block w-full py-3 bg-gradient-to-r from-royal-blue to-emerald-green text-xs font-bold uppercase tracking-widest rounded-xl text-black hover:opacity-90 transition-all font-semibold"
+          >
+            Sign In / Register to Unlock
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   const [destination, setDestination] = useState('');
   const [days, setDays] = useState(3);
   const [people, setPeople] = useState(1);
