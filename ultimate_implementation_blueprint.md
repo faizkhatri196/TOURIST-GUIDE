@@ -303,10 +303,44 @@ Signup ➔ Destination ➔ Budget ➔ AI Itinerary ➔ Book Flight ➔ Book Hote
 
 ---
 
-## 14. Premium Features
+## 14. Premium Features & Dashboard Specifications
 
-*   **Free Tier**: Basic planning, Local search, Standard map guides, Ad-supported.
-*   **Premium Tier ($12/mo or $99/yr)**: Unlimited itineraries, ML price drop alerts, Offline vector maps, Sat-linked AI Concierge, Family safety planner, No Ads, Expense reports, Cloud backups.
+### Free Tier vs. Premium Tier Matrix
+*   **Free Tier**: Basic single-city planning, ad-supported, standard OSM maps, basic budget entry.
+*   **Premium Tier ($12/mo or $99/yr)**: Unlimited itineraries, ML price drop alerts, offline vector maps caching, Sat-linked AI Concierge, family safety planner, zero ads, expense reports, cloud backups, and multi-modal transit comparisons.
+
+---
+
+### Premium Dashboard Module Specifications
+
+#### 🔔 Live Price Drop Alerts
+*   **Engine**: Automated price monitoring system connected to flight (Amadeus) and hotel (Booking.com) queries.
+*   **ML Predictor Integration**: Connects to the price prediction engine to alert users when a tracked route reaches its predicted price minimum.
+*   **Alert Options**: Push notification, Email alerts, or SMS alerts.
+
+#### 🗺️ Offline Vector Maps Cache
+*   **Mechanism**: Uses Leaflet/Mapbox vector tile caching. Downloads geographic tiles to the browser’s IndexedDB or client-side storage.
+*   **Features**: Enables fully functional map navigation, nearby attraction markers, and route searching without an active internet connection.
+
+#### 📅 Unlimited AI Neural Planning
+*   **Capacity**: Removes token usage restrictions and daily caps on the Llama-3/Gemini AI generators.
+*   **Features**: Multi-city scheduling, travel style personalization, custom daily time budgets, and local custom tracking.
+
+#### 📞 Emergency AI Concierge Line
+*   **Features**: 
+    1. **Medical SOS Line**: Real-time integration with international emergency numbers (112, 911, 100) and geolocation hospital mapping.
+    2. **Global IATA Support**: Direct automatic flight re-booking and ticketing support during delays or cancellations.
+    3. **Consulate Coordination**: Direct coordinate lookup for local embassies and consulates based on nationality.
+
+---
+
+### Secure Checkout & Payment Simulators
+
+#### 💳 Stripe Credit Card Gateway Simulator
+*   **Card Flow**: Front-end validates input ➔ Submits to `/api/auth/upgrade` ➔ Server mocks Stripe verification (2.5s network delay) ➔ Confetti activation on success ➔ Database updates user status flag `isPremium = true`.
+
+#### 📱 UPI (India) BHIM QR Code Generator
+*   **QR Flow**: User enters UPI ID ➔ Dynamic high-fidelity SVG QR Code renders containing the plan value ➔ Click "Verify UPI & Activate" ➔ Server queries NPCI gateway sandbox status (2.5s delay) ➔ Database updates user status flag `isPremium = true`.
 
 ---
 
