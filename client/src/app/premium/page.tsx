@@ -13,6 +13,8 @@ export default function PremiumPage() {
   const [cardExpiry, setCardExpiry] = useState('');
   const [cardCvc, setCardCvc] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'upi'>('card');
+  const [upiId, setUpiId] = useState('');
   
   // Premium simulated states
   const [priceAlertDestination, setPriceAlertDestination] = useState('');
@@ -36,13 +38,20 @@ export default function PremiumPage() {
       return;
     }
 
-    if (!cardNumber || cardNumber.length < 12) {
-      alert("Please enter a valid credit card number.");
-      return;
+    if (paymentMethod === 'card') {
+      if (!cardNumber || cardNumber.length < 12) {
+        alert("Please enter a valid credit card number.");
+        return;
+      }
+    } else {
+      if (!upiId || !upiId.includes('@')) {
+        alert("Please enter a valid UPI ID (e.g. name@okaxis).");
+        return;
+      }
     }
 
     setIsProcessing(true);
-    // Simulate secure Stripe network delay
+    // Simulate secure Stripe/NPCI network delay
     setTimeout(async () => {
       try {
         await upgradePremium();
@@ -275,16 +284,38 @@ export default function PremiumPage() {
               </div>
             </div>
 
-            {/* Stripe Checkout Simulator */}
-            <div className="md:col-span-5 bg-gradient-to-br from-zinc-950 to-zinc-900 border border-white/10 p-5 rounded-3xl space-y-6 shadow-2xl relative">
+            {/* Stripe & UPI Checkout Simulator */}
+            <div className="md:col-span-5 bg-gradient-to-br from-zinc-950 to-zinc-900 border border-white/10 p-5 rounded-3xl space-y-5 shadow-2xl relative">
               <div className="absolute top-0 right-0 w-48 h-48 bg-royal-blue/5 rounded-full blur-3xl -z-10" />
               
               <div className="flex items-center justify-between border-b border-white/5 pb-3">
                 <div className="flex items-center gap-2">
                   <CreditCard className="w-4 h-4 text-royal-blue" />
-                  <span className="text-xs uppercase font-mono font-bold tracking-wider text-white">Stripe Checkout</span>
+                  <span className="text-xs uppercase font-mono font-bold tracking-wider text-white">Secure checkout</span>
                 </div>
                 <span className="text-[10.5px] font-mono text-zinc-500">Test Simulator</span>
+              </div>
+
+              {/* Payment Method Tabs */}
+              <div className="flex gap-2 p-1 bg-black/40 border border-white/5 rounded-xl text-[10px]">
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('card')}
+                  className={`flex-1 py-1.5 rounded-lg font-mono uppercase transition-all cursor-pointer ${
+                    paymentMethod === 'card' ? 'bg-white/10 text-white font-bold' : 'text-zinc-500 hover:text-white'
+                  }`}
+                >
+                  💳 Credit Card
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('upi')}
+                  className={`flex-1 py-1.5 rounded-lg font-mono uppercase transition-all cursor-pointer ${
+                    paymentMethod === 'upi' ? 'bg-white/10 text-white font-bold' : 'text-zinc-500 hover:text-white'
+                  }`}
+                >
+                  📱 UPI (India)
+                </button>
               </div>
 
               <form onSubmit={handleCheckoutSubmit} className="space-y-4">
@@ -295,52 +326,106 @@ export default function PremiumPage() {
                   <span className="text-white font-mono font-bold">{selectedPlan === 'monthly' ? '$12.00' : '$99.00'}</span>
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block">Card Number</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      required
-                      placeholder="4242 4242 4242 4242"
-                      value={cardNumber}
-                      onChange={(e) => setCardNumber(e.target.value.replace(/\s?/g, '').replace(/(\d{4})/g, '$1 ').trim())}
-                      className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-royal-blue/50"
-                    />
-                    <CreditCard className="w-4 h-4 text-zinc-600 absolute right-3 top-3" />
-                  </div>
-                </div>
+                {paymentMethod === 'card' ? (
+                  /* CARD FORM */
+                  <div className="space-y-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block">Card Number</label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          required
+                          placeholder="4242 4242 4242 4242"
+                          value={cardNumber}
+                          onChange={(e) => setCardNumber(e.target.value.replace(/\s?/g, '').replace(/(\d{4})/g, '$1 ').trim())}
+                          className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-royal-blue/50"
+                        />
+                        <CreditCard className="w-4 h-4 text-zinc-600 absolute right-3 top-3" />
+                      </div>
+                    </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block">Expiry</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="MM/YY"
-                      value={cardExpiry}
-                      onChange={(e) => setCardExpiry(e.target.value)}
-                      className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-royal-blue/50"
-                    />
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block">Expiry</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="MM/YY"
+                          value={cardExpiry}
+                          onChange={(e) => setCardExpiry(e.target.value)}
+                          className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-royal-blue/50"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block">CVC</label>
+                        <input
+                          type="password"
+                          required
+                          placeholder="•••"
+                          maxLength={4}
+                          value={cardCvc}
+                          onChange={(e) => setCardCvc(e.target.value)}
+                          className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-royal-blue/50"
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block">CVC</label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="•••"
-                      maxLength={4}
-                      value={cardCvc}
-                      onChange={(e) => setCardCvc(e.target.value)}
-                      className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-royal-blue/50"
-                    />
+                ) : (
+                  /* UPI FORM */
+                  <div className="space-y-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block">UPI ID</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="explorer@ybl"
+                        value={upiId}
+                        onChange={(e) => setUpiId(e.target.value)}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-royal-blue/50"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block text-center">Scan QR Code to pay</label>
+                      <div className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-white/10 w-40 h-40 mx-auto">
+                        <svg className="w-32 h-32 text-black" viewBox="0 0 100 100">
+                          <rect x="5" y="5" width="25" height="25" fill="currentColor" />
+                          <rect x="10" y="10" width="15" height="15" fill="white" />
+                          <rect x="13" y="13" width="9" height="9" fill="currentColor" />
+                          
+                          <rect x="70" y="5" width="25" height="25" fill="currentColor" />
+                          <rect x="75" y="10" width="15" height="15" fill="white" />
+                          <rect x="78" y="13" width="9" height="9" fill="currentColor" />
+
+                          <rect x="5" y="70" width="25" height="25" fill="currentColor" />
+                          <rect x="10" y="75" width="15" height="15" fill="white" />
+                          <rect x="13" y="78" width="9" height="9" fill="currentColor" />
+
+                          <rect x="40" y="10" width="10" height="5" fill="currentColor" />
+                          <rect x="45" y="20" width="5" height="15" fill="currentColor" />
+                          <rect x="5" y="40" width="15" height="5" fill="currentColor" />
+                          <rect x="25" y="35" width="10" height="10" fill="currentColor" />
+                          <rect x="40" y="40" width="25" height="5" fill="currentColor" />
+                          <rect x="50" y="50" width="10" height="20" fill="currentColor" />
+                          <rect x="75" y="45" width="15" height="15" fill="currentColor" />
+                          <rect x="35" y="75" width="20" height="10" fill="currentColor" />
+                          <rect x="70" y="70" width="10" height="10" fill="currentColor" />
+                          <rect x="85" y="85" width="10" height="10" fill="currentColor" />
+                        </svg>
+                        <span className="text-[8px] font-sans font-semibold text-zinc-500 uppercase tracking-widest mt-2">BHIM UPI QR</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Info Note */}
                 <div className="flex gap-2 bg-yellow-500/5 border border-yellow-500/10 p-3 rounded-xl text-[10px] text-yellow-500/80 leading-normal">
                   <AlertTriangle className="w-4 h-4 flex-shrink-0" />
                   <span>
-                    Sandbox test mode active. Enter any simulated card number (e.g. 4242...) to immediately upgrade and test premium dashboards.
+                    {paymentMethod === 'card' 
+                      ? "Sandbox test mode active. Enter any simulated card number (e.g. 4242...) to immediately upgrade and test."
+                      : "UPI sandbox active. Enter any mock ID (e.g. name@upi) and scan/verify to activate."
+                    }
                   </span>
                 </div>
 
@@ -352,12 +437,12 @@ export default function PremiumPage() {
                   {isProcessing ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Verifying via Stripe...</span>
+                      <span>{paymentMethod === 'card' ? "Verifying via Stripe..." : "Checking UPI NPCI gateway..."}</span>
                     </>
                   ) : (
                     <>
                       <Shield className="w-4 h-4" />
-                      <span>Pay & Activate Upgrade</span>
+                      <span>{paymentMethod === 'card' ? "Pay & Activate Upgrade" : "Verify UPI & Activate"}</span>
                     </>
                   )}
                 </button>
