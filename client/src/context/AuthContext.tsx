@@ -25,6 +25,7 @@ interface User {
   visited: string[];
   badges: Badge[];
   stats: Stats;
+  isPremium?: boolean;
 }
 
 interface AuthContextType {
@@ -37,6 +38,7 @@ interface AuthContextType {
   toggleFavorite: (placeName: string) => Promise<void>;
   toggleVisited: (placeName: string) => Promise<void>;
   refreshProfile: () => Promise<void>;
+  upgradePremium: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -190,6 +192,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const upgradePremium = async () => {
+    if (!token) throw new Error("Auth required");
+    try {
+      const res = await axios.post(`${API_URL}/auth/upgrade`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (user) {
+        setUser({ ...user, isPremium: true });
+      }
+    } catch (err) {
+      console.warn("API Upgrade failed, falling back to simulated upgrade:", err);
+      if (user) {
+        setUser({ ...user, isPremium: true });
+      }
+    }
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -200,7 +219,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       logout,
       toggleFavorite,
       toggleVisited,
-      refreshProfile
+      refreshProfile,
+      upgradePremium
     }}>
       {children}
     </AuthContext.Provider>

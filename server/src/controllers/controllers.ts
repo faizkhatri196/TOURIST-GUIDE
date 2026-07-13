@@ -161,7 +161,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       favorites: [],
       visited: [],
       badges: [],
-      stats: { distanceTraveled: 0, placesVisited: 0, level: 1, points: 0 }
+      stats: { distanceTraveled: 0, placesVisited: 0, level: 1, points: 0 },
+      isPremium: false
     };
 
     try {
@@ -181,7 +182,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
           favorites: [],
           visited: [],
           badges: [],
-          stats: userData.stats
+          stats: userData.stats,
+          isPremium: false
         }
       });
     }
@@ -226,7 +228,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         favorites: user.favorites,
         visited: user.visited,
         badges: user.badges,
-        stats: user.stats
+        stats: user.stats,
+        isPremium: user.isPremium || false
       }
     });
   } catch (err: any) {
@@ -583,3 +586,35 @@ export const getSuperIntelEndpoint = async (req: Request, res: Response): Promis
     res.status(500).json({ error: err.message });
   }
 };
+
+export const upgradeToPremium = async (req: any, res: Response): Promise<void> => {
+  try {
+    let user: any = null;
+    let isSandbox = false;
+
+    try {
+      user = await User.findById(req.userId);
+    } catch (err) {
+      user = Array.from(sandboxUsers.values()).find(u => u._id === req.userId);
+      isSandbox = true;
+    }
+
+    if (!user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    user.isPremium = true;
+
+    if (isSandbox) {
+      sandboxUsers.set(user.email, user);
+    } else {
+      await user.save();
+    }
+
+    res.json({ success: true, message: "Account upgraded to Premium successfully!", user });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+};
+

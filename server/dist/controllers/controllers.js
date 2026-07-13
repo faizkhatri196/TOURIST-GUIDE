@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User, Place } from '../models/Schemas.js';
-import { generateItinerary, generateBudgetPlan, chatTravelAssistant, generateHotelDetails, generateRouteDetails } from '../services/gemini.js';
+import { generateItinerary, generateBudgetPlan, chatTravelAssistant, generateHotelDetails, generateRouteDetails, generateSuperIntel } from '../services/gemini.js';
 import { worldDestinations, indiaStatesRaw } from '../config/seed.js';
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 // In-memory sandbox storage for users if MongoDB connection fails
@@ -147,7 +147,8 @@ export const register = async (req, res) => {
             favorites: [],
             visited: [],
             badges: [],
-            stats: { distanceTraveled: 0, placesVisited: 0, level: 1, points: 0 }
+            stats: { distanceTraveled: 0, placesVisited: 0, level: 1, points: 0 },
+            isPremium: false
         };
         try {
             const dbUser = await User.create(userData);
@@ -167,7 +168,8 @@ export const register = async (req, res) => {
                     favorites: [],
                     visited: [],
                     badges: [],
-                    stats: userData.stats
+                    stats: userData.stats,
+                    isPremium: false
                 }
             });
         }
@@ -209,7 +211,8 @@ export const login = async (req, res) => {
                 favorites: user.favorites,
                 visited: user.visited,
                 badges: user.badges,
-                stats: user.stats
+                stats: user.stats,
+                isPremium: user.isPremium || false
             }
         });
     }
@@ -524,6 +527,48 @@ export const getRouteDetailsEndpoint = async (req, res) => {
         }
         const routeIntel = await generateRouteDetails(origin, destination, mode || "driving");
         res.json({ routeIntel });
+    }
+    catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+export const getSuperIntelEndpoint = async (req, res) => {
+    try {
+        const { destination, segment } = req.body;
+        if (!destination || !segment) {
+            res.status(400).json({ error: "Destination and Segment are required" });
+            return;
+        }
+        const intel = await generateSuperIntel(destination, segment);
+        res.json({ intel });
+    }
+    catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+export const upgradeToPremium = async (req, res) => {
+    try {
+        let user = null;
+        let isSandbox = false;
+        try {
+            user = await User.findById(req.userId);
+        }
+        catch (err) {
+            user = Array.from(sandboxUsers.values()).find(u => u._id === req.userId);
+            isSandbox = true;
+        }
+        if (!user) {
+            res.status(404).json({ error: "User not found" });
+            return;
+        }
+        user.isPremium = true;
+        if (isSandbox) {
+            sandboxUsers.set(user.email, user);
+        }
+        else {
+            await user.save();
+        }
+        res.json({ success: true, message: "Account upgraded to Premium successfully!", user });
     }
     catch (err) {
         res.status(500).json({ error: err.message });

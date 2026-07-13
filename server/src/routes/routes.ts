@@ -13,7 +13,8 @@ import {
   chatAssistantEndpoint,
   getHotelDetailsEndpoint,
   getRouteDetailsEndpoint,
-  getSuperIntelEndpoint
+  getSuperIntelEndpoint,
+  upgradeToPremium
 } from '../controllers/controllers.js';
 import { verifyToken } from '../middleware/auth.js';
 
@@ -25,6 +26,7 @@ router.post('/auth/login', login);
 router.get('/auth/profile', verifyToken, getProfile);
 router.post('/auth/favorite', verifyToken, toggleFavorite);
 router.post('/auth/visited', verifyToken, toggleVisited);
+router.post('/auth/upgrade', verifyToken, upgradeToPremium);
 
 // Places Routes
 router.get('/places', getPlaces);

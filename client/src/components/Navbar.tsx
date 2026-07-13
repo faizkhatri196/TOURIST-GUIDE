@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
-import { Compass, Map, Calendar, Hotel, User, LogOut, Compass as LogoIcon } from 'lucide-react';
+import { Compass, Map, Calendar, Hotel, User, LogOut, Sparkles, Compass as LogoIcon } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
@@ -15,6 +15,7 @@ export const Navbar: React.FC = () => {
     { name: 'AI Planner', href: '/planner', icon: Calendar },
     { name: 'Interactive Map', href: '/map', icon: Map },
     { name: 'Hotels', href: '/hotels', icon: Hotel },
+    { name: 'Premium', href: '/premium', icon: Sparkles },
   ];
 
   return (

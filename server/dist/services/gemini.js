@@ -204,7 +204,7 @@ export async function generateRouteDetails(origin, destination, mode) {
     try {
         const system = "You are a Route Intelligence Analyst for 'Let's Travel World'. Make all route dossiers highly detailed, structured, and formatted in markdown.";
         const prompt = `Analyze the travel route from: "${origin}" to "${destination}" using transport mode: "${mode}".
-
+ 
 Format your response in beautiful Markdown, including:
 1. **Route Overview**: High-level description of the transit path.
 2. **Estimated Parameters**: Distance in km, Travel Time, and estimated Fuel/Transit Cost.
@@ -217,5 +217,136 @@ Make it look like a highly detailed navigation dossier.`;
     catch (error) {
         console.error("Error in Groq generateRouteDetails:", error);
         return `### AI Route Intel Error\n\nFailed to compile route telemetry: ${error.message}.`;
+    }
+}
+export async function generateSuperIntel(destination, segment) {
+    if (!isAIAvailable()) {
+        return generateMockSuperIntel(destination, segment);
+    }
+    try {
+        const system = "You are the Ultimate AI Travel Operating System ('Let's Travel World OS'). Respond with premium, highly structured, expert-level Markdown including custom sections, telemetry indices, tables, and bullet points.";
+        let prompt = "";
+        if (segment === 'safety-accessibility') {
+            prompt = `Provide a comprehensive Safety and Accessibility dossier for: "${destination}".
+Include:
+1. **Safety Analysis Matrix**: Overall Safety Index, General Security, Women's Safety Dossier, LGBTQ+ Friendliness, and Nighttime safety.
+2. **Accessibility Matrix**: Wheelchair friendliness, Senior Citizen support, Family comfort, and Pet-friendly policies.
+3. **Emergency Terminals & Nodes**: Nearest Hospital contact coordinates, local Police Stations, active ATMs, and Pharmacies.
+4. **Photography & Aviation**: Top photography spots, drone-friendly zones (where legal), and best sunrise/sunset spots.`;
+        }
+        else if (segment === 'transport') {
+            prompt = `Provide a comprehensive Transport and Logistics dossier for: "${destination}".
+Include:
+1. **Transit Infrastructure Overview**: Airports, primary Railway Stations, Metro lines, and Bus terminals.
+2. **Regional Commute Options**: Ride-hailing availability (e.g. Uber, Bolt, Ola, local Auto-rickshaws), Car/Scooter rentals.
+3. **Route Metrics**: Estimated flight/train travel time, cost index, comfort score, and carbon offset comparison (CO2 emissions in kg).
+4. **Offline Access Advice**: Offline map suggestions, signal coverage (4G/5G/Fiber availability).`;
+        }
+        else if (segment === 'food-shopping') {
+            prompt = `Provide a comprehensive Food and Shopping dossier for: "${destination}".
+Include:
+1. **Culinary AI Recommendations**: Must-try traditional local specialties, street food highlights, and dinner hotspots.
+2. **Dietary Access**: Availability of Vegetarian, Vegan, Jain, Halal, and Gluten-Free food options.
+3. **Shopping Hub Directory**: Traditional handcraft markets, luxury fashion streets, souvenir boutiques, price tiers, and nearby cafe stops.`;
+        }
+        else {
+            prompt = `Provide a highlight AI Itinerary for: "${destination}".
+Include:
+1. **3-Day Fast-Track Timeline**: Day-by-day morning, afternoon, and evening slots with estimated activity times.
+2. **Logistics Integration**: Recommended nearby hotels, daily transport, and weather-aware packing checklists.`;
+        }
+        return await callGroq(system, prompt);
+    }
+    catch (error) {
+        console.error("Error in generateSuperIntel:", error);
+        return `### AI Super Intel Offline Fallback\n\nFailed to compile live dossier: ${error.message}.\n\n` + generateMockSuperIntel(destination, segment);
+    }
+}
+function generateMockSuperIntel(destination, segment) {
+    if (segment === 'safety-accessibility') {
+        return `### 🛡️ Safety & Accessibility Dossier // ${destination} (Sandbox Mode)
+    
+#### 1. Safety Analysis Matrix
+* **Overall Safety Rating**: 4.8 / 5.0 (Very High)
+* **Women's Safety**: Excellent. Highly walkable streets, active public policing, and well-lit public transit nodes.
+* **LGBTQ+ Friendliness**: Welcoming, progressive community centers.
+* **Nighttime Safety**: Safe in major municipal tourist zones. Keep normal precautions in quiet lanes.
+
+#### 2. Accessibility & Family Comfort
+* **Wheelchair Support**: Public transit stations and modern monuments have ramp access and low-floor buses.
+* **Senior Citizen Comfort**: Senior discounts, rest areas at major spots, and easily accessible taxi stands.
+* **Pet Policy**: Many parks allow leashed dogs; outdoor seating at cafes is widely pet-friendly.
+
+#### 3. Emergency Terminals & Nodes
+* **Local Hospital**: General Medical Center (Contact: 112 / +91-11-23000000)
+* **Police Station**: Municipal Head Police Terminal
+* **ATMs & Pharmacies**: Multiple 24/7 bank terminals and pharmacies are located within 500m of the city center.
+
+#### 4. Drone & Photography
+* **Photography Spots**: Panoramic city center overlook, historic temples, and local botanical garden pathways.
+* **Drone Regulations**: Permit required. Flight is banned near heritage sites, airports, and military zones.
+* **Sun Coordinates**: Sunset overlook at Vista Point; Sunrise view at Eastern Ridge.`;
+    }
+    else if (segment === 'transport') {
+        return `### 🚄 Transport & Logistics Dossier // ${destination} (Sandbox Mode)
+    
+#### 1. Transit Infrastructure Overview
+* **Primary Airport**: International Airport (IATA Code: global transit hub)
+* **Railway Stations**: Central Railway Terminal (High-speed rail active)
+* **Metro / Local Rails**: 6 active metro lines running every 5 minutes from 06:00 AM to Midnight.
+
+#### 2. Ride-Hailing & Rentals
+* **Ride-Hailing**: Uber, Bolt, and regional Rickshaw services are fully active via smartphone apps.
+* **Rentals**: Car rentals available at airport desks; Scooter and bicycle rental points are located at every major street corner.
+
+#### 3. Route & Environmental Metrics
+* **Carbon Footprint Index**: Green-certified rail options offset up to 80% CO2 compared to short-haul aviation.
+* **Travel Cost Index**: $ (Very Budget-friendly)
+* **Comfort Score**: 9.2 / 10 (Excellent roads and modern clean trains)
+
+#### 4. Connectivity & Offline Telemetry
+* **Cellular Coverage**: 5G/4G connectivity is stable throughout the region.
+* **Offline Maps**: Highly recommended to cache map zones via Leaflet storage prior to remote exploration.`;
+    }
+    else if (segment === 'food-shopping') {
+        return `### 🍽️ Food & Shopping Dossier // ${destination} (Sandbox Mode)
+    
+#### 1. Culinary Recommendations
+* **Breakfast**: Fresh pastries, traditional pancakes, and local pour-over espresso.
+* **Lunch & Dinner**: Wood-fired local specialties, regional broths, and fresh farm-to-table salads.
+* **Street Food**: Try the food market alleyways for cheap, authentic traditional delicacies.
+
+#### 2. Dietary & Allergen Access
+* **Vegetarian & Vegan**: Highly active scene. Over 50+ dedicated organic vegan outlets.
+* **Jain & Halal**: Available in city center restaurants. Specify preferences when placing orders.
+* **Gluten-Free**: Large supermarkets stock certified gluten-free options.
+
+#### 3. Shopping Hub Directory
+* **Traditional Bazaar**: Heritage Handicraft Market (Best for souvenirs, woven items, spices).
+* **Luxury Boulevard**: Central Plaza Mall & Fashion Street (Opening hours: 10 AM to 9 PM).
+* **Average Price Level**: Moderate ($$)`;
+    }
+    else {
+        return `### 📅 AI Itinerary Timeline // ${destination} (Sandbox Mode)
+    
+#### Day 1: Heritage & Overviews
+* **09:00 AM** — Morning stroll through the historic old town quarters.
+* **01:00 PM** — Quick lunch at a traditional food market lane.
+* **03:00 PM** — Guided architectural walk through the municipal museums.
+* **07:30 PM** — Rooftop dinner with panoramic views of the city sunset.
+
+#### Day 2: Nature & Local Escapes
+* **08:30 AM** — Early morning excursion to the nearby hills or beach reserves.
+* **12:30 PM** — Seaside or valley restaurant lunch.
+* **03:30 PM** — Hiking or cycling along scenic local paths.
+* **06:30 PM** — Scenic sunset viewing spot.
+
+#### Day 3: Shopping & Leisure
+* **10:00 AM** — Souvenir and artisan handicraft shopping.
+* **02:00 PM** — Casual lunch at a nearby park cafe.
+* **05:00 PM** — Farewell walk around the city lakes or plazas.
+
+#### Packing Checklist
+* Comfortable walking shoes, breathable attire, power bank, and a refillable water flask.`;
     }
 }
