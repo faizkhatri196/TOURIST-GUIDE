@@ -4,7 +4,7 @@
 
 A comprehensive, intelligent travel guide platform designed to help users explore destinations worldwide with personalized recommendations, real-time information, and interactive trip planning tools.
 
-**🚀 Live Demo:** [https://tourist-guide-steel.vercel.app](https://tourist-guide-steel.vercel.app)
+**🚀 Live Demo:** [https://tourist-guide-steel.vercel.app]([https://tourist-guide-steel.vercel.app](https://tourist-guide-gxyq-ix8fat8cw-faiz-khatri.vercel.app/))
 
 ---
 
