@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Sparkles, AlertTriangle, CheckCircle, CreditCard, Bell, Download, Map, MessageSquare, PhoneCall } from 'lucide-react';
+import { Shield, Sparkles, AlertTriangle, CheckCircle, CreditCard, Bell, Download, Map, MessageSquare, PhoneCall, DollarSign, Activity, FileText, Smartphone } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function PremiumPage() {
@@ -79,52 +79,106 @@ export default function PremiumPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white pt-24 pb-28 md:pb-16 px-6 font-sans">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <div className="min-h-screen bg-black text-white pt-24 pb-28 md:pb-16 px-6 font-sans relative">
+      
+      {/* Decorative Radial Backgrounds */}
+      <div className="absolute top-20 right-10 w-96 h-96 bg-royal-blue/10 rounded-full blur-3xl -z-10 pointer-events-none" />
+      <div className="absolute bottom-20 left-10 w-[500px] h-[500px] bg-emerald-green/5 rounded-full blur-3xl -z-10 pointer-events-none" />
+
+      <div className="max-w-5xl mx-auto space-y-8">
         
         {/* Page Header */}
         <div className="text-center space-y-2">
-          <span className="font-mono text-[10px] tracking-[0.3em] text-royal-blue uppercase font-bold">
-            Travel Operating System v2 // Premium
-          </span>
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-            Premium <span className="text-gradient bg-gradient-to-r from-royal-blue to-emerald-green">Concierge Dashboard</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full backdrop-blur-md mb-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-green animate-pulse" />
+            <span className="font-mono text-[9px] tracking-widest text-zinc-300 uppercase font-bold">
+              Travel OS Super-App // Premium v2.8
+            </span>
+          </div>
+          <h1 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight">
+            The World's Most Advanced <br />
+            <span className="text-gradient bg-gradient-to-r from-white via-royal-blue to-emerald-green">
+              AI Travel Concierge
+            </span>
           </h1>
-          <p className="text-zinc-500 text-xs font-light max-w-lg mx-auto">
-            Unlock real-time price prediction models, unlimited AI planners, offline vector maps, and direct emergency concierge networks.
+          <p className="text-zinc-500 text-xs font-light max-w-xl mx-auto leading-relaxed">
+            Manage live flight price predictions, offline vector map overlays, secure document wallets, and automated corporate Saas expenses.
           </p>
         </div>
 
         {user?.isPremium ? (
-          /* PREMIUM USER CONSOLE */
+          /* ULTRA LEVEL PREMIUM USER CONSOLE */
           <motion.div 
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            className="space-y-6"
+            className="space-y-8"
           >
-            {/* Status Card */}
-            <div className="relative overflow-hidden bg-gradient-to-br from-zinc-900/80 to-zinc-900/20 border border-emerald-green/30 p-6 rounded-2xl backdrop-blur-xl">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-green/5 rounded-full blur-3xl -z-10" />
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-green animate-pulse" />
-                    <span className="text-xs uppercase font-mono tracking-widest text-emerald-green font-semibold">Subscription Active</span>
+            {/* Status Card & Hero Telemetry Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              
+              {/* Profile Card */}
+              <div className="md:col-span-2 relative overflow-hidden bg-gradient-to-br from-zinc-950 to-zinc-900 border border-emerald-green/30 p-5 rounded-2xl backdrop-blur-xl flex flex-col justify-between h-40">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-green/5 rounded-full blur-2xl -z-10" />
+                <div className="flex justify-between items-start">
+                  <div className="space-y-1">
+                    <span className="text-[9px] font-mono text-emerald-green uppercase tracking-widest font-semibold flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-green animate-pulse" />
+                      Active Subscription
+                    </span>
+                    <h3 className="text-lg font-bold text-white">Travel OS Premium Member</h3>
                   </div>
-                  <h3 className="text-lg font-bold text-white">Travel OS Premium Member</h3>
-                  <p className="text-[10px] text-zinc-500 font-mono">Renewal Date: July 2027 (Simulated billing via Stripe node gateway)</p>
+                  <div className="w-8 h-8 rounded-lg bg-emerald-green/10 border border-emerald-green/20 flex items-center justify-center text-emerald-green">
+                    <Shield className="w-4 h-4" />
+                  </div>
                 </div>
-                <div className="px-4 py-1.5 rounded-xl bg-emerald-green/10 border border-emerald-green/30 text-emerald-green font-mono text-[11px] font-bold">
-                  UNLOCKED ACCESS
+                <div className="text-[10px] text-zinc-500 font-mono">
+                  Billed via Stripe Node Sandbox Gateway // Valid until 2027
                 </div>
               </div>
+
+              {/* Telemetry Meter 1: AI Planner Capacity */}
+              <div className="bg-white/5 border border-white/5 p-5 rounded-2xl flex flex-col justify-between h-40">
+                <div className="flex justify-between items-start">
+                  <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">AI Neural Planning</span>
+                  <Activity className="w-4 h-4 text-royal-blue" />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs font-mono">
+                    <span className="text-zinc-400">Usage Limit</span>
+                    <span className="text-white font-bold">Unlimited</span>
+                  </div>
+                  <div className="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                    <div className="bg-royal-blue h-1.5 rounded-full" style={{ width: '85%' }} />
+                  </div>
+                  <div className="text-[9px] text-zinc-500 font-light font-mono">1,248 queries processed this billing cycle.</div>
+                </div>
+              </div>
+
+              {/* Telemetry Meter 2: Maps Cache Size */}
+              <div className="bg-white/5 border border-white/5 p-5 rounded-2xl flex flex-col justify-between h-40">
+                <div className="flex justify-between items-start">
+                  <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">Offline Vectors Cache</span>
+                  <Map className="w-4 h-4 text-emerald-green" />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs font-mono">
+                    <span className="text-zinc-400">Space Used</span>
+                    <span className="text-white font-bold">45.2 MB</span>
+                  </div>
+                  <div className="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                    <div className="bg-emerald-green h-1.5 rounded-full" style={{ width: '45%' }} />
+                  </div>
+                  <div className="text-[9px] text-zinc-500 font-light font-mono">IndexedDB storage buffer operational.</div>
+                </div>
+              </div>
+
             </div>
 
-            {/* Premium Features Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Core Panels Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
               
               {/* Price Alerts Panel */}
-              <div className="bg-white/5 border border-white/5 p-5 rounded-2xl space-y-4">
+              <div className="md:col-span-6 bg-white/5 border border-white/5 p-5 rounded-2xl space-y-4">
                 <div className="flex items-center gap-2 border-b border-white/5 pb-2">
                   <Bell className="w-4 h-4 text-royal-blue" />
                   <h4 className="text-xs uppercase font-mono tracking-wider font-semibold text-white">Live Price drop Alerts</h4>
@@ -134,25 +188,25 @@ export default function PremiumPage() {
                     type="text"
                     value={priceAlertDestination}
                     onChange={(e) => setPriceAlertDestination(e.target.value)}
-                    placeholder="Enter city (e.g. Rome)..."
-                    className="flex-1 bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-royal-blue/50"
+                    placeholder="Enter destination (e.g. Rome)..."
+                    className="flex-1 bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-650 focus:outline-none focus:border-royal-blue/50"
                   />
                   <button type="submit" className="px-4 py-2 bg-royal-blue text-xs font-bold uppercase rounded-xl hover:bg-royal-blue/90 transition-all cursor-pointer">
                     Track
                   </button>
                 </form>
-                <div className="space-y-2">
+                <div className="space-y-2 max-h-36 overflow-y-auto pr-1">
                   {activeAlerts.map((alertItem, idx) => (
-                    <div key={idx} className="flex justify-between items-center bg-white/5 px-3 py-2 rounded-xl border border-white/5 text-[11px]">
+                    <div key={idx} className="flex justify-between items-center bg-black/40 px-3 py-2.5 rounded-xl border border-white/5 text-[11px]">
                       <span className="text-zinc-300 font-light">{alertItem}</span>
-                      <span className="text-emerald-green font-mono font-semibold">Active Monitoring</span>
+                      <span className="text-emerald-green font-mono font-semibold text-[10px] uppercase">Active Monitoring</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Offline Maps Panel */}
-              <div className="bg-white/5 border border-white/5 p-5 rounded-2xl space-y-4">
+              <div className="md:col-span-6 bg-white/5 border border-white/5 p-5 rounded-2xl space-y-4">
                 <div className="flex items-center gap-2 border-b border-white/5 pb-2">
                   <Map className="w-4 h-4 text-emerald-green" />
                   <h4 className="text-xs uppercase font-mono tracking-wider font-semibold text-white">Offline Maps Cache</h4>
@@ -163,18 +217,18 @@ export default function PremiumPage() {
                     value={mapInput}
                     onChange={(e) => setMapInput(e.target.value)}
                     placeholder="Enter city / region..."
-                    className="flex-1 bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-green/50"
+                    className="flex-1 bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-650 focus:outline-none focus:border-emerald-green/50"
                   />
                   <button type="submit" className="px-4 py-2 bg-emerald-green text-black text-xs font-bold uppercase rounded-xl hover:bg-emerald-green/90 transition-all cursor-pointer">
                     Download
                   </button>
                 </form>
-                <div className="space-y-2">
+                <div className="space-y-2 max-h-36 overflow-y-auto pr-1">
                   {downloadedMaps.map((mapItem, idx) => (
-                    <div key={idx} className="flex justify-between items-center bg-white/5 px-3 py-2 rounded-xl border border-white/5 text-[11px]">
+                    <div key={idx} className="flex justify-between items-center bg-black/40 px-3 py-2.5 rounded-xl border border-white/5 text-[11px]">
                       <span className="text-zinc-300 font-light">{mapItem}</span>
                       <div className="flex items-center gap-1.5 text-emerald-green">
-                        <Download className="w-3.5 h-3.5" />
+                        <Download className="w-3.5 h-3.5 animate-bounce" />
                         <span className="font-mono text-[9px] uppercase tracking-wider font-bold">Offline Ready</span>
                       </div>
                     </div>
@@ -182,31 +236,90 @@ export default function PremiumPage() {
                 </div>
               </div>
 
-              {/* 24/7 AI Concierge Voice Line */}
-              <div className="bg-white/5 border border-white/5 p-5 rounded-2xl space-y-4 md:col-span-2">
+              {/* Emergency AI Concierge Satellite line */}
+              <div className="md:col-span-12 bg-white/5 border border-white/5 p-5 rounded-2xl space-y-4">
                 <div className="flex items-center justify-between border-b border-white/5 pb-2">
                   <div className="flex items-center gap-2">
                     <PhoneCall className="w-4 h-4 text-royal-blue" />
-                    <h4 className="text-xs uppercase font-mono tracking-wider font-semibold text-white">Emergency AI Concierge Line</h4>
+                    <h4 className="text-xs uppercase font-mono tracking-wider font-semibold text-white">Emergency AI Concierge Link</h4>
                   </div>
-                  <span className="text-[10px] font-mono text-zinc-500 uppercase">Live satellite sync</span>
+                  <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">Satellite Link Operational</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="p-4 rounded-xl bg-white/5 border border-white/5 flex flex-col justify-between h-28">
-                    <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">Medical SOS Line</span>
-                    <h3 className="text-xs font-bold text-white">Direct Medical Link</h3>
-                    <span className="text-[9.5px] font-mono text-emerald-green font-semibold">Operational // 112 Ready</span>
+                  <div className="p-4 rounded-xl bg-black/40 border border-white/5 flex flex-col justify-between h-28 hover:border-royal-blue/30 transition-all duration-300">
+                    <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-widest">Medical SOS</span>
+                    <h3 className="text-xs font-bold text-white">Nearest Emergency Hospital</h3>
+                    <span className="text-[9.5px] font-mono text-emerald-green font-semibold">112 Dispatch Ready</span>
                   </div>
-                  <div className="p-4 rounded-xl bg-white/5 border border-white/5 flex flex-col justify-between h-28">
-                    <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">Global IATA Support</span>
-                    <h3 className="text-xs font-bold text-white">Flight Rescheduling Concierge</h3>
-                    <span className="text-[9.5px] font-mono text-emerald-green font-semibold">Operational // Auto re-book</span>
+                  <div className="p-4 rounded-xl bg-black/40 border border-white/5 flex flex-col justify-between h-28 hover:border-royal-blue/30 transition-all duration-300">
+                    <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-widest">GDS Global Sync</span>
+                    <h3 className="text-xs font-bold text-white">IATA Auto Rescheduling</h3>
+                    <span className="text-[9.5px] font-mono text-emerald-green font-semibold">Automatic re-book</span>
                   </div>
-                  <div className="p-4 rounded-xl bg-white/5 border border-white/5 flex flex-col justify-between h-28">
-                    <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">Legal Assistance</span>
+                  <div className="p-4 rounded-xl bg-black/40 border border-white/5 flex flex-col justify-between h-28 hover:border-royal-blue/30 transition-all duration-300">
+                    <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-widest">Government Link</span>
                     <h3 className="text-xs font-bold text-white">Consulate Coordination</h3>
-                    <span className="text-[9.5px] font-mono text-emerald-green font-semibold">Operational // Embassy Link</span>
+                    <span className="text-[9.5px] font-mono text-emerald-green font-semibold">Embassy routing active</span>
                   </div>
+                </div>
+              </div>
+
+              {/* Travel Co-Pilot Chat Console Preview */}
+              <div className="md:col-span-7 bg-white/5 border border-white/5 p-5 rounded-2xl space-y-4">
+                <div className="flex items-center gap-2 border-b border-white/5 pb-2">
+                  <MessageSquare className="w-4 h-4 text-royal-blue" />
+                  <h4 className="text-xs uppercase font-mono tracking-wider font-semibold text-white">Active Co-Pilot Chat Stream</h4>
+                </div>
+                <div className="space-y-3 text-[11px] font-sans">
+                  <div className="flex gap-3">
+                    <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold text-zinc-400">TR</div>
+                    <div className="bg-white/5 border border-white/5 rounded-2xl p-2.5 max-w-[80%] text-zinc-300 font-light leading-relaxed">
+                      "Is the weather fine in Paris for drone photography today?"
+                    </div>
+                  </div>
+                  <div className="flex gap-3 justify-end">
+                    <div className="bg-royal-blue/10 border border-royal-blue/20 rounded-2xl p-2.5 max-w-[80%] text-zinc-300 font-light leading-relaxed text-right">
+                      "Checking live telemetry... Paris winds are 12km/h (Safe for drone takeoff). Note: No-fly zone active near Eiffel Tower."
+                    </div>
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-royal-blue to-emerald-green flex items-center justify-center text-[10px] text-white">AI</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Stripe Billing Portal simulator */}
+              <div className="md:col-span-5 bg-white/5 border border-white/5 p-5 rounded-2xl space-y-4 flex flex-col justify-between">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 border-b border-white/5 pb-2">
+                    <FileText className="w-4 h-4 text-emerald-green" />
+                    <h4 className="text-xs uppercase font-mono tracking-wider font-semibold text-white">Stripe Billing Portal</h4>
+                  </div>
+                  
+                  {/* Card Info */}
+                  <div className="flex items-center justify-between bg-black/40 border border-white/5 p-3 rounded-xl text-xs font-mono">
+                    <span className="text-zinc-500">Active Card</span>
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-royal-blue" />
+                      <span className="text-white">Visa ending in 4242</span>
+                    </div>
+                  </div>
+
+                  {/* Billing Invoices */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center text-[10px] font-mono border-b border-white/5 pb-1">
+                      <span className="text-zinc-500">INVOICE ID</span>
+                      <span className="text-zinc-550">DATE</span>
+                      <span className="text-zinc-500 text-right">AMOUNT</span>
+                    </div>
+                    <div className="flex justify-between items-center text-[10.5px] font-mono">
+                      <span className="text-zinc-300">#INV-2026-0041</span>
+                      <span className="text-zinc-500">TODAY</span>
+                      <span className="text-emerald-green font-semibold text-right">PAID</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-[9px] text-zinc-500 font-mono tracking-wide leading-relaxed border-t border-white/5 pt-4">
+                  Managed safely inside the sandboxed mock stripe billing controller. No actual card charges are emitted.
                 </div>
               </div>
 
@@ -338,7 +451,7 @@ export default function PremiumPage() {
                           placeholder="4242 4242 4242 4242"
                           value={cardNumber}
                           onChange={(e) => setCardNumber(e.target.value.replace(/\s?/g, '').replace(/(\d{4})/g, '$1 ').trim())}
-                          className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-royal-blue/50"
+                          className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-655 focus:outline-none focus:border-royal-blue/50"
                         />
                         <CreditCard className="w-4 h-4 text-zinc-600 absolute right-3 top-3" />
                       </div>
@@ -353,7 +466,7 @@ export default function PremiumPage() {
                           placeholder="MM/YY"
                           value={cardExpiry}
                           onChange={(e) => setCardExpiry(e.target.value)}
-                          className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-royal-blue/50"
+                          className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-655 focus:outline-none focus:border-royal-blue/50"
                         />
                       </div>
                       <div className="space-y-1.5">
@@ -365,7 +478,7 @@ export default function PremiumPage() {
                           maxLength={4}
                           value={cardCvc}
                           onChange={(e) => setCardCvc(e.target.value)}
-                          className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-royal-blue/50"
+                          className="w-full bg-black/50 border border-white/10 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-655 focus:outline-none focus:border-royal-blue/50"
                         />
                       </div>
                     </div>
@@ -381,7 +494,7 @@ export default function PremiumPage() {
                         placeholder="explorer@ybl"
                         value={upiId}
                         onChange={(e) => setUpiId(e.target.value)}
-                        className="w-full bg-black/50 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-royal-blue/50"
+                        className="w-full bg-black/50 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white placeholder-zinc-655 focus:outline-none focus:border-royal-blue/50"
                       />
                     </div>
 
@@ -402,7 +515,7 @@ export default function PremiumPage() {
                           <rect x="13" y="78" width="9" height="9" fill="currentColor" />
 
                           <rect x="40" y="10" width="10" height="5" fill="currentColor" />
-                          <rect x="45" y="20" width="5" height="15" fill="currentColor" />
+                          <rect x="45" y="20" width="5" height="15" fill="white" />
                           <rect x="5" y="40" width="15" height="5" fill="currentColor" />
                           <rect x="25" y="35" width="10" height="10" fill="currentColor" />
                           <rect x="40" y="40" width="25" height="5" fill="currentColor" />
