@@ -35,6 +35,10 @@ Build an AI-powered travel operating system that plans, books, manages, and opti
 *   **Ads (Optional)**: Cost-Per-Click (CPC) ads for free-tier users.
 *   **Travel Packages**: Margin added to custom curated luxury travel packages.
 
+### 🔒 Compulsory Authentication & Landing Page Policy
+*   **Sign-In Requirement**: Unauthenticated visitors are restricted from exploring destinations, planners, maps, or bookings. Any direct access to internal subroutes (`/explore`, `/planner`, `/map`, `/hotels`) immediately redirects to the Landing/About page.
+*   **The About Section (Ultra UI Landing)**: Displays a gorgeous, luxury-themed preview of the Travel OS features. Visitors can only view the core product metrics, value statements, and "AI Itinerary" static demos. Registration/login is mandatory to activate dynamic APIs.
+
 ---
 
 ## 3. Entire System Architecture
@@ -321,6 +325,9 @@ Signup ➔ Destination ➔ Budget ➔ AI Itinerary ➔ Book Flight ➔ Book Hote
 
 ## 17. Security Specifications
 *   **Authentication**: JWT, Google Login, Apple Login, OAuth 2.0.
+*   **Passwordless OTP Verification**:
+    *   **The Recommendation**: Yes, implementing a passwordless OTP verification system via Email (SendGrid/Nodemailer) or SMS (Twilio) is **highly recommended** for a unicorn-level SaaS. It reduces login friction, eliminates password reset databases, and improves registration conversion rates.
+    *   **Verification Workflow**: User enters email/phone ➔ Express generates a secure 6-digit cryptographic hash valid for 5 minutes ➔ Delivers OTP ➔ User enters OTP ➔ Backend validates and signs JWT.
 *   **Audits & Limits**: Role-Based Access Control (RBAC), Rate Limiting, AES-256 local database encryption, HTTPS, 2FA, Audit logs, GDPR Ready.
 
 ---
