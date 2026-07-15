@@ -8,20 +8,15 @@ import { Shield, Mail, Lock, User, Sparkles, AlertCircle, CheckCircle2 } from 'l
 
 export default function AuthPage() {
   const router = useRouter();
-  const { user, token, login, register, verifyOTP, forgotPassword, resetPassword } = useAuth();
+  const { user, token, login, register, resetPassword } = useAuth();
 
   const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
-  // OTP Verification States
-  const [requiresOTP, setRequiresOTP] = useState(false);
-  const [otpCode, setOtpCode] = useState('');
-  
   // Forgot Password States
   const [isForgotMode, setIsForgotMode] = useState(false);
-  const [forgotStage, setForgotStage] = useState<'request' | 'verify'>('request');
   const [newPassword, setNewPassword] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -30,7 +25,7 @@ export default function AuthPage() {
 
   // If already authenticated, forward to profile
   useEffect(() => {
-    if (token && user && user.isVerified !== false) {
+    if (token && user) {
       router.push('/profile');
     }
   }, [token, user, router]);
@@ -46,80 +41,28 @@ export default function AuthPage() {
     setSuccessMessage('');
     setLoading(true);
 
-    if (!email || (!isForgotMode && !password) || (isSignUp && !name)) {
+    if (!email || !password || (isSignUp && !name)) {
       setError("Please fill in all required inputs.");
       setLoading(false);
       return;
     }
 
     if (!validateEmailFormat(email)) {
-      setError("Please enter a valid email address (e.g. user@domain.com).");
+      setError("Please enter a valid email address.");
       setLoading(false);
       return;
     }
 
     try {
       if (isSignUp) {
-        const res = await register(name, email, password) as any;
-        // Check if registration requires OTP verification
-        setRequiresOTP(true);
+        await register(name, email, password);
       } else {
         await login(email, password);
-        router.push('/profile');
       }
-    } catch (err: any) {
-      const errMsg = err.response?.data?.error || err.message || "Authentication failed.";
-      if (err.response?.data?.requiresVerification) {
-        setRequiresOTP(true);
-        setError("Please enter the verification OTP code sent to your email.");
-      } else {
-        setError(errMsg);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleOTPVerifySubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    if (!otpCode || otpCode.length < 6) {
-      setError("Please enter the 6-digit OTP code.");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      await verifyOTP(email, otpCode);
-      setRequiresOTP(false);
       router.push('/profile');
     } catch (err: any) {
-      setError(err.response?.data?.error || "OTP verification failed. Check code.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleForgotPasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setSuccessMessage('');
-    setLoading(true);
-
-    if (!email) {
-      setError("Please enter your registered email address.");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      await forgotPassword(email);
-      setForgotStage('verify');
-      setSuccessMessage("Reset OTP logged to console! Check your server console.");
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Forgot password request failed.");
+      const errMsg = err.response?.data?.error || err.message || "Authentication failed.";
+      setError(errMsg);
     } finally {
       setLoading(false);
     }
@@ -131,21 +74,26 @@ export default function AuthPage() {
     setSuccessMessage('');
     setLoading(true);
 
-    if (!otpCode || !newPassword) {
-      setError("OTP code and new password are required.");
+    if (!email || !newPassword) {
+      setError("Email and new password are required.");
+      setLoading(false);
+      return;
+    }
+
+    if (!validateEmailFormat(email)) {
+      setError("Please enter a valid email address.");
       setLoading(false);
       return;
     }
 
     try {
-      await resetPassword(email, otpCode, newPassword);
+      await resetPassword(email, '', newPassword);
       setSuccessMessage("Password updated successfully! You can now log in.");
       setIsForgotMode(false);
-      setForgotStage('request');
       setPassword('');
-      setOtpCode('');
+      setNewPassword('');
     } catch (err: any) {
-      setError(err.response?.data?.error || "Reset password failed. Check OTP code.");
+      setError(err.response?.data?.error || "Reset password failed.");
     } finally {
       setLoading(false);
     }
@@ -174,57 +122,8 @@ export default function AuthPage() {
         className="w-full max-w-sm glass-panel p-8 rounded-3xl relative z-10 flex flex-col justify-between"
       >
         <AnimatePresence mode="wait">
-          {requiresOTP ? (
-            /* OTP VERIFICATION VIEW */
-            <motion.div
-              key="otp"
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 10 }}
-              className="space-y-4"
-            >
-              <div className="flex justify-center mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-royal-blue/10 border border-royal-blue/30 flex items-center justify-center text-royal-blue">
-                  <Shield className="w-5 h-5 animate-pulse" />
-                </div>
-              </div>
-              <h2 className="text-center text-sm font-bold text-white uppercase tracking-wider">Verify Email Identity</h2>
-              <p className="text-[10px] text-zinc-400 text-center font-light leading-relaxed">
-                A 6-digit verification code has been dispatched to <strong>{email}</strong>. Check your server terminal console logs for the code.
-              </p>
-
-              <form onSubmit={handleOTPVerifySubmit} className="space-y-4">
-                <div className="space-y-1">
-                  <label className="text-[9px] uppercase tracking-wider text-zinc-550 font-medium">6-Digit OTP</label>
-                  <input
-                    type="text"
-                    maxLength={6}
-                    required
-                    placeholder="E.g. 123456"
-                    value={otpCode}
-                    onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
-                    className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-center text-sm font-mono tracking-widest text-white focus:outline-none focus:border-royal-blue/50"
-                  />
-                </div>
-
-                {error && (
-                  <div className="flex items-center gap-1.5 text-[10px] text-red-400 font-mono">
-                    <AlertCircle className="w-3.5 h-3.5" />
-                    <span>{error}</span>
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-2.5 bg-gradient-to-r from-royal-blue to-emerald-green text-black font-semibold text-xs uppercase tracking-wider rounded-xl hover:opacity-90 transition-all flex items-center justify-center cursor-pointer"
-                >
-                  {loading ? "Verifying OTP..." : "Confirm & Unlock"}
-                </button>
-              </form>
-            </motion.div>
-          ) : isForgotMode ? (
-            /* FORGOT / RESET PASSWORD VIEW */
+          {isForgotMode ? (
+            /* FORGOT / RESET PASSWORD VIEW (NO OTP) */
             <motion.div
               key="forgot"
               initial={{ opacity: 0, x: -10 }}
@@ -234,59 +133,39 @@ export default function AuthPage() {
             >
               <h2 className="text-center text-sm font-bold text-white uppercase tracking-wider">Reset Password</h2>
               <p className="text-[10px] text-zinc-400 text-center font-light leading-relaxed">
-                Connect directly with MongoDB to safely reset your explorer password using verification tokens.
+                Reset your explorer password directly in MongoDB.
               </p>
 
-              {forgotStage === 'request' ? (
-                <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
-                  <div className="space-y-1">
-                    <label className="text-[9px] uppercase tracking-wider text-zinc-400 font-medium">Registered Email</label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="explorer@orbit.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-royal-blue/55 cursor-pointer"
-                    />
-                  </div>
-                  <button type="submit" className="w-full py-2.5 bg-royal-blue text-xs font-semibold uppercase tracking-wider rounded-xl hover:opacity-90 transition-all cursor-pointer">
-                    Request Reset OTP
-                  </button>
-                </form>
-              ) : (
-                <form onSubmit={handleResetPasswordSubmit} className="space-y-4">
-                  <div className="space-y-1">
-                    <label className="text-[9px] uppercase tracking-wider text-zinc-400 font-medium">Reset OTP Code</label>
-                    <input
-                      type="text"
-                      maxLength={6}
-                      required
-                      placeholder="123456"
-                      value={otpCode}
-                      onChange={(e) => setOtpCode(e.target.value)}
-                      className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-royal-blue/55"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[9px] uppercase tracking-wider text-zinc-400 font-medium">New Security Password</label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="••••••••"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-royal-blue/55"
-                    />
-                  </div>
-                  <button type="submit" className="w-full py-2.5 bg-gradient-to-r from-royal-blue to-emerald-green text-black font-semibold text-xs uppercase tracking-wider rounded-xl hover:opacity-90 transition-all cursor-pointer">
-                    Update Password
-                  </button>
-                </form>
-              )}
+              <form onSubmit={handleResetPasswordSubmit} className="space-y-4">
+                <div className="space-y-1">
+                  <label className="text-[9px] uppercase tracking-wider text-zinc-400 font-medium">Registered Email</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="explorer@orbit.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-royal-blue/55"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] uppercase tracking-wider text-zinc-400 font-medium">New Security Password</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="••••••••"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-royal-blue/55"
+                  />
+                </div>
+                <button type="submit" className="w-full py-2.5 bg-gradient-to-r from-royal-blue to-emerald-green text-black font-semibold text-xs uppercase tracking-wider rounded-xl hover:opacity-90 transition-all cursor-pointer">
+                  Update Password
+                </button>
+              </form>
 
               {successMessage && (
-                <div className="flex items-center gap-1.5 text-[10px] text-emerald-400 mt-2 font-mono">
+                <div className="flex items-center gap-1.5 text-[10px] text-emerald-450 mt-2 font-mono">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   <span>{successMessage}</span>
                 </div>
@@ -302,7 +181,6 @@ export default function AuthPage() {
               <button
                 onClick={() => {
                   setIsForgotMode(false);
-                  setForgotStage('request');
                   setError('');
                 }}
                 className="w-full text-center text-[10px] text-zinc-500 hover:text-white transition-colors uppercase font-mono tracking-wider pt-2"
@@ -400,11 +278,10 @@ export default function AuthPage() {
                       type="button"
                       onClick={() => {
                         setIsForgotMode(true);
-                        setForgotStage('request');
                         setError('');
                         setSuccessMessage('');
                       }}
-                      className="text-[9px] text-zinc-550 hover:text-white uppercase font-mono tracking-wider transition-colors cursor-pointer"
+                      className="text-[9px] text-zinc-555 hover:text-white uppercase font-mono tracking-wider transition-colors cursor-pointer"
                     >
                       Forgot Password?
                     </button>

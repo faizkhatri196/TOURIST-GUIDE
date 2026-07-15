@@ -159,8 +159,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const mockId = `sandbox_u_${Date.now()}`;
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
 
     const userData = {
       _id: mockId,
@@ -172,20 +170,32 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       badges: [],
       stats: { distanceTraveled: 0, placesVisited: 0, level: 1, points: 0 },
       isPremium: false,
-      isVerified: false,
-      otpCode: otp,
-      otpExpires
+      isVerified: true,
+      otpCode: null,
+      otpExpires: null
     };
 
-    console.log(`\n==============================================\n[MOCK_EMAIL_DISPATCH] Registration OTP for ${email}: ${otp}\n==============================================\n`);
-
     try {
-      await User.create(userData);
-      res.status(201).json({ requiresVerification: true, email });
+      const dbUser = await User.create(userData);
+      const token = jwt.sign({ id: dbUser._id }, JWT_SECRET, { expiresIn: '7d' });
+      res.status(201).json({ token, user: dbUser });
     } catch (dbErr) {
       // Sandbox fallback
       sandboxUsers.set(email, userData);
-      res.status(201).json({ requiresVerification: true, email });
+      const token = jwt.sign({ id: mockId }, JWT_SECRET, { expiresIn: '7d' });
+      res.status(201).json({
+        token,
+        user: {
+          id: mockId,
+          name,
+          email,
+          favorites: [],
+          visited: [],
+          badges: [],
+          stats: userData.stats,
+          isPremium: false
+        }
+      });
     }
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -193,110 +203,18 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { email, otp } = req.body;
-    if (!email || !otp) {
-      res.status(400).json({ error: "Email and OTP are required" });
-      return;
-    }
-
-    let user: any = null;
-    let isDbUser = true;
-
-    try {
-      user = await User.findOne({ email });
-    } catch (err) {
-      user = sandboxUsers.get(email);
-      isDbUser = false;
-    }
-
-    if (!user) {
-      res.status(404).json({ error: "User not found" });
-      return;
-    }
-
-    if (user.otpCode !== otp || new Date(user.otpExpires) < new Date()) {
-      res.status(400).json({ error: "Invalid or expired OTP code" });
-      return;
-    }
-
-    user.isVerified = true;
-    user.otpCode = null;
-    user.otpExpires = null;
-
-    if (isDbUser) {
-      await User.updateOne({ email }, { isVerified: true, otpCode: null, otpExpires: null });
-    } else {
-      sandboxUsers.set(email, user);
-    }
-
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        favorites: user.favorites,
-        visited: user.visited,
-        badges: user.badges,
-        stats: user.stats,
-        isPremium: user.isPremium || false
-      }
-    });
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
-  }
+  res.json({ success: true, message: "OTP system disabled. Automatically verified." });
 };
 
 export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { email } = req.body;
-    if (!email) {
-      res.status(400).json({ error: "Email is required" });
-      return;
-    }
-
-    let user: any = null;
-    let isDbUser = true;
-
-    try {
-      user = await User.findOne({ email });
-    } catch (err) {
-      user = sandboxUsers.get(email);
-      isDbUser = false;
-    }
-
-    if (!user) {
-      res.status(404).json({ error: "No account registered with this email" });
-      return;
-    }
-
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
-
-    user.otpCode = otp;
-    user.otpExpires = otpExpires;
-
-    if (isDbUser) {
-      await User.updateOne({ email }, { otpCode: otp, otpExpires });
-    } else {
-      sandboxUsers.set(email, user);
-    }
-
-    console.log(`\n==============================================\n[MOCK_EMAIL_DISPATCH] Forgot Password Reset OTP for ${email}: ${otp}\n==============================================\n`);
-
-    res.json({ success: true, message: "Reset OTP logged to console." });
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
-  }
+  res.json({ success: true, message: "OTP system disabled. Reset password directly." });
 };
 
 export const resetPassword = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email, otp, newPassword } = req.body;
-    if (!email || !otp || !newPassword) {
-      res.status(400).json({ error: "Email, OTP, and new password are required" });
+    const { email, newPassword } = req.body;
+    if (!email || !newPassword) {
+      res.status(400).json({ error: "Email and new password are required" });
       return;
     }
 
@@ -312,21 +230,14 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
 
     if (!user) {
       res.status(404).json({ error: "User not found" });
-      return;
-    }
-
-    if (user.otpCode !== otp || new Date(user.otpExpires) < new Date()) {
-      res.status(400).json({ error: "Invalid or expired OTP code" });
       return;
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedPassword;
-    user.otpCode = null;
-    user.otpExpires = null;
 
     if (isDbUser) {
-      await User.updateOne({ email }, { password: hashedPassword, otpCode: null, otpExpires: null });
+      await User.updateOne({ email }, { password: hashedPassword });
     } else {
       sandboxUsers.set(email, user);
     }
@@ -360,29 +271,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       res.status(400).json({ error: "Invalid email or password" });
-      return;
-    }
-
-    if (!user.isVerified) {
-      // Re-trigger OTP dispatch log
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
-      user.otpCode = otp;
-      user.otpExpires = otpExpires;
-      
-      try {
-        await User.updateOne({ email }, { otpCode: otp, otpExpires });
-      } catch (dbErr) {
-        sandboxUsers.set(email, user);
-      }
-
-      console.log(`\n==============================================\n[MOCK_EMAIL_DISPATCH] Pending Verification OTP for ${email}: ${otp}\n==============================================\n`);
-
-      res.status(400).json({ 
-        error: "Account is unverified. Please verify your OTP.",
-        requiresVerification: true,
-        email: user.email
-      });
       return;
     }
 
