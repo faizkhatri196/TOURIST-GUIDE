@@ -128,6 +128,25 @@ function parseMarkdownToJSX(content: string) {
 export default function ExplorePage() {
   const { user, token, toggleFavorite, toggleVisited } = useAuth();
 
+  const [places, setPlaces] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedPlace, setSelectedPlace] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState<'All' | 'Global' | 'India'>('All');
+  const [activeStateTab, setActiveStateTab] = useState('All');
+  const [detailTab, setDetailTab] = useState<string>('overview');
+  const [superIntel, setSuperIntel] = useState<string>('');
+  const [superIntelLoading, setSuperIntelLoading] = useState(false);
+
+  // Reviews input state
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
+  const [reviewError, setReviewError] = useState('');
+  const [reviewSuccess, setReviewSuccess] = useState('');
+
+  // Dynamic photos states
+  const [placePhotos, setPlacePhotos] = useState<string[]>([]);
+  const [photosLoading, setPhotosLoading] = useState(false);
+
   if (!user || !token) {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center pt-24 px-6 relative">
@@ -151,25 +170,6 @@ export default function ExplorePage() {
       </div>
     );
   }
-
-  const [places, setPlaces] = useState<any[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedPlace, setSelectedPlace] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'All' | 'Global' | 'India'>('All');
-  const [activeStateTab, setActiveStateTab] = useState('All');
-  const [detailTab, setDetailTab] = useState<string>('overview');
-  const [superIntel, setSuperIntel] = useState<string>('');
-  const [superIntelLoading, setSuperIntelLoading] = useState(false);
-
-  // Reviews input state
-  const [reviewRating, setReviewRating] = useState(5);
-  const [reviewComment, setReviewComment] = useState('');
-  const [reviewError, setReviewError] = useState('');
-  const [reviewSuccess, setReviewSuccess] = useState('');
-
-  // Dynamic photos states
-  const [placePhotos, setPlacePhotos] = useState<string[]>([]);
-  const [photosLoading, setPhotosLoading] = useState(false);
 
   useEffect(() => {
     if (!selectedPlace) {

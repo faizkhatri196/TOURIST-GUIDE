@@ -104,6 +104,17 @@ function HotelsContent() {
   const { user, token } = useAuth();
   const searchParams = useSearchParams();
 
+  const [search, setSearch] = useState('');
+  const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [favorites, setFavorites] = useState<number[]>([]);
+
+  useEffect(() => {
+    const q = searchParams.get('search');
+    if (q) {
+      setSearch(decodeURIComponent(q).split(',')[0]);
+    }
+  }, [searchParams]);
+
   if (!user || !token) {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center pt-24 px-6 relative">
@@ -127,17 +138,6 @@ function HotelsContent() {
       </div>
     );
   }
-
-  const [search, setSearch] = useState('');
-
-  useEffect(() => {
-    const q = searchParams.get('search');
-    if (q) {
-      setSearch(decodeURIComponent(q).split(',')[0]);
-    }
-  }, [searchParams]);
-  const [activeCategory, setActiveCategory] = useState<string>('all');
-  const [favorites, setFavorites] = useState<number[]>([]);
 
   // AI stays dossier query
   const [aiHotelName, setAiHotelName] = useState('');

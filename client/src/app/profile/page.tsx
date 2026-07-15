@@ -8,6 +8,14 @@ import Link from 'next/link';
 export default function ProfilePage() {
   const { user, token } = useAuth();
 
+  // Expense Tracker States
+  const [expenses, setExpenses] = useState<{desc: string, amt: number}[]>([
+    { desc: "Indira Gandhi Flight", amt: 145 },
+    { desc: "Taj Rambagh Stay", amt: 320 }
+  ]);
+  const [expDesc, setExpDesc] = useState('');
+  const [expAmt, setExpAmt] = useState('');
+
   if (!user || !token) {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center pt-24 px-6 relative">
@@ -31,14 +39,6 @@ export default function ProfilePage() {
       </div>
     );
   }
-
-  // Expense Tracker States
-  const [expenses, setExpenses] = useState<{desc: string, amt: number}[]>([
-    { desc: "Indira Gandhi Flight", amt: 145 },
-    { desc: "Taj Rambagh Stay", amt: 320 }
-  ]);
-  const [expDesc, setExpDesc] = useState('');
-  const [expAmt, setExpAmt] = useState('');
 
   const handleAddExpense = () => {
     if (!expDesc.trim() || !expAmt) return;

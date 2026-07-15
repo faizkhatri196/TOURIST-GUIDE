@@ -9,6 +9,27 @@ import confetti from 'canvas-confetti';
 export default function PremiumPage() {
   const { user, token, upgradePremium } = useAuth();
 
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'annual'>('monthly');
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvc, setCardCvc] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [showCreditForm, setShowCreditForm] = useState(false);
+  const [showUpiForm, setShowUpiForm] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'upi'>('card');
+  const [upiId, setUpiId] = useState('');
+  const [upiProcessing, setUpiProcessing] = useState(false);
+  
+  // Premium simulated states
+  const [priceAlertDestination, setPriceAlertDestination] = useState('');
+  const [activeAlerts, setActiveAlerts] = useState<string[]>([
+    "Paris (Flight Alert - $480)",
+    "Tokyo (Hotel Alert - $120/night)"
+  ]);
+  const [downloadedMaps, setDownloadedMaps] = useState<string[]>(['London Offline Map']);
+  const [mapInput, setMapInput] = useState('');
+
   if (!user || !token) {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center pt-24 px-6 relative">
@@ -32,20 +53,6 @@ export default function PremiumPage() {
       </div>
     );
   }
-
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'annual'>('monthly');
-  const [cardNumber, setCardNumber] = useState('');
-  const [cardExpiry, setCardExpiry] = useState('');
-  const [cardCvc, setCardCvc] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'upi'>('card');
-  const [upiId, setUpiId] = useState('');
-  
-  // Premium simulated states
-  const [priceAlertDestination, setPriceAlertDestination] = useState('');
-  const [activeAlerts, setActiveAlerts] = useState<string[]>(['Paris (Flights)', 'Kyoto (Hotels)']);
-  const [downloadedMaps, setDownloadedMaps] = useState<string[]>(['London Offline Map']);
-  const [mapInput, setMapInput] = useState('');
 
   const triggerConfetti = () => {
     confetti({

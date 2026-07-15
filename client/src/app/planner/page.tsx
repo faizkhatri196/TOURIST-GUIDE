@@ -23,6 +23,17 @@ function PlannerForm() {
   const { user, token } = useAuth();
   const searchParams = useSearchParams();
 
+  const [destination, setDestination] = useState('');
+  const [days, setDays] = useState(3);
+  const [people, setPeople] = useState(1);
+  const [theme, setTheme] = useState('Adventure');
+  const [budgetLevel, setBudgetLevel] = useState('Moderate');
+
+  const [itinerary, setItinerary] = useState('');
+  const [budgetPlan, setBudgetPlan] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('');
+
   if (!user || !token) {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center pt-24 px-6 relative">
@@ -46,17 +57,6 @@ function PlannerForm() {
       </div>
     );
   }
-
-  const [destination, setDestination] = useState('');
-  const [days, setDays] = useState(3);
-  const [people, setPeople] = useState(1);
-  const [theme, setTheme] = useState('Adventure');
-  const [budgetLevel, setBudgetLevel] = useState('Moderate');
-
-  const [itinerary, setItinerary] = useState('');
-  const [budgetPlan, setBudgetPlan] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [statusMessage, setStatusMessage] = useState('');
 
   // Check URL params
   useEffect(() => {

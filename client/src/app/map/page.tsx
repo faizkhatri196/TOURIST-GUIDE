@@ -12,6 +12,28 @@ function MapContent() {
   const { user, token } = useAuth();
   const searchParams = useSearchParams();
 
+  const [startPoint, setStartPoint] = useState('New Delhi, India');
+  const [endPoint, setEndPoint] = useState('Jaipur, Rajasthan');
+  const [mode, setMode] = useState<'driving' | 'train' | 'flight' | 'bike' | 'walking'>('driving');
+  const [distance, setDistance] = useState(268); // km
+  const [time, setTime] = useState('4.5 Hours');
+  const [routing, setRouting] = useState(false);
+  const [routingTrigger, setRoutingTrigger] = useState(false);
+
+  // Layer mode for map views
+  const [layerMode, setLayerMode] = useState<'vector' | 'satellite' | 'traffic'>('vector');
+
+  // Places suggestions database
+  const [places, setPlaces] = useState<any[]>([]);
+  const [showStartSuggestions, setShowStartSuggestions] = useState(false);
+  const [showEndSuggestions, setShowEndSuggestions] = useState(false);
+
+  // Dynamic Nominatim Search suggestions states
+  const [startSuggestions, setStartSuggestions] = useState<any[]>([]);
+  const [startLoading, setStartLoading] = useState(false);
+  const [endSuggestions, setEndSuggestions] = useState<any[]>([]);
+  const [endLoading, setEndLoading] = useState(false);
+
   if (!user || !token) {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center pt-24 px-6 relative">
@@ -35,28 +57,6 @@ function MapContent() {
       </div>
     );
   }
-
-  const [startPoint, setStartPoint] = useState('New Delhi, India');
-  const [endPoint, setEndPoint] = useState('Jaipur, Rajasthan');
-  const [mode, setMode] = useState<'driving' | 'train' | 'flight' | 'bike' | 'walking'>('driving');
-  const [distance, setDistance] = useState(268); // km
-  const [time, setTime] = useState('4.5 Hours');
-  const [routing, setRouting] = useState(false);
-  const [routingTrigger, setRoutingTrigger] = useState(false);
-
-  // Layer mode for map views
-  const [layerMode, setLayerMode] = useState<'vector' | 'satellite' | 'traffic'>('vector');
-
-  // Places suggestions database
-  const [places, setPlaces] = useState<any[]>([]);
-  const [showStartSuggestions, setShowStartSuggestions] = useState(false);
-  const [showEndSuggestions, setShowEndSuggestions] = useState(false);
-
-  // Dynamic Nominatim Search suggestions states
-  const [startSuggestions, setStartSuggestions] = useState<any[]>([]);
-  const [startLoading, setStartLoading] = useState(false);
-  const [endSuggestions, setEndSuggestions] = useState<any[]>([]);
-  const [endLoading, setEndLoading] = useState(false);
 
   // Debounced search for Origin suggestions
   useEffect(() => {
